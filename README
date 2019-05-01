@@ -1,0 +1,12 @@
+6d chessboard?
+
+Hover to see what's connected...
+
+Issues:
+has a weird mkfile, read what it does differently
+
+Build:
+mk
+
+Cleaning:
+mk nuke
