@@ -90,6 +90,7 @@ chessinit(void)
 			pos = malloc(sizeof(Position));
 		if(pos == nil)
 			sysfatal("failed to malloc first move: %r");
+		pos->n = 0;
 		pos->sq[0] = pos->sq[7] = pos->sq[56] = pos->sq[63] = ROOK;
 		pos->sq[1] = pos->sq[6] = pos->sq[57] = pos->sq[62] = KNIGHT;
 		pos->sq[2] = pos->sq[5] = pos->sq[58] = pos->sq[61] = BISHOP;
@@ -205,6 +206,9 @@ noflush:
 					current = sel;
 					saux[sel].active = 2;
 					chessq = grtc[sel];
+					pos->n = 0;
+					if(chessq & BLACK)
+						pos->n = 1;
 					cleartargs();
 					findtargs(chessq);
 					for(i = 0; i < 64; i++){
