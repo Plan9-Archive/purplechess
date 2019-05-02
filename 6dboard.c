@@ -37,6 +37,8 @@ dogetwindow(void)
 	draw(screen, screen->r, display->black, nil, ZP);
 }
 
+
+
 /* breadth-first generation, 6 tree layers deep only */
 void
 elemsinit(void)
@@ -83,6 +85,7 @@ elemsinit(void)
 		pelems[i] = (Guielem){i, &tree[i], guipartinit, guipartresize, guipartupdate, guipartmouse, guipartkeyboard};
 	}
 }
+
 
 void
 threadmain(int argc, char **argv)
