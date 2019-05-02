@@ -34,6 +34,28 @@ char *maskdir = "/sys/games/lib/chess";
 int flipped, em, nhist, histborder, maxmsglen;
 
 Image *
+alloccolor(uint color)
+{
+	Image *tmp;
+
+	tmp = allocimage(display, Rect(0,0,1,1), RGBA32, 1, color);
+	if(tmp == nil)
+		sysfatal("cannot allocate buffer image: %r");
+	return tmp;
+}
+
+Image *
+alloccolormix(uint color1, uint color2)
+{
+	Image *tmp;
+
+	tmp = allocimagemix(display, color1, color2);
+	if(tmp == nil)
+		sysfatal("cannot allocate buffer image: %r");
+	return tmp;
+}
+
+Image *
 allocmask(char *m)
 {
 	Image *tmp;
@@ -57,17 +79,22 @@ static
 void
 redraw(Square *s)
 {
+	Image *color;
+
 	if(s->active == 0){
 		draw(screen, s->r, off, nil, ZP);
-		draw(screen, s->r, on, masks[pos->sq[s->id] & PC], ZP);
+		color = pos->sq[s->id] & WHITE ? whtpc : blkpc;
+		draw(screen, s->r, color, masks[pos->sq[s->id] & PC], ZP);
 	}
 	if(s->active == 1){
 		draw(screen, s->r, on, nil, ZP);
-		draw(screen, s->r, off, masks[pos->sq[s->id] & PC], ZP);
+		color = pos->sq[s->id] & WHITE ? whtpc : blkpc;
+		draw(screen, s->r, color, masks[pos->sq[s->id] & PC], ZP);
 	}
 	if(s->active == 2){
 		draw(screen, s->r, click, nil, ZP);
-		draw(screen, s->r, goal, masks[pos->sq[s->id] & PC], ZP);
+		color = pos->sq[s->id] & WHITE ? whtpc : blkpc;
+		draw(screen, s->r, color, masks[pos->sq[s->id] & PC], ZP);
 	}
 	if(s->active == 3){
 		draw(screen, s->r, goal, nil, ZP);
@@ -89,6 +116,17 @@ squareinit(Guielem*)
 	if(goal == nil)
 		goal = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x000099FF);
 	if(masks[NOPIECE] == nil){
+		baize = alloccolor(DDarkgreen);
+		dark = alloccolor(DYellowgreen);
+		light = alloccolor(DPaleyellow);
+		blkpc = alloccolor(DBlack);
+		whtpc = alloccolormix(DGreyblue, DWhite);
+		hlsq = alloccolor(setalpha(DRed, 0xc8));
+		hstbg = alloccolormix(DPurpleblue, DWhite);
+		hstfg = alloccolor(DPurpleblue);
+		msgbg = alloccolor(DWhite);
+		msgfg = alloccolor(DBlack);
+		scrbar = alloccolor(0x999999FF);
 		masks[NOPIECE] = allocmask("nopiece");
 		masks[PAWN] = allocmask("pawn");
 		masks[KNIGHT] = allocmask("knight");
