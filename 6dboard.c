@@ -207,7 +207,7 @@ noflush:
 					saux[sel].active = 2;
 					chessq = grtc[sel];
 					pos->n = 0;
-					if(chessq & BLACK)
+					if(pos->sq[chessq] & BLACK)
 						pos->n = 1;
 					cleartargs();
 					findtargs(chessq);
