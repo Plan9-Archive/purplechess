@@ -134,6 +134,14 @@ noflush:
 				break;
 			}
 			if(m.buttons == 1){
+				sel = root->mouse(root, m);
+				if(sel < 0)
+					break;
+				if(saux[sel].active == 2){
+					saux[sel].active = 1;
+					selems[sel].update(&selems[sel]);
+					break;
+				}
 				saux[sel].active = 2;
 				selems[sel].update(&selems[sel]);
 				break;
