@@ -91,11 +91,10 @@ threadmain(int argc, char **argv)
 	Rune r;
 	Mousectl *mctl;
 	Mouse m;
-	int sel, oldsel, sqi, i; /* selected, old, square index, index */
+	int sel, sqi, i; /* selected, square index, index */
 	int start, goal, current, oldsq, legalclick;
 	
 	srand(time(0));
-	sel = 0;
 
 	ARGBEGIN{
 	default:
@@ -109,10 +108,8 @@ threadmain(int argc, char **argv)
 	if((kctl = initkeyboard(nil)) == nil)
 		sysfatal("%r");
 
-reset:
 	elemsinit();
-	oldsq= 999;
-	legalclick=0;
+	legalclick = 0;
 	start=nrand(64);
 	current=start;
 	goal=63-start;
@@ -141,7 +138,23 @@ noflush:
 			if(m.buttons == 4){
 				switch(menuhit(3, mctl, &menu3, nil)){
 				case 0:
-					goto reset;
+					for(i = 0; i < 64; i++){
+						saux[i].active = 0;
+					}
+					legalclick = 0;
+					start=nrand(64);
+					current=start;
+					goal=63-start;
+					saux[start].active = 2;
+					saux[goal].active = 3;
+					for(i = 0; i < 6; i++){
+						sqi = start ^ (1<<i);
+						saux[sqi].active = 1;
+					}
+					for(i = 0; i < 64; i++){
+						selems[i].update(&selems[i]);
+					}
+					break;
 				case 1:
 					threadexitsall(nil);
 					break;
@@ -150,8 +163,8 @@ noflush:
 				}
 				break;
 			}
+			sel = root->mouse(root, m);
 			if(m.buttons == 1){
-				sel = root->mouse(root, m);
 				if(sel < 0)
 					break;
 				if(saux[sel].active == 1){
@@ -160,35 +173,24 @@ noflush:
 					current = sel;
 					saux[sel].active = 2;
 					selems[sel].update(&selems[sel]);
-				}
-				break;
-			}
-			oldsel = sel;
-			sel = root->mouse(root, m);
-			if(legalclick == 0){
-				if(sel == oldsel)
-					goto noflush;
-			}
-			legalclick = 0;
-			if(oldsel >= 0){
-				if(oldsq != 999){
 					for(i = 0; i < 6; i++){
 						sqi = oldsq ^ (1<<i);
 						if(saux[sqi].active == 1)
 							saux[sqi].active = 0;
 						selems[sqi].update(&selems[sqi]);
 					}
+					for(i = 0; i < 6; i++){
+						sqi = current ^ (1<<i);
+						if(saux[sqi].active == 0)
+							saux[sqi].active = 1;
+						selems[sqi].update(&selems[sqi]);
+					}
 				}
-			}
-			if(sel < 0)
 				break;
-			for(i = 0; i < 6; i++){
-				sqi = current ^ (1<<i);
-				if(saux[sqi].active == 0)
-					saux[sqi].active = 1;
-				selems[sqi].update(&selems[sqi]);
 			}
-			selems[sel].update(&selems[sel]);
+			if(legalclick == 0)
+				goto noflush;
+			legalclick = 0;
 			break;
 		case RESIZE:
 			dogetwindow();
