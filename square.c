@@ -14,6 +14,7 @@ static Image *on;
 static Image *off;
 static Image *click;
 static Image *goal;
+static Image *purple;
 
 int gtc[64] = {56,48,57,49,58,50,59,51,60,52,61,53,62,54,63,55,40,32,41,33,42,34,43,35,44,36,45,37,46,38,47,39,24,16,25,17,26,18,27,19,28,20,29,21,30,22,31,23,8,0,9,1,10,2,11,3,12,4,13,5,14,6,15,7};
 
@@ -86,23 +87,31 @@ redraw(Square *s)
 	
 	chsq=gtc[s->id];
 	if(s->active == 0){
-		draw(screen, s->r, off, nil, ZP);
+		if(s->isgoal == 1){
+			draw(screen,s->r, goal, nil, ZP);
+		} else
+			draw(screen, s->r, off, nil, ZP);
 		color = pos->sq[chsq] & WHITE ? whtpc : blkpc;
 		draw(screen, s->r, color, masks[pos->sq[chsq] & PC], ZP);
 	}
 	if(s->active == 1){
-		draw(screen, s->r, on, nil, ZP);
+		if(s->isgoal == 1){
+			draw(screen,s->r, purple, nil, ZP);
+		} else
+			draw(screen, s->r, on, nil, ZP);
 		color = pos->sq[chsq] & WHITE ? whtpc : blkpc;
-		draw(screen, s->r, color, masks[pos->sq[chsq] & PC], ZP);
+		if(s->isgoal == 1){
+			draw(screen, s->r, click, masks[QUEEN & PC], ZP);
+		} else
+			draw(screen, s->r, color, masks[pos->sq[chsq] & PC], ZP);
 	}
 	if(s->active == 2){
-		draw(screen, s->r, click, nil, ZP);
+		if(s->isgoal == 1){
+			draw(screen,s->r, goal, nil, ZP);
+		} else
+			draw(screen, s->r, click, nil, ZP);
 		color = pos->sq[chsq] & WHITE ? whtpc : blkpc;
 		draw(screen, s->r, color, masks[pos->sq[chsq] & PC], ZP);
-	}
-	if(s->active == 3){
-		draw(screen, s->r, goal, nil, ZP);
-		draw(screen, s->r, click, masks[QUEEN & PC], ZP);
 	}
 }
 
@@ -119,6 +128,8 @@ squareinit(Guielem*)
 		click = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x990000FF);
 	if(goal == nil)
 		goal = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x000099FF);
+	if(purple == nil)
+		purple = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0xAA55EEFF);
 	if(masks[NOPIECE] == nil){
 		baize = alloccolor(DDarkgreen);
 		dark = alloccolor(DYellowgreen);

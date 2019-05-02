@@ -47,6 +47,7 @@ elemsinit(void)
 	for(i = 0; i < 64; i++){
 		saux[i].active = 0;
 		saux[i].id = i;
+		saux[i].isgoal = 0;
 		selems[i].tag = i;
 		selems[i].aux = &saux[i];
 		selems[i].init = squareinit;
@@ -145,7 +146,8 @@ threadmain(int argc, char **argv)
 	current=start;
 	goal=63-start;
 	saux[start].active = 2;
-	saux[goal].active = 3;
+//	saux[goal].active = 3;
+	saux[goal].isgoal = 1;
 	for(i = 0; i < 6; i++){
 		sqi = start ^ (1<<i);
 		saux[sqi].active = 1;
@@ -172,13 +174,15 @@ noflush:
 					chessinit();
 					for(i = 0; i < 64; i++){
 						saux[i].active = 0;
+						saux[i].isgoal = 0;
 					}
 					legalclick = 0;
 					start=nrand(64);
 					current=start;
 					goal=63-start;
 					saux[start].active = 2;
-					saux[goal].active = 3;
+//					saux[goal].active = 3;
+					saux[goal].isgoal = 1;
 					for(i = 0; i < 6; i++){
 						sqi = start ^ (1<<i);
 						saux[sqi].active = 1;
