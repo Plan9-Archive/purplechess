@@ -19,7 +19,7 @@ Guielem pelems[63];
 
 Guielem *root = &pelems[0];
 
-char *buttons3[] = {"Exit", nil};
+char *buttons3[] = {"Reset", "Exit", nil};
 Menu menu3 = {buttons3};
 
 void
@@ -45,6 +45,7 @@ elemsinit(void)
 	Divtype dt;
 	
 	for(i = 0; i < 64; i++){
+		saux[i].active = 0;
 		selems[i].tag = i;
 		selems[i].aux = &saux[i];
 		selems[i].init = squareinit;
@@ -91,7 +92,9 @@ threadmain(int argc, char **argv)
 	Mousectl *mctl;
 	Mouse m;
 	int sel, oldsel, sqi, i; /* selected, old, square index, index */
+	int start, goal;
 	
+	srand(time(0));
 	sel = 0;
 	
 	ARGBEGIN{
@@ -105,8 +108,13 @@ threadmain(int argc, char **argv)
 		sysfatal("%r");
 	if((kctl = initkeyboard(nil)) == nil)
 		sysfatal("%r");
-	
+
+reset:
 	elemsinit();
+	start=nrand(64);
+	goal=63-start;
+	saux[start].active = 2;
+	saux[goal].active = 3;
 	dogetwindow();
 	root->init(root);
 	root->resize(root, screen->r);
@@ -126,6 +134,8 @@ noflush:
 			if(m.buttons == 4){
 				switch(menuhit(3, mctl, &menu3, nil)){
 				case 0:
+					goto reset;
+				case 1:
 					threadexitsall(nil);
 					break;
 				default:
