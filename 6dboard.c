@@ -8,6 +8,7 @@
 #include <mouse.h>
 #include <guiparts.h>
 #include "square.h"
+#include "chessdat.h"
 
 int pflag = 0;
 Square saux[64];
@@ -51,7 +52,6 @@ elemsinit(void)
 		selems[i].mouse = squaremouse;
 		selems[i].keyboard = squarekeyboard;
 	}
-	
 	a = 1;
 	for(i = 0; i < 31; i++){
 		if(i > 2)
@@ -65,7 +65,6 @@ elemsinit(void)
 		tree[i].rb = &pelems[a+1];
 		a += 2;
 	}
-	
 	a = 0;
 	for(i = 31; i < 63; i++){
 		tree[i].vh = Hdiv;
@@ -75,10 +74,32 @@ elemsinit(void)
 		tree[i].rb = &selems[a+1];
 		a += 2;
 	}
-	
 	for(i = 0; i < nelem(pelems); i++){
 		pelems[i] = (Guielem){i, &tree[i], guipartinit, guipartresize, guipartupdate, guipartmouse, guipartkeyboard};
 	}
+}
+
+void
+chessinit(void)
+{
+	int i;
+		if(pos == nil)
+			pos = malloc(sizeof(Position));
+		if(pos == nil)
+			sysfatal("failed to malloc first move: %r");
+		pos->sq[0] = pos->sq[7] = pos->sq[56] = pos->sq[63] = ROOK;
+		pos->sq[1] = pos->sq[6] = pos->sq[57] = pos->sq[62] = KNIGHT;
+		pos->sq[2] = pos->sq[5] = pos->sq[58] = pos->sq[61] = BISHOP;
+		pos->sq[3] = pos->sq[59] = QUEEN;
+		pos->sq[4] = pos->sq[60] = KING;
+		for(i = 0; i < 8; i++)
+			pos->sq[i+8] = pos->sq[i + 48] = PAWN;
+		for(i = 0; i < 16; i++)
+			pos->sq[i] |= WHITE;
+		for(i = 48; i < 64; i++)
+			pos->sq[i] |= BLACK;
+		for(i = 16; i < 48; i++)
+			pos->sq[i] = NOPIECE;
 }
 
 void
@@ -106,6 +127,7 @@ threadmain(int argc, char **argv)
 		sysfatal("%r");
 
 	elemsinit();
+	chessinit();
 	legalclick = 0;
 	start=nrand(64);
 	current=start;
