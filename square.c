@@ -89,12 +89,18 @@ static
 void
 redraw(Square *s)
 {
-	if(s->active == 0)
+	if(s->active == 0){
 		draw(screen, s->r, off, nil, ZP);
-	if(s->active == 1)
+		draw(screen, s->r, on, masks[pos->sq[s->id] & PC], ZP);
+	}
+	if(s->active == 1){
 		draw(screen, s->r, on, nil, ZP);
-	if(s->active == 2)
+		draw(screen, s->r, off, masks[pos->sq[s->id] & PC], ZP);
+	}
+	if(s->active == 2){
 		draw(screen, s->r, click, nil, ZP);
+		draw(screen, s->r, goal, masks[pos->sq[s->id] & PC], ZP);
+	}
 	if(s->active == 3){
 		draw(screen, s->r, goal, nil, ZP);
 		draw(screen, s->r, click, masks[QUEEN & PC], ZP);
@@ -105,6 +111,7 @@ Point
 squareinit(Guielem*)
 {
 	Point p = {1,1};
+	int i;
 	
 	if(off == nil)
 		off = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x777777FF);
@@ -122,6 +129,24 @@ squareinit(Guielem*)
 		masks[ROOK] = allocmask("rook");
 		masks[QUEEN] = allocmask("queen");
 		masks[KING] = allocmask("king");
+	}
+	if(pos == nil){
+		pos = malloc(sizeof(Position));
+		if(pos == nil)
+			sysfatal("failed to malloc first move: %r");
+		pos->sq[0] = pos->sq[7] = pos->sq[56] = pos->sq[63] = ROOK;
+		pos->sq[1] = pos->sq[6] = pos->sq[57] = pos->sq[62] = KNIGHT;
+		pos->sq[2] = pos->sq[5] = pos->sq[58] = pos->sq[61] = BISHOP;
+		pos->sq[3] = pos->sq[59] = QUEEN;
+		pos->sq[4] = pos->sq[60] = KING;
+		for(i = 0; i < 8; i++)
+			pos->sq[i+8] = pos->sq[i + 48] = PAWN;
+		for(i = 0; i < 16; i++)
+			pos->sq[i] |= WHITE;
+		for(i = 48; i < 64; i++)
+			pos->sq[i] |= BLACK;
+		for(i = 16; i < 48; i++)
+			pos->sq[i] = NOPIECE;
 	}
 
 	if(off == nil || on == nil)

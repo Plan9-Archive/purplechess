@@ -1,6 +1,7 @@
 typedef struct Square Square;
 
 struct Square {
+	int id;
 	char active; /* is currently highlighted */
 	/* internal */
 	Rectangle r; /* current size */

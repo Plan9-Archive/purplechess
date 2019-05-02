@@ -48,6 +48,7 @@ elemsinit(void)
 	
 	for(i = 0; i < 64; i++){
 		saux[i].active = 0;
+		saux[i].id = i;
 		selems[i].tag = i;
 		selems[i].aux = &saux[i];
 		selems[i].init = squareinit;
