@@ -92,11 +92,11 @@ threadmain(int argc, char **argv)
 	Mousectl *mctl;
 	Mouse m;
 	int sel, oldsel, sqi, i; /* selected, old, square index, index */
-	int start, goal;
+	int start, goal, current, oldsq, legalclick;
 	
 	srand(time(0));
 	sel = 0;
-	
+
 	ARGBEGIN{
 	default:
 		usage();
@@ -111,10 +111,17 @@ threadmain(int argc, char **argv)
 
 reset:
 	elemsinit();
+	oldsq= 999;
+//	legalclick=0;
 	start=nrand(64);
+	current=start;
 	goal=63-start;
 	saux[start].active = 2;
 	saux[goal].active = 3;
+	for(i = 0; i < 6; i++){
+		sqi = start ^ (1<<i);
+		saux[sqi].active = 1;
+	}
 	dogetwindow();
 	root->init(root);
 	root->resize(root, screen->r);
@@ -147,41 +154,50 @@ noflush:
 				sel = root->mouse(root, m);
 				if(sel < 0)
 					break;
+/*
 				if(saux[sel].active == 2){
 					saux[sel].active = 1;
 					selems[sel].update(&selems[sel]);
 					break;
 				}
-				saux[sel].active = 2;
-				selems[sel].update(&selems[sel]);
+*/
+				if(saux[sel].active == 1){
+					oldsq = current;
+					current = sel;
+					saux[sel].active = 2;
+					selems[sel].update(&selems[sel]);
+				}
 				break;
 			}
-			
 			oldsel = sel;
 			sel = root->mouse(root, m);
 			if(sel == oldsel)
 				goto noflush;
 			if(oldsel >= 0){
+/*
 				if(saux[oldsel].active == 1)
 					saux[oldsel].active = 0;
 				selems[oldsel].update(&selems[oldsel]);
-				for(i = 0; i < 6; i++){
-					sqi = oldsel ^ (1<<i);
-					if(saux[sqi].active == 1)
-						saux[sqi].active = 0;
-					selems[sqi].update(&selems[sqi]);
+*/
+				if(oldsq != 999){
+					for(i = 0; i < 6; i++){
+						sqi = oldsq ^ (1<<i);
+						if(saux[sqi].active == 1)
+							saux[sqi].active = 0;
+						selems[sqi].update(&selems[sqi]);
+					}
 				}
 			}
 			if(sel < 0)
 				break;
 			for(i = 0; i < 6; i++){
-				sqi = sel ^ (1<<i);
+				sqi = current ^ (1<<i);
 				if(saux[sqi].active == 0)
 					saux[sqi].active = 1;
 				selems[sqi].update(&selems[sqi]);
 			}
-			if(saux[sel].active == 0)
-				saux[sel].active = 1;
+			if(saux[current].active == 0)
+				saux[current].active = 1;
 			selems[sel].update(&selems[sel]);
 			break;
 		case RESIZE:
