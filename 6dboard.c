@@ -112,7 +112,7 @@ threadmain(int argc, char **argv)
 reset:
 	elemsinit();
 	oldsq= 999;
-//	legalclick=0;
+	legalclick=0;
 	start=nrand(64);
 	current=start;
 	goal=63-start;
@@ -154,14 +154,8 @@ noflush:
 				sel = root->mouse(root, m);
 				if(sel < 0)
 					break;
-/*
-				if(saux[sel].active == 2){
-					saux[sel].active = 1;
-					selems[sel].update(&selems[sel]);
-					break;
-				}
-*/
 				if(saux[sel].active == 1){
+					legalclick = 1;
 					oldsq = current;
 					current = sel;
 					saux[sel].active = 2;
@@ -171,14 +165,12 @@ noflush:
 			}
 			oldsel = sel;
 			sel = root->mouse(root, m);
-			if(sel == oldsel)
-				goto noflush;
+			if(legalclick == 0){
+				if(sel == oldsel)
+					goto noflush;
+			}
+			legalclick = 0;
 			if(oldsel >= 0){
-/*
-				if(saux[oldsel].active == 1)
-					saux[oldsel].active = 0;
-				selems[oldsel].update(&selems[oldsel]);
-*/
 				if(oldsq != 999){
 					for(i = 0; i < 6; i++){
 						sqi = oldsq ^ (1<<i);
@@ -196,8 +188,6 @@ noflush:
 					saux[sqi].active = 1;
 				selems[sqi].update(&selems[sqi]);
 			}
-			if(saux[current].active == 0)
-				saux[current].active = 1;
 			selems[sel].update(&selems[sel]);
 			break;
 		case RESIZE:
