@@ -11,6 +11,7 @@
 
 static Image *on;
 static Image *off;
+static Image *click;
 
 static
 void
@@ -18,8 +19,10 @@ redraw(Square *s)
 {
 	if(s->active == 1)
 		draw(screen, s->r, on, nil, ZP);
-	else
+	if(s->active == 0)
 		draw(screen, s->r, off, nil, ZP);
+	if(s->active == 2)
+		draw(screen, s->r, click, nil, ZP);
 }
 
 Point
@@ -31,6 +34,8 @@ squareinit(Guielem*)
 		off = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x777777FF);
 	if(on == nil)
 		on = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x88CC88FF);
+	if(click == nil)
+		click = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x990000FF);
 	if(off == nil || on == nil)
 		sysfatal("get more ram dude: %r");
 	

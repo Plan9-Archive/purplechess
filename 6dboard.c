@@ -133,17 +133,24 @@ noflush:
 				}
 				break;
 			}
+			if(m.buttons == 1){
+				saux[sel].active = 2;
+				selems[sel].update(&selems[sel]);
+				break;
+			}
 			
 			oldsel = sel;
 			sel = root->mouse(root, m);
 			if(sel == oldsel)
 				goto noflush;
 			if(oldsel >= 0){
-				saux[oldsel].active = 0;
+				if(saux[oldsel].active == 1)
+					saux[oldsel].active = 0;
 				selems[oldsel].update(&selems[oldsel]);
 				for(i = 0; i < 6; i++){
 					sqi = oldsel ^ (1<<i);
-					saux[sqi].active = 0;
+					if(saux[sqi].active == 1)
+						saux[sqi].active = 0;
 					selems[sqi].update(&selems[sqi]);
 				}
 			}
@@ -151,10 +158,12 @@ noflush:
 				break;
 			for(i = 0; i < 6; i++){
 				sqi = sel ^ (1<<i);
-				saux[sqi].active = 1;
+				if(saux[sqi].active == 0)
+					saux[sqi].active = 1;
 				selems[sqi].update(&selems[sqi]);
 			}
-			saux[sel].active = 1;
+			if(saux[sel].active == 0)
+				saux[sel].active = 1;
 			selems[sel].update(&selems[sel]);
 			break;
 		case RESIZE:
