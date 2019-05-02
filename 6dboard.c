@@ -1,4 +1,4 @@
-/* Amavect! */
+/* Mycroftiv, Amavect!, Umbraticus */
 #include <u.h>
 #include <libc.h>
 #include <draw.h>
@@ -10,15 +10,11 @@
 #include "square.h"
 
 int pflag = 0;
-
 Square saux[64];
 Guielem selems[64];
-
 Guipart tree[63];
 Guielem pelems[63];
-
 Guielem *root = &pelems[0];
-
 char *buttons3[] = {"Reset", "Exit", nil};
 Menu menu3 = {buttons3};
 
@@ -36,8 +32,6 @@ dogetwindow(void)
 		sysfatal("Cannot reconnect to display: %r");
 	draw(screen, screen->r, display->black, nil, ZP);
 }
-
-
 
 /* breadth-first generation, 6 tree layers deep only */
 void
@@ -86,7 +80,6 @@ elemsinit(void)
 		pelems[i] = (Guielem){i, &tree[i], guipartinit, guipartresize, guipartupdate, guipartmouse, guipartkeyboard};
 	}
 }
-
 
 void
 threadmain(int argc, char **argv)

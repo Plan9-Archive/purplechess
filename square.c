@@ -1,4 +1,4 @@
-/* Amavect! */
+/* Mycroftiv, Amavect!, Umbraticus */
 #include <u.h>
 #include <libc.h>
 #include <draw.h>
@@ -148,10 +148,8 @@ squareinit(Guielem*)
 		for(i = 16; i < 48; i++)
 			pos->sq[i] = NOPIECE;
 	}
-
 	if(off == nil || on == nil)
 		sysfatal("get more ram dude: %r");
-	
 	return p;
 }
 
@@ -162,7 +160,6 @@ squareresize(Guielem *e, Rectangle r)
 	
 	s = e->aux;
 	s->r = r;
-	
 	redraw(s);
 }
 
@@ -172,7 +169,6 @@ squareupdate(Guielem *e)
 	Square *s;
 	
 	s = e->aux;
-	
 	redraw(s);
 }
 
@@ -185,7 +181,6 @@ squaremouse(Guielem *e, Mouse m)
 	Square *s;
 	
 	s = e->aux;
-	
 	if(ptinrect(m.xy, s->r))
 		return e->tag;
 	return -1;

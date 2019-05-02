@@ -13,4 +13,3 @@ extern void squareresize(Guielem*, Rectangle);
 extern void squareupdate(Guielem*);
 extern int squaremouse(Guielem*, Mouse);
 extern int squarekeyboard(Guielem*, Rune);
-
