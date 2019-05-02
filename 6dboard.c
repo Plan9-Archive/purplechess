@@ -19,6 +19,16 @@ Guielem *root = &pelems[0];
 char *buttons3[] = {"Reset", "Exit", nil};
 Menu menu3 = {buttons3};
 
+/*
+int grtc[64] = {0,8,1,9,2,10,3,11,4,12,5,13,6,14,7,15,16,24,17,25,18,26,19,27,20,28,21,29,22,30,23,31,32,40,33,41,34,42,35,43,36,44,37,45,38,46,39,47,48,56,49,57,50,58,51,59,52,60,53,61,54,62,55,63};
+*/
+
+int grtc[64] = {56,48,57,49,58,50,59,51,60,52,61,53,62,54,63,55,40,32,41,33,42,34,43,35,44,36,45,37,46,38,47,39,24,16,25,17,26,18,27,19,28,20,29,21,30,22,31,23,8,0,9,1,10,2,11,3,12,4,13,5,14,6,15,7};
+
+/*
+int grtc[64] = {63,55,62,54,61,53,60,52,59,51,58,50,57,49,56,48,47,39,46,38,45,37,44,36,43,35,42,34,41,33,40,32,31,23,30,22,29,21,28,20,27,19,26,18,25,17,24,16,15,7,14,6,13,5,12,4,11,3,10,2,9,1,8,0};
+*/
+
 void
 usage(void)
 {
@@ -82,7 +92,7 @@ elemsinit(void)
 void
 chessinit(void)
 {
-	int i;
+	int i,j,tmp;
 		if(pos == nil)
 			pos = malloc(sizeof(Position));
 		if(pos == nil)
@@ -100,6 +110,14 @@ chessinit(void)
 			pos->sq[i] |= BLACK;
 		for(i = 16; i < 48; i++)
 			pos->sq[i] = NOPIECE;
+
+		for(i = 63; i >= 0; i--){
+			j=nrand(i+1);
+			tmp=pos->sq[i];
+			pos->sq[i]=pos->sq[j];
+			pos->sq[j]=tmp;
+		}
+
 }
 
 void
@@ -157,6 +175,7 @@ noflush:
 			if(m.buttons == 4){
 				switch(menuhit(3, mctl, &menu3, nil)){
 				case 0:
+					chessinit();
 					for(i = 0; i < 64; i++){
 						saux[i].active = 0;
 					}
@@ -186,6 +205,7 @@ noflush:
 			if(m.buttons == 1){
 				if(sel < 0)
 					break;
+//				print(" (%d %d)", sel, grtc[sel]);
 				if(saux[sel].active == 1){
 					legalclick = 1;
 					oldsq = current;
