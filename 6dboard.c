@@ -9,6 +9,7 @@
 #include <guiparts.h>
 #include "square.h"
 #include "chessdat.h"
+#include "target.c"
 
 int pflag = 0;
 Square saux[64];
@@ -120,7 +121,7 @@ threadmain(int argc, char **argv)
 	Mousectl *mctl;
 	Mouse m;
 	int sel, sqi, i; /* selected, square index, index */
-	int start, goal, current, oldsq, legalclick;
+	int start, goal, current, oldsq, chessq, legalclick;
 	
 	srand(time(0));
 
@@ -203,19 +204,28 @@ noflush:
 					oldsq = current;
 					current = sel;
 					saux[sel].active = 2;
-					selems[sel].update(&selems[sel]);
+					chessq = grtc[sel];
+					cleartargs();
+					findtargs(chessq);
+					for(i = 0; i < 64; i++){
+						if(pos->sq[i] & TARGET)
+							pos->sq[i] = NOPIECE;
+					}
+//					selems[sel].update(&selems[sel]);
 					for(i = 0; i < 6; i++){
 						sqi = oldsq ^ (1<<i);
 						if(saux[sqi].active == 1)
 							saux[sqi].active = 0;
-						selems[sqi].update(&selems[sqi]);
+//						selems[sqi].update(&selems[sqi]);
 					}
 					for(i = 0; i < 6; i++){
 						sqi = current ^ (1<<i);
 						if(saux[sqi].active == 0)
 							saux[sqi].active = 1;
-						selems[sqi].update(&selems[sqi]);
+//						selems[sqi].update(&selems[sqi]);
 					}
+					for(i = 0; i < 64; i++)
+						selems[i].update(&selems[i]);			
 				}
 				break;
 			}
