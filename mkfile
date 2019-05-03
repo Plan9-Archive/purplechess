@@ -58,11 +58,11 @@ all:V: include lib/$objtype
 
 install:V: man
 	mk all
-	mk $BIN/$TARG
 	if(! test -e /sys/games/lib/chess/queen.bit){
 		mkdir /sys/games/lib/chess
 		dircp masks /sys/games/lib/chess
 	}
+	cp $O.out $BIN/$TARG
 
 installall:V:
 	for(objtype in $CPUS)
@@ -102,6 +102,6 @@ safeinstallall:V:
 man:V:
 	for(i in $MANFILES){
 		echo $i
-		PAGE=`{echo $i | sed ''s/([^.]+)\.([^.]+)\.man/\2\/\1/g''}
+#		PAGE=`{echo $i | sed ''s/([^.]+)\.([^.]+)\.man/\2\/\1/g''}
 		mk $MKFLAGS $MAN/$PAGE
 	}
