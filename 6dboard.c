@@ -19,7 +19,7 @@ Guielem pelems[63];
 Guielem *root = &pelems[0];
 char *buttons3[] = {"Reset", "Score", "Exit", nil};
 Menu menu3 = {buttons3};
-int sel, sqi, start, goal, current, oldsq, chessq, legalclick, wscore, bscore;
+int sel, sqi, start, goal, current, oldsq, chessq, legalclick, wscore, bscore, moves;
 Image *wheat;
 Rectangle *trect;
 Guipart textarg;
@@ -129,6 +129,7 @@ gamereset(void)
 	legalclick = 0;
 	wscore = 0;
 	bscore = 0;
+	moves = 0;
 	start=nrand(64);
 	current=start;
 	goal=63-start;
@@ -145,6 +146,7 @@ activehit(void)
 {
 	int i, sco;
 
+	moves++;
 	oldsq = current;
 	current = sel;
 	saux[sel].active = 2;
@@ -161,27 +163,27 @@ activehit(void)
 		if(pos->sq[i] & TARGET){
 			if((pos->sq[i] & PC) == PAWN){
 //				print(".pawn.");
-				sco = 2;
+				sco = 20;
 			}
 			if((pos->sq[i] & PC) == KNIGHT){
 //				print(".knight.");
-				sco = 6;
+				sco = 60;
 			}
 			if((pos->sq[i] & PC) == BISHOP){
 //				print(".bishop.");
-				sco = 7;
+				sco = 70;
 			}
 			if((pos->sq[i] & PC) == ROOK){
 //				print(".rook.");
-				sco = 13;
+				sco = 130;
 			}
 			if((pos->sq[i] & PC) == QUEEN){
 //				print(".queen.");
-				sco = 20;
+				sco = 200;
 			}
 			if((pos->sq[i] & PC) == KING){
 //				print(".king.");
-				sco = 17;	
+				sco = 170;	
 			}
 			if(pos->n == 1)
 				wscore += sco;
@@ -203,7 +205,7 @@ activehit(void)
 	for(i = 0; i < 64; i++)
 		selems[i].update(&selems[i]);
 	if(saux[sel].isgoal == 1){
-		sprint(texbuf, "wscore: %d bscore: %d", wscore, bscore);
+		sprint(texbuf, "wcap: %d bcap: %d moves: %d avg: %d", wscore, bscore, moves, (wscore + bscore) / moves);
 		string(screen, trect->min, wheat, ZP, font, texbuf);
 	}
 }
@@ -260,7 +262,12 @@ noflush:
 						selems[i].update(&selems[i]);
 					break;
 				case 1:
-					sprint(texbuf, "wscore: %d bscore: %d", wscore, bscore);
+					if(moves == 0){
+						sprint(texbuf, "wcap: %d bcap: %d moves: %d avg: %d", wscore, bscore, moves, moves);
+						string(screen, trect->min, wheat, ZP, font, texbuf);
+						break;
+					}
+					sprint(texbuf, "wcap: %d bcap: %d moves: %d avg: %d", wscore, bscore, moves, (wscore + bscore) / moves);
 					string(screen, trect->min, wheat, ZP, font, texbuf);
 					break;
 				case 2:
