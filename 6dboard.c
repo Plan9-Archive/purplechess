@@ -17,9 +17,13 @@ Guielem selems[64];
 Guipart tree[63];
 Guielem pelems[63];
 Guielem *root = &pelems[0];
-char *buttons3[] = {"Reset", "Exit", nil};
+char *buttons3[] = {"Reset", "Score", "Exit", nil};
 Menu menu3 = {buttons3};
 int sel, sqi, start, goal, current, oldsq, chessq, legalclick, wscore, bscore;
+Image *wheat;
+Rectangle *trect;
+Guipart textarg;
+char texbuf[512];
 
 int grtc[64] = {56,48,57,49,58,50,59,51,60,52,61,53,62,54,63,55,40,32,41,33,42,34,43,35,44,36,45,37,46,38,47,39,24,16,25,17,26,18,27,19,28,20,29,21,30,22,31,23,8,0,9,1,10,2,11,3,12,4,13,5,14,6,15,7};
 
@@ -46,9 +50,6 @@ elemsinit(void)
 	Divtype dt;
 	
 	for(i = 0; i < 64; i++){
-//		saux[i].active = 0;
-//		saux[i].id = i;
-//		saux[i].isgoal = 0;
 		selems[i].tag = i;
 		selems[i].aux = &saux[i];
 		selems[i].init = squareinit;
@@ -121,11 +122,13 @@ gamereset(void)
 	int i;
 
 	for(i = 0; i < 64; i++){
-		saux[i].active = 0;
 		saux[i].id = i;
+		saux[i].active = 0;
 		saux[i].isgoal = 0;
 	}
 	legalclick = 0;
+	wscore = 0;
+	bscore = 0;
 	start=nrand(64);
 	current=start;
 	goal=63-start;
@@ -140,7 +143,7 @@ gamereset(void)
 void
 activehit(void)
 {
-	int i;
+	int i, sco;
 
 	oldsq = current;
 	current = sel;
@@ -152,10 +155,38 @@ activehit(void)
 	cleartargs();
 	findtargs(chessq);
 	for(i = 0; i < 64; i++){
+		sco = 0;
+		if(i == chessq)
+			continue;
 		if(pos->sq[i] & TARGET){
-//			if((pos->sq[i] & PC) == PAWN)
-//				print(" pawn ");
-//			print("taken");
+			if((pos->sq[i] & PC) == PAWN){
+//				print(".pawn.");
+				sco = 2;
+			}
+			if((pos->sq[i] & PC) == KNIGHT){
+//				print(".knight.");
+				sco = 6;
+			}
+			if((pos->sq[i] & PC) == BISHOP){
+//				print(".bishop.");
+				sco = 7;
+			}
+			if((pos->sq[i] & PC) == ROOK){
+//				print(".rook.");
+				sco = 13;
+			}
+			if((pos->sq[i] & PC) == QUEEN){
+//				print(".queen.");
+				sco = 20;
+			}
+			if((pos->sq[i] & PC) == KING){
+//				print(".king.");
+				sco = 17;	
+			}
+			if(pos->n == 1)
+				wscore += sco;
+			if(pos->n == 0)
+				bscore += sco;
 			pos->sq[i] = NOPIECE;
 		}
 	}
@@ -169,6 +200,12 @@ activehit(void)
 		if(saux[sqi].active == 0)
 			saux[sqi].active = 1;
 	}
+	for(i = 0; i < 64; i++)
+		selems[i].update(&selems[i]);
+	if(saux[sel].isgoal == 1){
+		sprint(texbuf, "wscore: %d bscore: %d", wscore, bscore);
+		string(screen, trect->min, wheat, ZP, font, texbuf);
+	}
 }
 
 void
@@ -180,19 +217,17 @@ threadmain(int argc, char **argv)
 	Mouse m;
 	int i;
 
-	srand(time(0));
-
 	ARGBEGIN{
 	default:
 		usage();
 	}ARGEND;
-	
 	if(initdraw(nil, nil, argv0) < 0)
 		sysfatal("%r");
 	if((mctl = initmouse(nil, screen)) == nil)
 		sysfatal("%r");
 	if((kctl = initkeyboard(nil)) == nil)
 		sysfatal("%r");
+	srand(time(0));
 
 	elemsinit();
 	chessinit();
@@ -200,6 +235,9 @@ threadmain(int argc, char **argv)
 	dogetwindow();
 	root->init(root);
 	root->resize(root, screen->r);
+	wheat = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0xFFFFFFFF);
+	textarg = tree[0];
+	trect = &(textarg.ltrect);
 	enum { MOUSE, RESIZE, KEYS, NONE };
 	Alt alts[] = {
 		[MOUSE] =  {mctl->c, &m, CHANRCV},
@@ -222,6 +260,10 @@ noflush:
 						selems[i].update(&selems[i]);
 					break;
 				case 1:
+					sprint(texbuf, "wscore: %d bscore: %d", wscore, bscore);
+					string(screen, trect->min, wheat, ZP, font, texbuf);
+					break;
+				case 2:
 					threadexitsall(nil);
 					break;
 				default:
@@ -237,8 +279,7 @@ noflush:
 				if(saux[sel].active == 1){
 					legalclick = 1;
 					activehit();
-					for(i = 0; i < 64; i++)
-						selems[i].update(&selems[i]);			
+			
 				}
 				break;
 			}

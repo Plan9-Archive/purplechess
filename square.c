@@ -174,9 +174,7 @@ squareupdate(Guielem *e)
 	redraw(s);
 }
 
-/*
- * Gonna break convention by not updating ->active and redrawing, for simplicity.
- */
+/* Gonna break convention by not updating ->active and redrawing, for simplicity. */
 int
 squaremouse(Guielem *e, Mouse m)
 {
@@ -188,9 +186,6 @@ squaremouse(Guielem *e, Mouse m)
 	return -1;
 }
 
-/*
- * Insert functionality here.
- */
 int
 squarekeyboard(Guielem*, Rune)
 {
