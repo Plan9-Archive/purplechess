@@ -290,6 +290,8 @@ noflush:
 		case RESIZE:
 			dogetwindow();
 			root->resize(root, screen->r);
+			textarg = tree[0];
+			trect = &(textarg.ltrect);
 			break;
 		case KEYS:
 			if(r == Kdel)
