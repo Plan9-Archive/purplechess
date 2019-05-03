@@ -19,6 +19,7 @@ Guielem pelems[63];
 Guielem *root = &pelems[0];
 char *buttons3[] = {"Reset", "Exit", nil};
 Menu menu3 = {buttons3};
+int sel, sqi, start, goal, current, oldsq, chessq, legalclick, wscore, bscore;
 
 int grtc[64] = {56,48,57,49,58,50,59,51,60,52,61,53,62,54,63,55,40,32,41,33,42,34,43,35,44,36,45,37,46,38,47,39,24,16,25,17,26,18,27,19,28,20,29,21,30,22,31,23,8,0,9,1,10,2,11,3,12,4,13,5,14,6,15,7};
 
@@ -45,9 +46,9 @@ elemsinit(void)
 	Divtype dt;
 	
 	for(i = 0; i < 64; i++){
-		saux[i].active = 0;
-		saux[i].id = i;
-		saux[i].isgoal = 0;
+//		saux[i].active = 0;
+//		saux[i].id = i;
+//		saux[i].isgoal = 0;
 		selems[i].tag = i;
 		selems[i].aux = &saux[i];
 		selems[i].init = squareinit;
@@ -112,7 +113,62 @@ chessinit(void)
 			pos->sq[i]=pos->sq[j];
 			pos->sq[j]=tmp;
 		}
+}
 
+void
+gamereset(void)
+{
+	int i;
+
+	for(i = 0; i < 64; i++){
+		saux[i].active = 0;
+		saux[i].id = i;
+		saux[i].isgoal = 0;
+	}
+	legalclick = 0;
+	start=nrand(64);
+	current=start;
+	goal=63-start;
+	saux[start].active = 2;
+	saux[goal].isgoal = 1;
+	for(i = 0; i < 6; i++){
+		sqi = start ^ (1<<i);
+		saux[sqi].active = 1;
+	}
+}
+
+void
+activehit(void)
+{
+	int i;
+
+	oldsq = current;
+	current = sel;
+	saux[sel].active = 2;
+	chessq = grtc[sel];
+	pos->n = 0;
+	if(pos->sq[chessq] & BLACK)
+		pos->n = 1;
+	cleartargs();
+	findtargs(chessq);
+	for(i = 0; i < 64; i++){
+		if(pos->sq[i] & TARGET){
+//			if((pos->sq[i] & PC) == PAWN)
+//				print(" pawn ");
+//			print("taken");
+			pos->sq[i] = NOPIECE;
+		}
+	}
+	for(i = 0; i < 6; i++){
+		sqi = oldsq ^ (1<<i);
+		if(saux[sqi].active == 1)
+			saux[sqi].active = 0;
+	}
+	for(i = 0; i < 6; i++){
+		sqi = current ^ (1<<i);
+		if(saux[sqi].active == 0)
+			saux[sqi].active = 1;
+	}
 }
 
 void
@@ -122,9 +178,8 @@ threadmain(int argc, char **argv)
 	Rune r;
 	Mousectl *mctl;
 	Mouse m;
-	int sel, sqi, i; /* selected, square index, index */
-	int start, goal, current, oldsq, chessq, legalclick;
-	
+	int i;
+
 	srand(time(0));
 
 	ARGBEGIN{
@@ -141,17 +196,7 @@ threadmain(int argc, char **argv)
 
 	elemsinit();
 	chessinit();
-	legalclick = 0;
-	start=nrand(64);
-	current=start;
-	goal=63-start;
-	saux[start].active = 2;
-//	saux[goal].active = 3;
-	saux[goal].isgoal = 1;
-	for(i = 0; i < 6; i++){
-		sqi = start ^ (1<<i);
-		saux[sqi].active = 1;
-	}
+	gamereset();
 	dogetwindow();
 	root->init(root);
 	root->resize(root, screen->r);
@@ -172,24 +217,9 @@ noflush:
 				switch(menuhit(3, mctl, &menu3, nil)){
 				case 0:
 					chessinit();
-					for(i = 0; i < 64; i++){
-						saux[i].active = 0;
-						saux[i].isgoal = 0;
-					}
-					legalclick = 0;
-					start=nrand(64);
-					current=start;
-					goal=63-start;
-					saux[start].active = 2;
-//					saux[goal].active = 3;
-					saux[goal].isgoal = 1;
-					for(i = 0; i < 6; i++){
-						sqi = start ^ (1<<i);
-						saux[sqi].active = 1;
-					}
-					for(i = 0; i < 64; i++){
+					gamereset();
+					for(i = 0; i < 64; i++)
 						selems[i].update(&selems[i]);
-					}
 					break;
 				case 1:
 					threadexitsall(nil);
@@ -206,32 +236,7 @@ noflush:
 //				print(" (%d %d)", sel, grtc[sel]);
 				if(saux[sel].active == 1){
 					legalclick = 1;
-					oldsq = current;
-					current = sel;
-					saux[sel].active = 2;
-					chessq = grtc[sel];
-					pos->n = 0;
-					if(pos->sq[chessq] & BLACK)
-						pos->n = 1;
-					cleartargs();
-					findtargs(chessq);
-					for(i = 0; i < 64; i++){
-						if(pos->sq[i] & TARGET)
-							pos->sq[i] = NOPIECE;
-					}
-//					selems[sel].update(&selems[sel]);
-					for(i = 0; i < 6; i++){
-						sqi = oldsq ^ (1<<i);
-						if(saux[sqi].active == 1)
-							saux[sqi].active = 0;
-//						selems[sqi].update(&selems[sqi]);
-					}
-					for(i = 0; i < 6; i++){
-						sqi = current ^ (1<<i);
-						if(saux[sqi].active == 0)
-							saux[sqi].active = 1;
-//						selems[sqi].update(&selems[sqi]);
-					}
+					activehit();
 					for(i = 0; i < 64; i++)
 						selems[i].update(&selems[i]);			
 				}
