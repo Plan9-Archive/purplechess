@@ -1,6 +1,6 @@
 </$objtype/mkfile
 
-TARG=6dboard
+TARG=purplechess
 NAMES=$TARG square
 OFILES=${NAMES:%=%.$O}
 HFILES=square.h
@@ -59,6 +59,10 @@ all:V: include lib/$objtype
 install:V: man
 	mk all
 	mk $BIN/$TARG
+	if(! test -e /sys/games/lib/chess/queen.bit){
+		mkdir /sys/games/lib/chess
+		dircp masks /sys/games/lib/chess
+	}
 
 installall:V:
 	for(objtype in $CPUS)

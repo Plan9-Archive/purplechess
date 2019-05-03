@@ -205,7 +205,7 @@ activehit(void)
 	for(i = 0; i < 64; i++)
 		selems[i].update(&selems[i]);
 	if(saux[sel].isgoal == 1){
-		sprint(texbuf, "wcap: %d bcap: %d moves: %d avg: %d", wscore, bscore, moves, (wscore + bscore) / moves);
+		sprint(texbuf, "score: %d wcap: %d bcap: %d moves: %d avg: %d", (((wscore + bscore) / moves) * (11 - moves) * 100), wscore, bscore, moves, (wscore + bscore) / moves);
 		string(screen, trect->min, wheat, ZP, font, texbuf);
 	}
 }
