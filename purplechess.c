@@ -25,6 +25,7 @@ Rectangle *trect;
 Guipart textarg;
 char texbuf[512];
 
+/* this array converts from gray id to chess square id and is duplicated in square.c */
 int grtc[64] = {56,48,57,49,58,50,59,51,60,52,61,53,62,54,63,55,40,32,41,33,42,34,43,35,44,36,45,37,46,38,47,39,24,16,25,17,26,18,27,19,28,20,29,21,30,22,31,23,8,0,9,1,10,2,11,3,12,4,13,5,14,6,15,7};
 
 void
@@ -107,7 +108,7 @@ chessinit(void)
 			pos->sq[i] |= BLACK;
 		for(i = 16; i < 48; i++)
 			pos->sq[i] = NOPIECE;
-
+		/* in-place fisher-yates shuffle randomization of pieces on board */
 		for(i = 63; i >= 0; i--){
 			j=nrand(i+1);
 			tmp=pos->sq[i];
@@ -141,6 +142,7 @@ gamereset(void)
 	}
 }
 
+/* this is the main game logic which triggers on a click of a valid target square */
 void
 activehit(void)
 {
@@ -151,6 +153,7 @@ activehit(void)
 	current = sel;
 	saux[sel].active = 2;
 	chessq = grtc[sel];
+	/* the chess code uses the move # pos->n to determine capture color legality */
 	pos->n = 0;
 	if(pos->sq[chessq] & BLACK)
 		pos->n = 1;
@@ -192,11 +195,13 @@ activehit(void)
 			pos->sq[i] = NOPIECE;
 		}
 	}
+	/* clear previous active squares */
 	for(i = 0; i < 6; i++){
 		sqi = oldsq ^ (1<<i);
 		if(saux[sqi].active == 1)
 			saux[sqi].active = 0;
 	}
+	/* mark new possible targets as valid */
 	for(i = 0; i < 6; i++){
 		sqi = current ^ (1<<i);
 		if(saux[sqi].active == 0)
@@ -204,6 +209,7 @@ activehit(void)
 	}
 	for(i = 0; i < 64; i++)
 		selems[i].update(&selems[i]);
+	/* print the score if we just clicked the goal square */
 	if(saux[sel].isgoal == 1){
 		sprint(texbuf, "score: %d wcap: %d bcap: %d moves: %d avg: %d", (((wscore + bscore) / moves) * (11 - moves) * 100), wscore, bscore, moves, (wscore + bscore) / moves);
 		string(screen, trect->min, wheat, ZP, font, texbuf);
@@ -286,7 +292,6 @@ noflush:
 				if(saux[sel].active == 1){
 					legalclick = 1;
 					activehit();
-			
 				}
 				break;
 			}

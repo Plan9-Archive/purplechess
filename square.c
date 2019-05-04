@@ -87,6 +87,7 @@ redraw(Square *s)
 	int chsq;
 	
 	chsq=gtc[s->id];
+	/* base checkerboard pattern of inactive squares */
 	if(s->active == 0){
 		if(s->isgoal == 1){
 			draw(screen,s->r, goal, nil, ZP);
@@ -99,6 +100,7 @@ redraw(Square *s)
 		color = pos->sq[chsq] & WHITE ? whtpc : blkpc;
 		draw(screen, s->r, color, masks[pos->sq[chsq] & PC], ZP);
 	}
+	/* legal target squares, green unless they are the purple goal */
 	if(s->active == 1){
 		if(s->isgoal == 1){
 			draw(screen,s->r, purple, nil, ZP);
@@ -110,6 +112,7 @@ redraw(Square *s)
 		} else
 			draw(screen, s->r, color, masks[pos->sq[chsq] & PC], ZP);
 	}
+	/* previously visited squares */
 	if(s->active == 2){
 		if(s->isgoal == 1){
 			draw(screen,s->r, goal, nil, ZP);
@@ -138,6 +141,7 @@ squareinit(Guielem*)
 		goal = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x4C95FFFF);
 	if(purple == nil)
 		purple = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0xAA55EEFF);
+	/* this is probably the wrong place for all this stuff */
 	if(masks[NOPIECE] == nil){
 		baize = alloccolor(DDarkgreen);
 		dark = alloccolor(DYellowgreen);
