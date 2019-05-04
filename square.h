@@ -5,6 +5,7 @@ struct Square {
 	int isgoal;
 	int iscurrent;
 	int active;
+	int drawid;
 	/* internal */
 	Rectangle r; /* current size */
 	Mouse olde; /* ye olde mouse input */

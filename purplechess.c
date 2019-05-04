@@ -17,7 +17,7 @@ Guielem selems[64];
 Guipart tree[63];
 Guielem pelems[63];
 Guielem *root = &pelems[0];
-char *buttons3[] = {"Reset", "Score", "Exit", nil};
+char *buttons3[] = {"Reset", "Score", "Labels", "Exit", nil};
 Menu menu3 = {buttons3};
 int sel, sqi, start, goal, current, oldsq, chessq, legalclick, wscore, bscore, moves;
 Image *wheat;
@@ -291,6 +291,15 @@ noflush:
 					string(screen, trect->min, wheat, ZP, font, texbuf);
 					break;
 				case 2:
+					for(i = 0; i < 64; i++){
+						if(saux[i].drawid == 0)
+							saux[i].drawid = 1;
+						else
+							saux[i].drawid = 0;
+						selems[i].update(&selems[i]);
+					}
+					break;
+				case 3:
 					threadexitsall(nil);
 					break;
 				default:

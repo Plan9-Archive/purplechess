@@ -86,6 +86,8 @@ redraw(Square *s)
 {
 	Image *color;
 	int chsq;
+	char buf[256];
+	Point targ;
 
 	chsq=gtc[s->id];
 	/* base checkerboard pattern of inactive squares */
@@ -126,6 +128,12 @@ redraw(Square *s)
 		}
 		color = pos->sq[chsq] & WHITE ? whtpc : blkpc;
 		draw(screen, s->r, color, masks[pos->sq[chsq] & PC], ZP);
+	}
+	if(s->drawid == 1){
+		sprint(buf, "%d", s->id);
+		targ.x = s->r.min.x;
+		targ.y = s->r.min.y + ((s->r.max.y - s->r.min.y) / 2);
+		string(screen, targ, msgbg, ZP, font, buf);
 	}
 }
 
