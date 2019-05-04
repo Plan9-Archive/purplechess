@@ -3,7 +3,8 @@ typedef struct Square Square;
 struct Square {
 	int id;
 	int isgoal;
-	char active; /* is currently highlighted */
+	int iscurrent;
+	int active;
 	/* internal */
 	Rectangle r; /* current size */
 	Mouse olde; /* ye olde mouse input */

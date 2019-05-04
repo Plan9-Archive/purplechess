@@ -16,6 +16,7 @@ static Image *off2;
 static Image *click;
 static Image *goal;
 static Image *purple;
+static Image *orange;
 
 int gtc[64] = {56,48,57,49,58,50,59,51,60,52,61,53,62,54,63,55,40,32,41,33,42,34,43,35,44,36,45,37,46,38,47,39,24,16,25,17,26,18,27,19,28,20,29,21,30,22,31,23,8,0,9,1,10,2,11,3,12,4,13,5,14,6,15,7};
 
@@ -116,8 +117,12 @@ redraw(Square *s)
 	if(s->active == 2){
 		if(s->isgoal == 1){
 			draw(screen,s->r, goal, nil, ZP);
-		} else
-			draw(screen, s->r, click, nil, ZP);
+		} else {
+			if(s->iscurrent == 1) {
+				draw(screen,s->r, orange, nil, ZP);
+			} else
+				draw(screen, s->r, click, nil, ZP);
+		}
 		color = pos->sq[chsq] & WHITE ? whtpc : blkpc;
 		draw(screen, s->r, color, masks[pos->sq[chsq] & PC], ZP);
 	}
@@ -141,6 +146,8 @@ squareinit(Guielem*)
 		goal = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x4C95FFFF);
 	if(purple == nil)
 		purple = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0xAA55EEFF);
+	if(orange == nil)
+		orange = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0xE4A02AFF);
 	/* this is probably the wrong place for all this stuff */
 	if(masks[NOPIECE] == nil){
 		baize = alloccolor(DDarkgreen);

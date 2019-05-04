@@ -126,6 +126,7 @@ gamereset(void)
 		saux[i].id = i;
 		saux[i].active = 0;
 		saux[i].isgoal = 0;
+		saux[i].iscurrent = 0;
 	}
 	legalclick = 0;
 	wscore = 0;
@@ -135,6 +136,7 @@ gamereset(void)
 	current=start;
 	goal=63-start;
 	saux[start].active = 2;
+	saux[start].iscurrent = 1;
 	saux[goal].isgoal = 1;
 	for(i = 0; i < 6; i++){
 		sqi = start ^ (1<<i);
@@ -149,9 +151,11 @@ activehit(void)
 	int i, sco;
 
 	moves++;
+	saux[current].iscurrent = 0;
 	oldsq = current;
 	current = sel;
 	saux[sel].active = 2;
+	saux[sel].iscurrent = 1;
 	chessq = grtc[sel];
 	/* the chess code uses the move # pos->n to determine capture color legality */
 	pos->n = 0;
