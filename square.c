@@ -12,6 +12,7 @@
 
 static Image *on;
 static Image *off;
+static Image *off2;
 static Image *click;
 static Image *goal;
 static Image *purple;
@@ -89,8 +90,12 @@ redraw(Square *s)
 	if(s->active == 0){
 		if(s->isgoal == 1){
 			draw(screen,s->r, goal, nil, ZP);
-		} else
-			draw(screen, s->r, off, nil, ZP);
+		} else {
+			if((s->id % 4 == 0) || (s->id % 4 == 3)){
+				draw(screen, s->r, off, nil, ZP);
+			} else 
+				draw(screen, s->r, off2, nil, ZP);
+		}
 		color = pos->sq[chsq] & WHITE ? whtpc : blkpc;
 		draw(screen, s->r, color, masks[pos->sq[chsq] & PC], ZP);
 	}
@@ -121,13 +126,16 @@ squareinit(Guielem*)
 	Point p = {1,1};
 	
 	if(off == nil)
-		off = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x777777FF);
+		off = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x666666FF);
+	if(off2 == nil)
+		off2 = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x888888FF);
 	if(on == nil)
-		on = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x88CC88FF);
+//		on = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x88CC88FF);
+		on = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x10B754FF);
 	if(click == nil)
 		click = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x990000FF);
 	if(goal == nil)
-		goal = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x000099FF);
+		goal = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x4C95FFFF);
 	if(purple == nil)
 		purple = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0xAA55EEFF);
 	if(masks[NOPIECE] == nil){
