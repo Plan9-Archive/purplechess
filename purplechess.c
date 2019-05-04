@@ -21,6 +21,7 @@ char *buttons3[] = {"Score", "Hexa", "Labels", "Reset", "Exit", nil};
 Menu menu3 = {buttons3};
 int sel, sqi, start, goal, current, oldsq, chessq, legalclick, wscore, bscore, moves;
 Image *wheat;
+Image *black;
 Rectangle *trect;
 Guipart textarg;
 char texbuf[512];
@@ -58,6 +59,25 @@ elemsinit(void)
 		selems[i].update = squareupdate;
 		selems[i].mouse = squaremouse;
 		selems[i].keyboard = squarekeyboard;
+		saux[i].id = i;
+		saux[i].active = 0;
+		saux[i].isgoal = 0;
+		saux[i].iscurrent = 0;
+		saux[i].drawid = 0;
+		saux[i].drawhexa = 0;
+		sprint(saux[i].binid, "000000");
+		if(saux[i].id & 32)
+			saux[i].binid[0] = '1';
+		if(saux[i].id & 16)
+			saux[i].binid[1] = '1';
+		if(saux[i].id & 8)
+			saux[i].binid[2] = '1';
+		if(saux[i].id & 4)
+			saux[i].binid[3] = '1';
+		if(saux[i].id & 2)
+			saux[i].binid[4] = '1';
+		if(saux[i].id & 1)
+			saux[i].binid[5] = '1';
 	}
 	a = 1;
 	for(i = 0; i < 31; i++){
@@ -124,25 +144,9 @@ gamereset(void)
 	int i;
 
 	for(i = 0; i < 64; i++){
-		saux[i].id = i;
 		saux[i].active = 0;
 		saux[i].isgoal = 0;
 		saux[i].iscurrent = 0;
-		saux[i].drawid = 0;
-		saux[i].drawhexa = 0;
-		sprint(saux[i].binid, "000000");
-		if(saux[i].id & 32)
-			saux[i].binid[0] = '1';
-		if(saux[i].id & 16)
-			saux[i].binid[1] = '1';
-		if(saux[i].id & 8)
-			saux[i].binid[2] = '1';
-		if(saux[i].id & 4)
-			saux[i].binid[3] = '1';
-		if(saux[i].id & 2)
-			saux[i].binid[4] = '1';
-		if(saux[i].id & 1)
-			saux[i].binid[5] = '1';
 	}
 	legalclick = 0;
 	wscore = 0;
@@ -241,7 +245,7 @@ activehit(void)
 	/* print the score if we just clicked the goal square */
 	if(saux[sel].isgoal == 1){
 		sprint(texbuf, "score: %d wcap: %d bcap: %d moves: %d avg: %d", (((wscore + bscore) / moves) * (11 - moves) * 100), wscore, bscore, moves, (wscore + bscore) / moves);
-		string(screen, trect->min, wheat, ZP, font, texbuf);
+		stringbg(screen, trect->min, wheat, ZP, font, texbuf, black, trect->min);
 	}
 }
 
@@ -273,6 +277,7 @@ threadmain(int argc, char **argv)
 	root->init(root);
 	root->resize(root, screen->r);
 	wheat = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0xFFFFFFFF);
+	black = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x000000FF);
 	textarg = tree[0];
 	trect = &(textarg.ltrect);
 	enum { MOUSE, RESIZE, KEYS, NONE };
@@ -293,11 +298,11 @@ noflush:
 				case 0:
 					if(moves == 0){
 						sprint(texbuf, "wcap: %d bcap: %d moves: %d avg: %d", wscore, bscore, moves, moves);
-						string(screen, trect->min, wheat, ZP, font, texbuf);
+						stringbg(screen, trect->min, wheat, ZP, font, texbuf, black, trect->min);
 						break;
 					}
 					sprint(texbuf, "wcap: %d bcap: %d moves: %d avg: %d", wscore, bscore, moves, (wscore + bscore) / moves);
-					string(screen, trect->min, wheat, ZP, font, texbuf);
+					stringbg(screen, trect->min, wheat, ZP, font, texbuf, black, trect->min);
 					break;
 				case 1:
 					for(i = 0; i < 64; i++){
