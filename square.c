@@ -87,8 +87,13 @@ redraw(Square *s)
 	Image *color;
 	int i, chsq;
 	Point targ, dest;
+	Rectangle align;
 
 	chsq=gtc[s->id];
+	align.min.x = s->r.min.x;
+	align.min.y = s->r.min.y + 10;
+	align.max.x = s->r.max.x;
+	align.max.y = s->r.max.y;
 	/* base checkerboard pattern of inactive squares */
 	if(s->active == 0){
 		if(s->isgoal == 1){
@@ -100,8 +105,7 @@ redraw(Square *s)
 				draw(screen, s->r, off2, nil, ZP);
 		}
 		color = pos->sq[chsq] & WHITE ? whtpc : blkpc;
-		draw(screen, s->r, color, masks[pos->sq[chsq] & PC], ZP);
-//		line(screen, s->r.min, s->r.max, 0, 0, 2, orange, f);
+		draw(screen, align, color, masks[pos->sq[chsq] & PC], ZP);
 	}
 	/* legal target squares, green unless they are the purple goal */
 	if(s->active == 1){
@@ -111,9 +115,9 @@ redraw(Square *s)
 			draw(screen, s->r, on, nil, ZP);
 		color = pos->sq[chsq] & WHITE ? whtpc : blkpc;
 		if(s->isgoal == 1){
-			draw(screen, s->r, click, masks[QUEEN & PC], ZP);
+			draw(screen, align, click, masks[QUEEN & PC], ZP);
 		} else
-			draw(screen, s->r, color, masks[pos->sq[chsq] & PC], ZP);
+			draw(screen, align, color, masks[pos->sq[chsq] & PC], ZP);
 	}
 	/* previously visited squares */
 	if(s->active == 2){
@@ -126,7 +130,7 @@ redraw(Square *s)
 				draw(screen, s->r, click, nil, ZP);
 		}
 		color = pos->sq[chsq] & WHITE ? whtpc : blkpc;
-		draw(screen, s->r, color, masks[pos->sq[chsq] & PC], ZP);
+		draw(screen, align, color, masks[pos->sq[chsq] & PC], ZP);
 	}
 	if(s->drawhexa == 1){
 		targ.x = s->r.min.x + ((s->r.max.x - s->r.min.x) / 2);
@@ -150,8 +154,9 @@ redraw(Square *s)
 	}
 	if(s->drawid == 1){
 //		sprint(buf, "%d", s->id);
-		targ.x = s->r.min.x;
-		targ.y = s->r.min.y + ((s->r.max.y - s->r.min.y) / 2);
+		targ.x = s->r.min.x + 5;
+//		targ.y = s->r.min.y + ((s->r.max.y - s->r.min.y) / 2);
+		targ.y = s->r.max.y - 25;
 		string(screen, targ, msgbg, ZP, font, s->binid);
 	}
 }
