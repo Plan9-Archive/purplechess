@@ -17,7 +17,7 @@ Guielem selems[64];
 Guipart tree[63];
 Guielem pelems[63];
 Guielem *root = &pelems[0];
-char *buttons3[] = {"Score", "Labels", "Reset", "Exit", nil};
+char *buttons3[] = {"Score", "Hexa", "Labels", "Reset", "Exit", nil};
 Menu menu3 = {buttons3};
 int sel, sqi, start, goal, current, oldsq, chessq, legalclick, wscore, bscore, moves;
 Image *wheat;
@@ -128,6 +128,8 @@ gamereset(void)
 		saux[i].active = 0;
 		saux[i].isgoal = 0;
 		saux[i].iscurrent = 0;
+		saux[i].drawid = 0;
+		saux[i].drawhexa = 0;
 		sprint(saux[i].binid, "000000");
 		if(saux[i].id & 32)
 			saux[i].binid[0] = '1';
@@ -299,6 +301,15 @@ noflush:
 					break;
 				case 1:
 					for(i = 0; i < 64; i++){
+						if(saux[i].drawhexa == 0)
+							saux[i].drawhexa = 1;
+						else
+							saux[i].drawhexa = 0;
+						selems[i].update(&selems[i]);
+					}
+					break;
+				case 2:
+					for(i = 0; i < 64; i++){
 						if(saux[i].drawid == 0)
 							saux[i].drawid = 1;
 						else
@@ -306,13 +317,13 @@ noflush:
 						selems[i].update(&selems[i]);
 					}
 					break;
-				case 2:
+				case 3:
 					chessinit();
 					gamereset();
 					for(i = 0; i < 64; i++)
 						selems[i].update(&selems[i]);
 					break;
-				case 3:
+				case 4:
 					threadexitsall(nil);
 					break;
 				default:
