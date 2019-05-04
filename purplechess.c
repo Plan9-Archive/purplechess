@@ -128,6 +128,19 @@ gamereset(void)
 		saux[i].active = 0;
 		saux[i].isgoal = 0;
 		saux[i].iscurrent = 0;
+		sprint(saux[i].binid, "000000");
+		if(saux[i].id & 32)
+			saux[i].binid[0] = '1';
+		if(saux[i].id & 16)
+			saux[i].binid[1] = '1';
+		if(saux[i].id & 8)
+			saux[i].binid[2] = '1';
+		if(saux[i].id & 4)
+			saux[i].binid[3] = '1';
+		if(saux[i].id & 2)
+			saux[i].binid[4] = '1';
+		if(saux[i].id & 1)
+			saux[i].binid[5] = '1';
 	}
 	legalclick = 0;
 	wscore = 0;
