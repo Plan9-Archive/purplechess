@@ -86,7 +86,7 @@ redraw(Square *s)
 {
 	Image *color;
 	int chsq;
-	
+
 	chsq=gtc[s->id];
 	/* base checkerboard pattern of inactive squares */
 	if(s->active == 0){
@@ -100,6 +100,7 @@ redraw(Square *s)
 		}
 		color = pos->sq[chsq] & WHITE ? whtpc : blkpc;
 		draw(screen, s->r, color, masks[pos->sq[chsq] & PC], ZP);
+//		line(screen, s->r.min, s->r.max, 0, 0, 2, orange, f);
 	}
 	/* legal target squares, green unless they are the purple goal */
 	if(s->active == 1){

@@ -90,31 +90,32 @@ void
 chessinit(void)
 {
 	int i,j,tmp;
-		if(pos == nil)
-			pos = malloc(sizeof(Position));
-		if(pos == nil)
-			sysfatal("failed to malloc first move: %r");
-		pos->n = 0;
-		pos->sq[0] = pos->sq[7] = pos->sq[56] = pos->sq[63] = ROOK;
-		pos->sq[1] = pos->sq[6] = pos->sq[57] = pos->sq[62] = KNIGHT;
-		pos->sq[2] = pos->sq[5] = pos->sq[58] = pos->sq[61] = BISHOP;
-		pos->sq[3] = pos->sq[59] = QUEEN;
-		pos->sq[4] = pos->sq[60] = KING;
-		for(i = 0; i < 8; i++)
-			pos->sq[i+8] = pos->sq[i + 48] = PAWN;
-		for(i = 0; i < 16; i++)
-			pos->sq[i] |= WHITE;
-		for(i = 48; i < 64; i++)
-			pos->sq[i] |= BLACK;
-		for(i = 16; i < 48; i++)
-			pos->sq[i] = NOPIECE;
-		/* in-place fisher-yates shuffle randomization of pieces on board */
-		for(i = 63; i >= 0; i--){
-			j=nrand(i+1);
-			tmp=pos->sq[i];
-			pos->sq[i]=pos->sq[j];
-			pos->sq[j]=tmp;
-		}
+
+	if(pos == nil)
+		pos = malloc(sizeof(Position));
+	if(pos == nil)
+		sysfatal("failed to malloc first move: %r");
+	pos->n = 0;
+	pos->sq[0] = pos->sq[7] = pos->sq[56] = pos->sq[63] = ROOK;
+	pos->sq[1] = pos->sq[6] = pos->sq[57] = pos->sq[62] = KNIGHT;
+	pos->sq[2] = pos->sq[5] = pos->sq[58] = pos->sq[61] = BISHOP;
+	pos->sq[3] = pos->sq[59] = QUEEN;
+	pos->sq[4] = pos->sq[60] = KING;
+	for(i = 0; i < 8; i++)
+		pos->sq[i+8] = pos->sq[i + 48] = PAWN;
+	for(i = 0; i < 16; i++)
+		pos->sq[i] |= WHITE;
+	for(i = 48; i < 64; i++)
+		pos->sq[i] |= BLACK;
+	for(i = 16; i < 48; i++)
+		pos->sq[i] = NOPIECE;
+	/* in-place fisher-yates shuffle randomization of pieces on board */
+	for(i = 63; i >= 0; i--){
+		j=nrand(i+1);
+		tmp=pos->sq[i];
+		pos->sq[i]=pos->sq[j];
+		pos->sq[j]=tmp;
+	}
 }
 
 void
@@ -144,25 +145,12 @@ gamereset(void)
 	}
 }
 
-/* this is the main game logic which triggers on a click of a valid target square */
+/* make all possible captures and accumulate score */
 void
-activehit(void)
+capallandscore(void)
 {
 	int i, sco;
 
-	moves++;
-	saux[current].iscurrent = 0;
-	oldsq = current;
-	current = sel;
-	saux[sel].active = 2;
-	saux[sel].iscurrent = 1;
-	chessq = grtc[sel];
-	/* the chess code uses the move # pos->n to determine capture color legality */
-	pos->n = 0;
-	if(pos->sq[chessq] & BLACK)
-		pos->n = 1;
-	cleartargs();
-	findtargs(chessq);
 	for(i = 0; i < 64; i++){
 		sco = 0;
 		if(i == chessq)
@@ -199,6 +187,28 @@ activehit(void)
 			pos->sq[i] = NOPIECE;
 		}
 	}
+}
+
+/* this is the main game logic which triggers on a click of a valid target square */
+void
+activehit(void)
+{
+	int i;
+
+	moves++;
+	saux[current].iscurrent = 0;
+	oldsq = current;
+	current = sel;
+	saux[sel].active = 2;
+	saux[sel].iscurrent = 1;
+	chessq = grtc[sel];
+	/* the chess code uses the move # pos->n to determine capture color legality */
+	pos->n = 0;
+	if(pos->sq[chessq] & BLACK)
+		pos->n = 1;
+	cleartargs();
+	findtargs(chessq);
+	capallandscore();
 	/* clear previous active squares */
 	for(i = 0; i < 6; i++){
 		sqi = oldsq ^ (1<<i);
