@@ -19,7 +19,7 @@ Guielem pelems[63];
 Guielem *root = &pelems[0];
 char *buttons3[] = {"Score", "Hexa", "Labels", "Reset", "Exit", nil};
 Menu menu3 = {buttons3};
-int sel, sqi, start, goal, current, oldsq, chessq, legalclick, wscore, bscore, moves;
+int sel, sqi, start, goal, current, oldsq, chessq, legalclick, wscore, bscore, moves, pcson, clearflag;
 Image *wheat;
 Image *black;
 Rectangle *trect;
@@ -28,6 +28,17 @@ char texbuf[512];
 
 /* this array converts from gray id to chess square id and is duplicated in square.c */
 int grtc[64] = {56,48,57,49,58,50,59,51,60,52,61,53,62,54,63,55,40,32,41,33,42,34,43,35,44,36,45,37,46,38,47,39,24,16,25,17,26,18,27,19,28,20,29,21,30,22,31,23,8,0,9,1,10,2,11,3,12,4,13,5,14,6,15,7};
+
+int
+ctgr(int find)
+{
+	int i;
+
+	for(i=0; i <64; i++)
+		if(grtc[i] == find)
+			return i;
+	return 0;
+}
 
 void
 usage(void)
@@ -138,32 +149,6 @@ chessinit(void)
 	}
 }
 
-void
-gamereset(void)
-{
-	int i;
-
-	for(i = 0; i < 64; i++){
-		saux[i].active = 0;
-		saux[i].isgoal = 0;
-		saux[i].iscurrent = 0;
-	}
-	legalclick = 0;
-	wscore = 0;
-	bscore = 0;
-	moves = 0;
-	start=nrand(64);
-	current=start;
-	goal=63-start;
-	saux[start].active = 2;
-	saux[start].iscurrent = 1;
-	saux[goal].isgoal = 1;
-	for(i = 0; i < 6; i++){
-		sqi = start ^ (1<<i);
-		saux[sqi].active = 1;
-	}
-}
-
 /* make all possible captures and accumulate score */
 void
 capallandscore(void)
@@ -172,38 +157,49 @@ capallandscore(void)
 
 	for(i = 0; i < 64; i++){
 		sco = 0;
-		if(i == chessq)
-			continue;
-		if(pos->sq[i] & TARGET){
+		if((pos->sq[i] & TARGET) && (pos->sq[i] != NOPIECE)){
 			if((pos->sq[i] & PC) == PAWN){
 //				print(".pawn.");
 				sco = 25;
+				if(saux[ctgr(i)].active != 2)
+					pcson--; 
 			}
 			if((pos->sq[i] & PC) == KNIGHT){
 //				print(".knight.");
 				sco = 65;
+				if(saux[ctgr(i)].active != 2)
+					pcson--; 
 			}
 			if((pos->sq[i] & PC) == BISHOP){
 //				print(".bishop.");
 				sco = 70;
+				if(saux[ctgr(i)].active != 2)
+					pcson--; 
 			}
 			if((pos->sq[i] & PC) == ROOK){
 //				print(".rook.");
 				sco = 135;
+				if(saux[ctgr(i)].active != 2)
+					pcson--; 
 			}
 			if((pos->sq[i] & PC) == QUEEN){
 //				print(".queen.");
 				sco = 210;
+				if(saux[ctgr(i)].active != 2)
+					pcson--; 
 			}
 			if((pos->sq[i] & PC) == KING){
 //				print(".king.");
-				sco = 175;	
+				sco = 175;
+				if(saux[ctgr(i)].active != 2)
+					pcson--; 
 			}
 			if(pos->n == 1)
 				wscore += sco;
 			if(pos->n == 0)
 				bscore += sco;
-			pos->sq[i] = NOPIECE;
+			if(i != chessq)
+				pos->sq[i] = NOPIECE;
 		}
 	}
 }
@@ -214,14 +210,14 @@ printscore(void)
 	int bonus;
 
 	if(moves == 0){
-		sprint(texbuf, "wcap: %d bcap: %d moves: %d avg: %d", wscore, bscore, moves, moves);
+		sprint(texbuf, "wcap: %d bcap: %d moves: %d avg: %d pcson: %d", wscore, bscore, moves, moves, pcson);
 		stringbg(screen, trect->min, wheat, ZP, font, texbuf, black, trect->min);
 		return;
 	}
 	bonus = 1;
 	if(moves < 11)
 		bonus = 11 - moves;
-	sprint(texbuf, "score: %d wcap: %d bcap: %d moves: %d avg: %d", (((wscore + bscore) / moves) * bonus * 100), wscore, bscore, moves, (wscore + bscore) / moves);
+	sprint(texbuf, "score: %d wcap: %d bcap: %d moves: %d avg: %d pcson %d", (((wscore + bscore) / moves) * bonus * 100), wscore, bscore, moves, (wscore + bscore) / moves, pcson);
 	stringbg(screen, trect->min, wheat, ZP, font, texbuf, black, trect->min);
 }
 
@@ -235,8 +231,6 @@ activehit(void)
 	saux[current].iscurrent = 0;
 	oldsq = current;
 	current = sel;
-	saux[sel].active = 2;
-	saux[sel].iscurrent = 1;
 	chessq = grtc[sel];
 	/* the chess code uses the move # pos->n to determine capture color legality */
 	pos->n = 0;
@@ -245,6 +239,8 @@ activehit(void)
 	cleartargs();
 	findtargs(chessq);
 	capallandscore();
+	saux[sel].active = 2;
+	saux[sel].iscurrent = 1;
 	/* clear previous active squares */
 	for(i = 0; i < 6; i++){
 		sqi = oldsq ^ (1<<i);
@@ -267,6 +263,42 @@ activehit(void)
 		printscore();
 	if(saux[sel].isgoal == 1)
 		printscore();
+	if((clearflag == 0) && (pcson == 0)){
+		printscore();
+		clearflag = 1;
+	}
+}
+
+void
+gamereset(void)
+{
+	int i;
+
+	for(i = 0; i < 64; i++){
+		saux[i].active = 0;
+		saux[i].isgoal = 0;
+		saux[i].iscurrent = 0;
+	}
+	legalclick = 0;
+	wscore = 0;
+	bscore = 0;
+	moves = 0;
+	clearflag = 0;
+	pcson = 32;
+	start=nrand(64);
+	current=start;
+	goal=63-start;
+	saux[start].active = 2;
+	saux[start].iscurrent = 1;
+	saux[goal].isgoal = 1;
+	for(i = 0; i < 6; i++){
+		sqi = start ^ (1<<i);
+		saux[sqi].active = 1;
+	}
+	sel=current;
+	if(pos->sq[grtc[current]] != NOPIECE)
+		pcson--;
+	activehit();
 }
 
 void
