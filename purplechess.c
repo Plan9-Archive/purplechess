@@ -19,7 +19,7 @@ Guielem pelems[63];
 Guielem *root = &pelems[0];
 char *buttons3[] = {"Help", "Hexa", "Binary", "Reset", "Exit", nil};
 Menu menu3 = {buttons3};
-int sel, sqi, start, goal, current, oldsq, chessq, legalclick, wscore, bscore, moves, pcson, clearflag, hexdisp, turnsco;
+int sel, sqi, start, goal, current, oldsq, chessq, legalclick, wscore, bscore, moves, pcson, clearflag, hexdisp, turnsco, totalsco;
 Image *white;
 Image *black;
 Rectangle textrect, textrect2, boardrect;
@@ -204,20 +204,16 @@ capallandscore(void)
 			if(i != chessq)
 				pos->sq[i] = NOPIECE;
 		}
-		sprint(texbuf2, "+ %d points                                ", turnsco);
-		stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
 	}
+	totalsco += turnsco;
+	sprint(texbuf2, "+ %d points                                ", turnsco);
+	stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
 }
 
 void
 printscore(void)
 {
-	int bonus;
-
-	bonus = 1;
-	if(moves < 11)
-		bonus = 11 - moves;
-	sprint(texbuf, "sco: %d w: %d b: %d move: %d avg: %d  pcs: %d        ", (((wscore + bscore) / moves) * bonus * 100), wscore, bscore, moves, (wscore + bscore) / moves, pcson);
+	sprint(texbuf, "sco: %d w: %d b: %d move: %d avg: %d  pcs: %d        ", totalsco, wscore, bscore, moves, (wscore + bscore) / moves, pcson);
 	stringbg(screen, textrect.min, white, ZP, font, texbuf, black, textrect.min);
 }
 
@@ -260,14 +256,23 @@ activehit(void)
 		selems[i].update(&selems[i]);
 	/* print the score and goal completion info */
 	if(legalsqs == 0){
-		sprint(texbuf2, "No moves, %d squares remain              ", 64 - moves);
+		turnsco += moves * 50;
+		totalsco += turnsco;
+		sprint(texbuf2, "No moves, %d remain, + %d              ", 64 - moves, turnsco);
 		stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
 	}
 	if(saux[sel].isgoal == 1){
+		if((11 - moves) > 0){
+			turnsco += (11 - moves) * totalsco;
+		}
+		turnsco += 200;
+		totalsco += turnsco;
 		sprint(texbuf2, "+ %d, GOAL REACHED!          ", turnsco);
 		stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
 	}
 	if((clearflag == 0) && (pcson == 0)){
+		turnsco += (64 - moves) * 50;
+		totalsco += turnsco;
 		sprint(texbuf2, "+ %d, ALL PIECES SCORED         ", turnsco);
 		stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
 		clearflag = 1;
@@ -286,6 +291,7 @@ gamereset(void)
 		saux[i].iscurrent = 0;
 		saux[i].drawhexa = 0;
 	}
+	totalsco = 0;
 	hexdisp = 0;
 	legalclick = 0;
 	wscore = 0;
