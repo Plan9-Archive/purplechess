@@ -19,14 +19,12 @@ Guielem pelems[63];
 Guielem *root = &pelems[0];
 char *buttons3[] = {"Score", "Hexa", "Labels", "Reset", "Exit", nil};
 Menu menu3 = {buttons3};
-int sel, sqi, start, goal, current, oldsq, chessq, legalclick, wscore, bscore, moves, pcson, clearflag, hexdisp;
+int sel, sqi, start, goal, current, oldsq, chessq, legalclick, wscore, bscore, moves, pcson, clearflag, hexdisp, turnsco;
 Image *wheat;
 Image *black;
-Rectangle *trect;
-Rectangle textrect;
-Rectangle boardrect;
-Guipart textarg;
+Rectangle textrect, textrect2, boardrect;
 char texbuf[512];
+char texbuf2[512];
 
 /* this array converts from gray id to chess square id and is duplicated in square.c */
 int grtc[64] = {56,48,57,49,58,50,59,51,60,52,61,53,62,54,63,55,40,32,41,33,42,34,43,35,44,36,45,37,46,38,47,39,24,16,25,17,26,18,27,19,28,20,29,21,30,22,31,23,8,0,9,1,10,2,11,3,12,4,13,5,14,6,15,7};
@@ -158,6 +156,7 @@ capallandscore(void)
 {
 	int i, sco;
 
+	turnsco = 0;
 	for(i = 0; i < 64; i++){
 		sco = 0;
 		if((pos->sq[i] & TARGET) && (pos->sq[i] != NOPIECE)){
@@ -201,9 +200,12 @@ capallandscore(void)
 				wscore += sco;
 			if(pos->n == 0)
 				bscore += sco;
+			turnsco += sco;
 			if(i != chessq)
 				pos->sq[i] = NOPIECE;
 		}
+		sprint(texbuf2, "+ %d points                                ", turnsco);
+		stringbg(screen, textrect2.min, wheat, ZP, font, texbuf2, black, textrect2.min);
 	}
 }
 
@@ -212,15 +214,10 @@ printscore(void)
 {
 	int bonus;
 
-	if(moves == 0){
-		sprint(texbuf, "wcap: %d bcap: %d moves: %d avg: %d pcson: %d", wscore, bscore, moves, moves, pcson);
-		stringbg(screen, trect->min, wheat, ZP, font, texbuf, black, trect->min);
-		return;
-	}
 	bonus = 1;
 	if(moves < 11)
 		bonus = 11 - moves;
-	sprint(texbuf, "score: %d wcap: %d bcap: %d moves: %d avg: %d pcson %d", (((wscore + bscore) / moves) * bonus * 100), wscore, bscore, moves, (wscore + bscore) / moves, pcson);
+	sprint(texbuf, "sco: %d w: %d b: %d move: %d avg: %d  pcs: %d        ", (((wscore + bscore) / moves) * bonus * 100), wscore, bscore, moves, (wscore + bscore) / moves, pcson);
 	stringbg(screen, textrect.min, wheat, ZP, font, texbuf, black, textrect.min);
 }
 
@@ -262,16 +259,19 @@ activehit(void)
 	for(i = 0; i < 64; i++)
 		selems[i].update(&selems[i]);
 	/* print the score if we just clicked the goal square or moves are exhausted */
-/*
-	if(legalsqs == 0)
-		printscore();
-	if(saux[sel].isgoal == 1)
-		printscore();
+	if(legalsqs == 0){
+		sprint(texbuf2, "No moves, %d squares remain              ", 64 - moves);
+		stringbg(screen, textrect2.min, wheat, ZP, font, texbuf2, black, textrect2.min);
+	}
+	if(saux[sel].isgoal == 1){
+		sprint(texbuf2, "+ %d, GOAL REACHED!          ", turnsco);
+		stringbg(screen, textrect2.min, wheat, ZP, font, texbuf2, black, textrect2.min);
+	}
 	if((clearflag == 0) && (pcson == 0)){
-		printscore();
+		sprint(texbuf2, "+ %d, ALL PIECES SCORED         ", turnsco);
+		stringbg(screen, textrect2.min, wheat, ZP, font, texbuf2, black, textrect2.min);
 		clearflag = 1;
 	}
-*/
 	printscore();
 }
 
@@ -315,11 +315,15 @@ boardsize(void)
 	boardrect.min.x = screen->r.min.x;
 	boardrect.min.y = screen->r.min.y;
 	boardrect.max.x = screen->r.max.x;
-	boardrect.max.y = screen->r.max.y - 50;
+	boardrect.max.y = screen->r.max.y - 60;
 	textrect.min.x = screen->r.min.x + 5;
 	textrect.min.y = screen->r.max.y - 45;
 	textrect.max.x = screen->r.max.x;
 	textrect.max.y = screen->r.max.y;
+	textrect2.min.x = screen->r.min.x + 5;
+	textrect2.min.y = screen->r.max.y - 25;
+	textrect2.max.x = screen->r.max.x;
+	textrect2.max.y = screen->r.max.y;
 }
 
 void
@@ -358,8 +362,8 @@ threadmain(int argc, char **argv)
 	root->resize(root, boardrect);
 	wheat = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0xFFFFFFFF);
 	black = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x000000FF);
-	textarg = tree[0];
-	trect = &(textarg.ltrect);
+//	textarg = tree[0];
+//	trect = &(textarg.ltrect);
 
 	enum { MOUSE, RESIZE, KEYS, NONE };
 	Alt alts[] = {
@@ -444,8 +448,8 @@ noflush:
 			dogetwindow();
 			boardsize();
 			root->resize(root, boardrect);
-			textarg = tree[0];
-			trect = &(textarg.ltrect);
+//			textarg = tree[0];
+//			trect = &(textarg.ltrect);
 			break;
 		case KEYS:
 			if(r == Kdel)
