@@ -19,7 +19,7 @@ Guielem pelems[63];
 Guielem *root = &pelems[0];
 char *buttons3[] = {"Score", "Hexa", "Labels", "Reset", "Exit", nil};
 Menu menu3 = {buttons3};
-int sel, sqi, start, goal, current, oldsq, chessq, legalclick, wscore, bscore, moves, pcson, clearflag;
+int sel, sqi, start, goal, current, oldsq, chessq, legalclick, wscore, bscore, moves, pcson, clearflag, hexdisp;
 Image *wheat;
 Image *black;
 Rectangle *trect;
@@ -71,6 +71,7 @@ elemsinit(void)
 		selems[i].mouse = squaremouse;
 		selems[i].keyboard = squarekeyboard;
 		saux[i].id = i;
+		saux[i].isstart = 0;
 		saux[i].active = 0;
 		saux[i].isgoal = 0;
 		saux[i].iscurrent = 0;
@@ -290,7 +291,10 @@ gamereset(void)
 	goal=63-start;
 	saux[start].active = 2;
 	saux[start].iscurrent = 1;
+	saux[start].isstart = 1;
+	saux[start].drawhexa = 1;
 	saux[goal].isgoal = 1;
+	saux[goal].drawhexa = 1;
 	for(i = 0; i < 6; i++){
 		sqi = start ^ (1<<i);
 		saux[sqi].active = 1;
@@ -298,7 +302,6 @@ gamereset(void)
 	sel=current;
 	if(pos->sq[grtc[current]] != NOPIECE)
 		pcson--;
-	activehit();
 }
 
 void
@@ -314,6 +317,7 @@ threadmain(int argc, char **argv)
 	default:
 		usage();
 	}ARGEND;
+	hexdisp=0;
 	if(initdraw(nil, nil, argv0) < 0)
 		sysfatal("%r");
 	if((mctl = initmouse(nil, screen)) == nil)
@@ -332,6 +336,7 @@ threadmain(int argc, char **argv)
 	black = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x000000FF);
 	textarg = tree[0];
 	trect = &(textarg.ltrect);
+
 	enum { MOUSE, RESIZE, KEYS, NONE };
 	Alt alts[] = {
 		[MOUSE] =  {mctl->c, &m, CHANRCV},
@@ -339,7 +344,7 @@ threadmain(int argc, char **argv)
 		[KEYS] = {kctl->c, &r, CHANRCV},
 		[NONE] =  {nil, nil, CHANEND}
 	};
-	
+	activehit();
 	for(;;){
 		flushimage(display, 1);
 noflush:
@@ -351,6 +356,19 @@ noflush:
 					printscore();
 					break;
 				case 1:
+					hexdisp++;
+					if(hexdisp == 3){
+						saux[start].drawhexa = 1;
+						saux[goal].drawhexa = 1;
+						selems[start].update(&selems[start]);
+						selems[goal].update(&selems[goal]);
+						hexdisp = 0;
+						break;
+					}
+					if(hexdisp == 1){
+						saux[start].drawhexa = 0;
+						saux[goal].drawhexa = 0;
+					}
 					for(i = 0; i < 64; i++){
 						if(saux[i].drawhexa == 0)
 							saux[i].drawhexa = 1;
@@ -371,6 +389,7 @@ noflush:
 				case 3:
 					chessinit();
 					gamereset();
+					activehit();
 					for(i = 0; i < 64; i++)
 						selems[i].update(&selems[i]);
 					break;

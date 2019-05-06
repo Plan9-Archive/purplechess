@@ -2,6 +2,7 @@ typedef struct Square Square;
 
 struct Square {
 	int id;
+	int isstart;
 	int isgoal;
 	int iscurrent;
 	int active;

@@ -138,6 +138,8 @@ redraw(Square *s)
 		dest.x = targ.x + 40;
 		dest.y = targ.y;
 		for(i = 0; i < 6; i++){
+			if(blkpc == nil)
+				sysfatal("blkpc");
 			if(s->binid[i] == '0')
 				line(screen, targ, dest, 0, 0, 2, blkpc, targ);
 			else {
