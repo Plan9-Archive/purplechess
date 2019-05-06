@@ -177,11 +177,11 @@ capallandscore(void)
 		if(pos->sq[i] & TARGET){
 			if((pos->sq[i] & PC) == PAWN){
 //				print(".pawn.");
-				sco = 20;
+				sco = 25;
 			}
 			if((pos->sq[i] & PC) == KNIGHT){
 //				print(".knight.");
-				sco = 60;
+				sco = 65;
 			}
 			if((pos->sq[i] & PC) == BISHOP){
 //				print(".bishop.");
@@ -189,15 +189,15 @@ capallandscore(void)
 			}
 			if((pos->sq[i] & PC) == ROOK){
 //				print(".rook.");
-				sco = 130;
+				sco = 135;
 			}
 			if((pos->sq[i] & PC) == QUEEN){
 //				print(".queen.");
-				sco = 200;
+				sco = 210;
 			}
 			if((pos->sq[i] & PC) == KING){
 //				print(".king.");
-				sco = 170;	
+				sco = 175;	
 			}
 			if(pos->n == 1)
 				wscore += sco;
@@ -208,11 +208,28 @@ capallandscore(void)
 	}
 }
 
+void
+printscore(void)
+{
+	int bonus;
+
+	if(moves == 0){
+		sprint(texbuf, "wcap: %d bcap: %d moves: %d avg: %d", wscore, bscore, moves, moves);
+		stringbg(screen, trect->min, wheat, ZP, font, texbuf, black, trect->min);
+		return;
+	}
+	bonus = 1;
+	if(moves < 11)
+		bonus = 11 - moves;
+	sprint(texbuf, "score: %d wcap: %d bcap: %d moves: %d avg: %d", (((wscore + bscore) / moves) * bonus * 100), wscore, bscore, moves, (wscore + bscore) / moves);
+	stringbg(screen, trect->min, wheat, ZP, font, texbuf, black, trect->min);
+}
+
 /* this is the main game logic which triggers on a click of a valid target square */
 void
 activehit(void)
 {
-	int i;
+	int i, legalsqs;
 
 	moves++;
 	saux[current].iscurrent = 0;
@@ -235,18 +252,21 @@ activehit(void)
 			saux[sqi].active = 0;
 	}
 	/* mark new possible targets as valid */
+	legalsqs = 0;
 	for(i = 0; i < 6; i++){
 		sqi = current ^ (1<<i);
-		if(saux[sqi].active == 0)
+		if(saux[sqi].active == 0){
 			saux[sqi].active = 1;
+			legalsqs++;
+		}
 	}
 	for(i = 0; i < 64; i++)
 		selems[i].update(&selems[i]);
-	/* print the score if we just clicked the goal square */
-	if(saux[sel].isgoal == 1){
-		sprint(texbuf, "score: %d wcap: %d bcap: %d moves: %d avg: %d", (((wscore + bscore) / moves) * (11 - moves) * 100), wscore, bscore, moves, (wscore + bscore) / moves);
-		stringbg(screen, trect->min, wheat, ZP, font, texbuf, black, trect->min);
-	}
+	/* print the score if we just clicked the goal square or moves are exhausted */
+	if(legalsqs == 0)
+		printscore();
+	if(saux[sel].isgoal == 1)
+		printscore();
 }
 
 void
@@ -296,13 +316,7 @@ noflush:
 			if(m.buttons == 4){
 				switch(menuhit(3, mctl, &menu3, nil)){
 				case 0:
-					if(moves == 0){
-						sprint(texbuf, "wcap: %d bcap: %d moves: %d avg: %d", wscore, bscore, moves, moves);
-						stringbg(screen, trect->min, wheat, ZP, font, texbuf, black, trect->min);
-						break;
-					}
-					sprint(texbuf, "wcap: %d bcap: %d moves: %d avg: %d", wscore, bscore, moves, (wscore + bscore) / moves);
-					stringbg(screen, trect->min, wheat, ZP, font, texbuf, black, trect->min);
+					printscore();
 					break;
 				case 1:
 					for(i = 0; i < 64; i++){
