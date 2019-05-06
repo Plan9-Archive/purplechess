@@ -20,7 +20,7 @@ Guielem *root = &pelems[0];
 Guielem *mousetarg;
 char *buttons3[] = {"Help", "Hexa", "Binary", "Reset", "Exit", nil};
 Menu menu3 = {buttons3};
-int sel, sqi, start, goal, current, oldsq, chessq, legalclick, wscore, bscore, moves, pcson, clearflag, hexdisp, turnsco, totalsco;
+int sel, sqi, start, goal, current, oldsq, chessq, legalclick, wscore, bscore, moves, pcson, clearflag, hexdisp, turnsco, totalsco, legalsqs;
 Image *white;
 Image *black;
 Rectangle textrect, textrect2, boardrect;
@@ -207,14 +207,38 @@ capallandscore(void)
 		}
 	}
 	totalsco += turnsco;
-	sprint(texbuf2, "+ %d points                                ", turnsco);
+	sprint(texbuf2, "+ %d points", turnsco);
 	stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
 }
 
+/* print the score and goal completion info */
 void
 printscore(void)
 {
-	sprint(texbuf, "sco: %d w: %d b: %d move: %d avg: %d  pcs: %d        ", totalsco, wscore, bscore, moves, (wscore + bscore) / moves, pcson);
+	if((legalsqs == 0) && (clearflag != 2)){
+		clearflag = 2;
+		turnsco += moves * 50;
+		totalsco += turnsco;
+		sprint(texbuf2, "No moves, %d remain, + %d", 64 - moves, turnsco);
+		stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
+	}
+	if(saux[sel].isgoal == 1){
+		if((11 - moves) > 0){
+			turnsco += (11 - moves) * totalsco;
+		}
+		turnsco += 200;
+		totalsco += turnsco;
+		sprint(texbuf2, "+ %d, GOAL REACHED!", turnsco);
+		stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
+	}
+	if((clearflag == 0) && (pcson == 0)){
+		turnsco += (64 - moves) * 50;
+		totalsco += turnsco;
+		sprint(texbuf2, "+ %d, ALL PIECES SCORED", turnsco);
+		stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
+		clearflag = 1;
+	}
+	sprint(texbuf, "sco: %d w: %d b: %d move: %d avg: %d  pcs: %d", totalsco, wscore, bscore, moves, (wscore + bscore) / moves, pcson);
 	stringbg(screen, textrect.min, white, ZP, font, texbuf, black, textrect.min);
 }
 
@@ -222,8 +246,9 @@ printscore(void)
 void
 activehit(void)
 {
-	int i, legalsqs;
+	int i;
 
+	draw(screen, textrect, black, nil, ZP);
 	moves++;
 	saux[current].iscurrent = 0;
 	oldsq = current;
@@ -253,31 +278,9 @@ activehit(void)
 			legalsqs++;
 		}
 	}
+	draw(screen, boardrect, black, nil, ZP);
 	for(i = 0; i < 64; i++)
 		selems[i].update(&selems[i]);
-	/* print the score and goal completion info */
-	if(legalsqs == 0){
-		turnsco += moves * 50;
-		totalsco += turnsco;
-		sprint(texbuf2, "No moves, %d remain, + %d              ", 64 - moves, turnsco);
-		stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
-	}
-	if(saux[sel].isgoal == 1){
-		if((11 - moves) > 0){
-			turnsco += (11 - moves) * totalsco;
-		}
-		turnsco += 200;
-		totalsco += turnsco;
-		sprint(texbuf2, "+ %d, GOAL REACHED!          ", turnsco);
-		stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
-	}
-	if((clearflag == 0) && (pcson == 0)){
-		turnsco += (64 - moves) * 50;
-		totalsco += turnsco;
-		sprint(texbuf2, "+ %d, ALL PIECES SCORED         ", turnsco);
-		stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
-		clearflag = 1;
-	}
 	printscore();
 }
 
@@ -491,6 +494,7 @@ noflush:
 			dogetwindow();
 			boardsize();
 			root->resize(root, boardrect);
+			printscore();
 			break;
 		case KEYS:
 			if(r == Kdel)
