@@ -17,10 +17,10 @@ Guielem selems[64];
 Guipart tree[63];
 Guielem pelems[63];
 Guielem *root = &pelems[0];
-char *buttons3[] = {"Score", "Hexa", "Labels", "Reset", "Exit", nil};
+char *buttons3[] = {"Help", "Hexa", "Binary", "Reset", "Exit", nil};
 Menu menu3 = {buttons3};
 int sel, sqi, start, goal, current, oldsq, chessq, legalclick, wscore, bscore, moves, pcson, clearflag, hexdisp, turnsco;
-Image *wheat;
+Image *white;
 Image *black;
 Rectangle textrect, textrect2, boardrect;
 char texbuf[512];
@@ -205,7 +205,7 @@ capallandscore(void)
 				pos->sq[i] = NOPIECE;
 		}
 		sprint(texbuf2, "+ %d points                                ", turnsco);
-		stringbg(screen, textrect2.min, wheat, ZP, font, texbuf2, black, textrect2.min);
+		stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
 	}
 }
 
@@ -218,7 +218,7 @@ printscore(void)
 	if(moves < 11)
 		bonus = 11 - moves;
 	sprint(texbuf, "sco: %d w: %d b: %d move: %d avg: %d  pcs: %d        ", (((wscore + bscore) / moves) * bonus * 100), wscore, bscore, moves, (wscore + bscore) / moves, pcson);
-	stringbg(screen, textrect.min, wheat, ZP, font, texbuf, black, textrect.min);
+	stringbg(screen, textrect.min, white, ZP, font, texbuf, black, textrect.min);
 }
 
 /* this is the main game logic which triggers on a click of a valid target square */
@@ -258,18 +258,18 @@ activehit(void)
 	}
 	for(i = 0; i < 64; i++)
 		selems[i].update(&selems[i]);
-	/* print the score if we just clicked the goal square or moves are exhausted */
+	/* print the score and goal completion info */
 	if(legalsqs == 0){
 		sprint(texbuf2, "No moves, %d squares remain              ", 64 - moves);
-		stringbg(screen, textrect2.min, wheat, ZP, font, texbuf2, black, textrect2.min);
+		stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
 	}
 	if(saux[sel].isgoal == 1){
 		sprint(texbuf2, "+ %d, GOAL REACHED!          ", turnsco);
-		stringbg(screen, textrect2.min, wheat, ZP, font, texbuf2, black, textrect2.min);
+		stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
 	}
 	if((clearflag == 0) && (pcson == 0)){
 		sprint(texbuf2, "+ %d, ALL PIECES SCORED         ", turnsco);
-		stringbg(screen, textrect2.min, wheat, ZP, font, texbuf2, black, textrect2.min);
+		stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
 		clearflag = 1;
 	}
 	printscore();
@@ -284,7 +284,9 @@ gamereset(void)
 		saux[i].active = 0;
 		saux[i].isgoal = 0;
 		saux[i].iscurrent = 0;
+		saux[i].drawhexa = 0;
 	}
+	hexdisp = 0;
 	legalclick = 0;
 	wscore = 0;
 	bscore = 0;
@@ -329,6 +331,27 @@ boardsize(void)
 void
 instructions(void)
 {
+	Point printat;
+
+	printat=boardrect.min;
+	sprint(texbuf, "Navigate the 6d hypercube along a Gray code path.");
+	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
+	printat.y +=25;
+	sprint(texbuf, "Each piece you move onto captures everything it can.");
+	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
+	printat.y +=25;
+	sprint(texbuf, "Travel from the blue starting square to the gold goal.");
+	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
+	printat.y +=25;
+	sprint(texbuf, "Next select or capture every piece on the board as fast as you can.");
+	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
+	printat.y +=25;
+	sprint(texbuf, "Then see how much of the rest of the board you can fill in.");
+	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
+	printat.y +=25;
+	sprint(texbuf, "Points: P-25 Kt-65 B-70 R-135 K-175 Q-210");
+	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
+	printat.y +=25;
 }
 
 void
@@ -352,7 +375,6 @@ threadmain(int argc, char **argv)
 	if((kctl = initkeyboard(nil)) == nil)
 		sysfatal("%r");
 	srand(time(0));
-
 	elemsinit();
 	chessinit();
 	gamereset();
@@ -360,11 +382,8 @@ threadmain(int argc, char **argv)
 	root->init(root);
 	boardsize();
 	root->resize(root, boardrect);
-	wheat = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0xFFFFFFFF);
+	white = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0xFFFFFFFF);
 	black = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x000000FF);
-//	textarg = tree[0];
-//	trect = &(textarg.ltrect);
-
 	enum { MOUSE, RESIZE, KEYS, NONE };
 	Alt alts[] = {
 		[MOUSE] =  {mctl->c, &m, CHANRCV},
@@ -372,6 +391,8 @@ threadmain(int argc, char **argv)
 		[KEYS] = {kctl->c, &r, CHANRCV},
 		[NONE] =  {nil, nil, CHANEND}
 	};
+
+	/* we behave as if the player clicked on the starting square to begin the game */
 	activehit();
 	for(;;){
 		flushimage(display, 1);
@@ -448,8 +469,6 @@ noflush:
 			dogetwindow();
 			boardsize();
 			root->resize(root, boardrect);
-//			textarg = tree[0];
-//			trect = &(textarg.ltrect);
 			break;
 		case KEYS:
 			if(r == Kdel)
