@@ -23,6 +23,8 @@ int sel, sqi, start, goal, current, oldsq, chessq, legalclick, wscore, bscore, m
 Image *wheat;
 Image *black;
 Rectangle *trect;
+Rectangle textrect;
+Rectangle boardrect;
 Guipart textarg;
 char texbuf[512];
 
@@ -219,7 +221,7 @@ printscore(void)
 	if(moves < 11)
 		bonus = 11 - moves;
 	sprint(texbuf, "score: %d wcap: %d bcap: %d moves: %d avg: %d pcson %d", (((wscore + bscore) / moves) * bonus * 100), wscore, bscore, moves, (wscore + bscore) / moves, pcson);
-	stringbg(screen, trect->min, wheat, ZP, font, texbuf, black, trect->min);
+	stringbg(screen, textrect.min, wheat, ZP, font, texbuf, black, textrect.min);
 }
 
 /* this is the main game logic which triggers on a click of a valid target square */
@@ -260,6 +262,7 @@ activehit(void)
 	for(i = 0; i < 64; i++)
 		selems[i].update(&selems[i]);
 	/* print the score if we just clicked the goal square or moves are exhausted */
+/*
 	if(legalsqs == 0)
 		printscore();
 	if(saux[sel].isgoal == 1)
@@ -268,6 +271,8 @@ activehit(void)
 		printscore();
 		clearflag = 1;
 	}
+*/
+	printscore();
 }
 
 void
@@ -305,6 +310,24 @@ gamereset(void)
 }
 
 void
+boardsize(void)
+{
+	boardrect.min.x = screen->r.min.x;
+	boardrect.min.y = screen->r.min.y;
+	boardrect.max.x = screen->r.max.x;
+	boardrect.max.y = screen->r.max.y - 50;
+	textrect.min.x = screen->r.min.x + 5;
+	textrect.min.y = screen->r.max.y - 45;
+	textrect.max.x = screen->r.max.x;
+	textrect.max.y = screen->r.max.y;
+}
+
+void
+instructions(void)
+{
+}
+
+void
 threadmain(int argc, char **argv)
 {
 	Keyboardctl *kctl;
@@ -331,7 +354,8 @@ threadmain(int argc, char **argv)
 	gamereset();
 	dogetwindow();
 	root->init(root);
-	root->resize(root, screen->r);
+	boardsize();
+	root->resize(root, boardrect);
 	wheat = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0xFFFFFFFF);
 	black = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x000000FF);
 	textarg = tree[0];
@@ -353,7 +377,7 @@ noflush:
 			if(m.buttons == 4){
 				switch(menuhit(3, mctl, &menu3, nil)){
 				case 0:
-					printscore();
+					instructions();
 					break;
 				case 1:
 					hexdisp++;
@@ -418,7 +442,8 @@ noflush:
 			break;
 		case RESIZE:
 			dogetwindow();
-			root->resize(root, screen->r);
+			boardsize();
+			root->resize(root, boardrect);
 			textarg = tree[0];
 			trect = &(textarg.ltrect);
 			break;
