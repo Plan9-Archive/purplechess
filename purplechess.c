@@ -346,7 +346,7 @@ instructions(void)
 	sprint(texbuf, "Each piece you move onto captures everything it can.");
 	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
 	printat.y +=25;
-	sprint(texbuf, "Travel from the blue starting square to the gold goal.");
+	sprint(texbuf, "Travel from the gold starting square to the blue goal.");
 	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
 	printat.y +=25;
 	sprint(texbuf, "Next select or capture every piece on the board as fast as you can.");
@@ -356,6 +356,15 @@ instructions(void)
 	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
 	printat.y +=25;
 	sprint(texbuf, "Points: P-25 Kt-65 B-70 R-135 K-175 Q-210");
+	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
+	printat.y +=25;
+	sprint(texbuf, "Fast goal bonus: 4x score for 6 moves, 2x score for 8");
+	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
+	printat.y +=25;
+	sprint(texbuf, "Piece clear score: 50 * (64 - moves)");
+	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
+	printat.y +=25;
+	sprint(texbuf, "Cube fill score: 50 * squares filled");
 	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
 	printat.y +=25;
 }
