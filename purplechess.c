@@ -17,6 +17,7 @@ Guielem selems[64];
 Guipart tree[63];
 Guielem pelems[63];
 Guielem *root = &pelems[0];
+Guielem *mousetarg;
 char *buttons3[] = {"Help", "Hexa", "Binary", "Reset", "Exit", nil};
 Menu menu3 = {buttons3};
 int sel, sqi, start, goal, current, oldsq, chessq, legalclick, wscore, bscore, moves, pcson, clearflag, hexdisp, turnsco, totalsco;
@@ -465,7 +466,13 @@ noflush:
 				}
 				break;
 			}
-			sel = root->mouse(root, m);
+//			sel = root->mouse(root, m);
+			for(i = 0; i < 64; i++){
+				mousetarg = &selems[i];
+				sel = mousetarg->mouse(&selems[i], m);
+				if(sel != -1)
+					break;
+			}
 			if(m.buttons == 1){
 				if(sel < 0)
 					break;
