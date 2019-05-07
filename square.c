@@ -83,8 +83,9 @@ redraw(Square *s)
 	align.min.y = s->r.min.y + 10;
 	align.max.x = s->r.max.x;
 	align.max.y = s->r.max.y;
-	/* base checkerboard pattern of inactive squares */
-	if(s->active == 0){
+	
+	switch(s->active){
+	case 0: /* base checkerboard pattern of inactive squares */
 		if(s->isgoal == 1){
 			draw(screen,s->r, goal, nil, ZP);
 		} else {
@@ -93,16 +94,14 @@ redraw(Square *s)
 			} else 
 				draw(screen, s->r, off2, nil, ZP);
 		}
-	}
-	/* legal target squares, green unless they are the purple goal */
-	if(s->active == 1){
+		break;
+	case 1: /* legal target squares, green unless they are the purple goal */
 		if(s->isgoal == 1){
 			draw(screen,s->r, purple, nil, ZP);
 		} else
 			draw(screen, s->r, on, nil, ZP);
-	}
-	/* previously visited squares */
-	if(s->active == 2){
+		break;
+	case 2: /* previously visited squares */
 		if(s->isgoal == 1){
 			draw(screen,s->r, purple, nil, ZP);
 		} else {
@@ -111,6 +110,7 @@ redraw(Square *s)
 			} else
 				draw(screen, s->r, click, nil, ZP);
 		}
+		break;
 	}
 	if(s->drawpiece == 1){
 		color = pos->sq[chsq] & WHITE ? whtpc : blkpc;
@@ -165,23 +165,16 @@ Point
 squareinit(Guielem*)
 {
 	Point p = {1,1};
-	
-	if(off == nil)
+
+	/* is this really the right place for all this stuff? */
+	if(off == nil){
 		off = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x666666FF);
-	if(off2 == nil)
 		off2 = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x888888FF);
-	if(on == nil)
 		on = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x10B754FF);
-	if(click == nil)
 		click = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x990000FF);
-	if(goal == nil)
 		goal = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x4C95FFFF);
-	if(purple == nil)
 		purple = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0xAA55EEFF);
-	if(orange == nil)
 		orange = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0xE4A02AFF);
-	/* this is probably the wrong place for all this stuff */
-	if(masks[NOPIECE] == nil){
 		baize = alloccolor(DDarkgreen);
 		dark = alloccolor(DYellowgreen);
 		light = alloccolor(DPaleyellow);
@@ -201,8 +194,6 @@ squareinit(Guielem*)
 		masks[QUEEN] = allocmask("queen");
 		masks[KING] = allocmask("king");
 	}
-	if(off == nil || on == nil)
-		sysfatal("get more ram dude: %r");
 	return p;
 }
 
