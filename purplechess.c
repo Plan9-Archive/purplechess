@@ -197,8 +197,16 @@ gamereset(void)
 	csum=saux[33].coin + saux[35].coin + saux[37].coin;
 	if((csum == 7) || (csum == 9))
 		start += 32;
+	for(i = 0; i < 64; i++)
+		selems[i].update(&selems[i]);
+	draw(screen, textrect, black, nil, ZP);
+	sprint(texbuf, "starting square:");
+	sprint(texbuf2, saux[start].binid);
+	stringbg(screen, textrect.min, white, ZP, font, texbuf, black, textrect.min);
+	stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
 }
 
+/* called by the first activeclick() when moves == 0 to complete boardstate setup */
 void
 aftercoins(void)
 {
@@ -281,6 +289,9 @@ capallandscore(void)
 void
 printscore(void)
 {
+	if(moves == 0){
+		return;
+	}
 	sprint(texbuf2, "+ %d points", turnsco);
 	stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
 	if((legalsqs == 0) && (clearflag != 2)){
@@ -471,8 +482,6 @@ menureset(void)
 	srand(seed);
 	chessinit();
 	gamereset();
-//	aftercoins();
-//	activehit();
 	for(i = 0; i < 64; i++)
 		selems[i].update(&selems[i]);
 }
@@ -486,8 +495,10 @@ threadmain(int argc, char **argv)
 	Mouse m;
 	char *userseed;
 	int i;
+	enum { MOUSE, RESIZE, KEYS, NONE };
 
 	seed = 0;
+	hexdisp = 0;
 	ARGBEGIN{
 	case 's':
 		userseed=EARGF(usage());
@@ -496,36 +507,31 @@ threadmain(int argc, char **argv)
 	default:
 		usage();
 	}ARGEND;
-	hexdisp=0;
 	if(initdraw(nil, nil, argv0) < 0)
 		sysfatal("%r");
 	if((mctl = initmouse(nil, screen)) == nil)
 		sysfatal("%r");
 	if((kctl = initkeyboard(nil)) == nil)
 		sysfatal("%r");
-	if(seed == 0)
-		seed=time(0);
-	srand(seed);
-	elemsinit();
-	chessinit();
-	gamereset();
-//	aftercoins();
-	dogetwindow();
-	root->init(root);
-	boardsize();
-	root->resize(root, boardrect);
-	white = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0xFFFFFFFF);
-	black = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x000000FF);
-	enum { MOUSE, RESIZE, KEYS, NONE };
 	Alt alts[] = {
 		[MOUSE] =  {mctl->c, &m, CHANRCV},
 		[RESIZE] =  {mctl->resizec, nil, CHANRCV},
 		[KEYS] = {kctl->c, &r, CHANRCV},
 		[NONE] =  {nil, nil, CHANEND}
 	};
+	white = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0xFFFFFFFF);
+	black = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x000000FF);
+	if(seed == 0)
+		seed=time(0);
+	srand(seed);
+	elemsinit();
+	dogetwindow();
+	root->init(root);
+	boardsize();
+	root->resize(root, boardrect);
+	chessinit();
+	gamereset();
 
-	/* we behave as if the player clicked on the starting square to begin the game */
-//	activehit();
 	for(;;){
 		flushimage(display, 1);
 noflush:
