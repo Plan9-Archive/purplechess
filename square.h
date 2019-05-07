@@ -8,6 +8,8 @@ struct Square {
 	int active;
 	int drawid;
 	int drawhexa;
+	int drawpiece;
+	int coin;
 	char binid[7];
 	/* internal */
 	Rectangle r; /* current size */

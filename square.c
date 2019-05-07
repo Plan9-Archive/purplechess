@@ -74,7 +74,7 @@ void
 redraw(Square *s)
 {
 	Image *color;
-	int i, chsq;
+	int i, chsq, ell1, ell2;
 	Point targ, dest;
 	Rectangle align;
 
@@ -93,8 +93,6 @@ redraw(Square *s)
 			} else 
 				draw(screen, s->r, off2, nil, ZP);
 		}
-		color = pos->sq[chsq] & WHITE ? whtpc : blkpc;
-		draw(screen, align, color, masks[pos->sq[chsq] & PC], ZP);
 	}
 	/* legal target squares, green unless they are the purple goal */
 	if(s->active == 1){
@@ -102,11 +100,6 @@ redraw(Square *s)
 			draw(screen,s->r, purple, nil, ZP);
 		} else
 			draw(screen, s->r, on, nil, ZP);
-		color = pos->sq[chsq] & WHITE ? whtpc : blkpc;
-		if(s->isgoal == 1){
-			draw(screen, align, click, masks[pos->sq[chsq] & PC], ZP);
-		} else
-			draw(screen, align, color, masks[pos->sq[chsq] & PC], ZP);
 	}
 	/* previously visited squares */
 	if(s->active == 2){
@@ -118,8 +111,25 @@ redraw(Square *s)
 			} else
 				draw(screen, s->r, click, nil, ZP);
 		}
+	}
+	if(s->drawpiece == 1){
 		color = pos->sq[chsq] & WHITE ? whtpc : blkpc;
+		if((s->active == 1) && (s->isgoal == 1))
+			color = click;
 		draw(screen, align, color, masks[pos->sq[chsq] & PC], ZP);
+	}
+	if(s->coin != 0){
+		ell1=(s->r.max.x - s->r.min.x) / 2;
+		ell2=(s->r.max.y - s->r.min.y) / 2;
+		targ.x = s->r.min.x + ell1;
+		targ.y = s->r.min.y + ell2;
+		if(ell2 < ell1)
+			ell1 = ell2;
+		ell1 = ell1 - 5;
+		color=blkpc;
+		if((s->coin % 2) == 1)
+			color=whtpc;
+		fillellipse(screen, targ, ell1, ell1, color, targ);
 	}
 	if(s->drawhexa == 1){
 		targ.x = s->r.min.x + ((s->r.max.x - s->r.min.x) / 2);

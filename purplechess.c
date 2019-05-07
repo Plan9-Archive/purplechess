@@ -154,14 +154,17 @@ chessinit(void)
 void
 gamereset(void)
 {
-	int i;
+	int i, csum;
 
 	for(i = 0; i < 64; i++){
 		saux[i].active = 0;
 		saux[i].isgoal = 0;
 		saux[i].iscurrent = 0;
 		saux[i].drawhexa = 0;
+		saux[i].drawpiece = 0;
+		saux[i].coin = 0;
 	}
+	start = 0;
 	totalsco = 0;
 	hexdisp = 0;
 	legalclick = 0;
@@ -170,7 +173,41 @@ gamereset(void)
 	moves = 0;
 	clearflag = 0;
 	pcson = 32;
-	start=nrand(64);
+	for(i=0; i < 6; i++)
+		saux[i].coin = nrand(2) + 2;
+	for(i=16; i < 22; i++)
+		saux[i].coin = nrand(2) + 2;
+	for(i=32; i < 38; i++)
+		saux[i].coin = nrand(2) + 2;
+	csum=saux[0].coin + saux[2].coin + saux[4].coin;
+	if((csum == 7) || (csum == 9))
+		start += 1;
+	csum=saux[1].coin + saux[3].coin + saux[5].coin;
+	if((csum == 7) || (csum == 9))
+		start += 2;
+	csum=saux[16].coin + saux[18].coin + saux[20].coin;
+	if((csum == 7) || (csum == 9))
+		start += 4;
+	csum=saux[17].coin + saux[19].coin + saux[21].coin;
+	if((csum == 7) || (csum == 9))
+		start += 8;
+	csum=saux[32].coin + saux[34].coin + saux[36].coin;
+	if((csum == 7) || (csum == 9))
+		start += 16;
+	csum=saux[33].coin + saux[35].coin + saux[37].coin;
+	if((csum == 7) || (csum == 9))
+		start += 32;
+}
+
+void
+aftercoins(void)
+{
+	int i;
+
+	for(i = 0; i < 64; i++){
+		saux[i].drawpiece = 1;
+		saux[i].coin = 0;
+	}
 	current=start;
 	goal=63-start;
 	saux[start].active = 2;
@@ -280,6 +317,8 @@ activehit(void)
 	int i;
 
 	draw(screen, textrect, black, nil, ZP);
+	if(moves == 0)
+		aftercoins();
 	moves++;
 	saux[current].iscurrent = 0;
 	oldsq = current;
@@ -432,7 +471,8 @@ menureset(void)
 	srand(seed);
 	chessinit();
 	gamereset();
-	activehit();
+//	aftercoins();
+//	activehit();
 	for(i = 0; i < 64; i++)
 		selems[i].update(&selems[i]);
 }
@@ -469,6 +509,7 @@ threadmain(int argc, char **argv)
 	elemsinit();
 	chessinit();
 	gamereset();
+//	aftercoins();
 	dogetwindow();
 	root->init(root);
 	boardsize();
@@ -484,7 +525,7 @@ threadmain(int argc, char **argv)
 	};
 
 	/* we behave as if the player clicked on the starting square to begin the game */
-	activehit();
+//	activehit();
 	for(;;){
 		flushimage(display, 1);
 noflush:
@@ -527,7 +568,7 @@ noflush:
 				if(sel < 0)
 					break;
 //				print(" (%d %d)", sel, grtc[sel]);
-				if(saux[sel].active == 1){
+				if((saux[sel].active == 1) || (moves == 0)){
 					legalclick = 1;
 					activehit();
 				}
