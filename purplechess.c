@@ -44,7 +44,7 @@ ctgr(int find)
 void
 usage(void)
 {
-	fprint(2, "usage: %s\n", argv0);
+	fprint(2, "usage: %s [-s seed]\n", argv0);
 	threadexitsall("usage");
 }
 
@@ -149,6 +149,43 @@ chessinit(void)
 		pos->sq[i]=pos->sq[j];
 		pos->sq[j]=tmp;
 	}
+}
+
+void
+gamereset(void)
+{
+	int i;
+
+	for(i = 0; i < 64; i++){
+		saux[i].active = 0;
+		saux[i].isgoal = 0;
+		saux[i].iscurrent = 0;
+		saux[i].drawhexa = 0;
+	}
+	totalsco = 0;
+	hexdisp = 0;
+	legalclick = 0;
+	wscore = 0;
+	bscore = 0;
+	moves = 0;
+	clearflag = 0;
+	pcson = 32;
+	start=nrand(64);
+	current=start;
+	goal=63-start;
+	saux[start].active = 2;
+	saux[start].iscurrent = 1;
+	saux[start].isstart = 1;
+	saux[start].drawhexa = 1;
+	saux[goal].isgoal = 1;
+	saux[goal].drawhexa = 1;
+	for(i = 0; i < 6; i++){
+		sqi = start ^ (1<<i);
+		saux[sqi].active = 1;
+	}
+	sel=current;
+	if(pos->sq[grtc[current]] != NOPIECE)
+		pcson--;
 }
 
 /* make all possible captures and accumulate score */
@@ -279,43 +316,6 @@ activehit(void)
 }
 
 void
-gamereset(void)
-{
-	int i;
-
-	for(i = 0; i < 64; i++){
-		saux[i].active = 0;
-		saux[i].isgoal = 0;
-		saux[i].iscurrent = 0;
-		saux[i].drawhexa = 0;
-	}
-	totalsco = 0;
-	hexdisp = 0;
-	legalclick = 0;
-	wscore = 0;
-	bscore = 0;
-	moves = 0;
-	clearflag = 0;
-	pcson = 32;
-	start=nrand(64);
-	current=start;
-	goal=63-start;
-	saux[start].active = 2;
-	saux[start].iscurrent = 1;
-	saux[start].isstart = 1;
-	saux[start].drawhexa = 1;
-	saux[goal].isgoal = 1;
-	saux[goal].drawhexa = 1;
-	for(i = 0; i < 6; i++){
-		sqi = start ^ (1<<i);
-		saux[sqi].active = 1;
-	}
-	sel=current;
-	if(pos->sq[grtc[current]] != NOPIECE)
-		pcson--;
-}
-
-void
 boardsize(void)
 {
 	boardrect.min.x = screen->r.min.x;
@@ -332,6 +332,7 @@ boardsize(void)
 	textrect2.max.y = screen->r.max.y;
 }
 
+/* menu option "Info" */
 void
 instructions(void)
 {
@@ -367,6 +368,7 @@ instructions(void)
 	printat.y +=25;
 }
 
+/* menu option "Hexa" 3-way toggle */
 void
 hexatoggle(void)
 {
@@ -394,6 +396,7 @@ hexatoggle(void)
 	}
 }
 
+/* menu option "Binary" for node/square id display */
 void
 binarytoggle(void)
 {
@@ -408,6 +411,7 @@ binarytoggle(void)
 	}
 }
 
+/* menu option "Seed" to display the random seed to produce this game */
 void
 printseed(void)
 {
@@ -418,6 +422,7 @@ printseed(void)
 	stringbg(screen, printhere, white, ZP, font, texbuf, black, printhere);
 }
 
+/* menu option "Reset" to start new game */
 void
 menureset(void)
 {
@@ -510,6 +515,7 @@ noflush:
 				}
 				break;
 			}
+			/* the standard libguiparts mouse check is inconsistent; the loop of all selems is a workaround */
 //			sel = root->mouse(root, m);
 			for(i = 0; i < 64; i++){
 				mousetarg = &selems[i];

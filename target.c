@@ -1,3 +1,4 @@
+/* chess logic by Umbraticus */
 
 void
 cleartargs(void)

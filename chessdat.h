@@ -1,3 +1,4 @@
+/* chess logic by Umbraticus */
 enum {
 	NOPIECE, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING,
 	PC = 7,		/* mask for piece type */

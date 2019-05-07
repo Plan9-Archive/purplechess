@@ -22,21 +22,10 @@ int gtc[64] = {56,48,57,49,58,50,59,51,60,52,61,53,62,54,63,55,40,32,41,33,42,34
 
 enum{NPATH = 256};
 
-typedef struct Histrow Histrow;
-struct Histrow{
-	Rectangle n;	/* for move number */
-	Rectangle w;	/* for white move */
-	Rectangle b;	/* for black move */
-};
-
-Rectangle board, square[64], history, messages, scrollbar;
-Point xaxis[8], yaxis[8], msgline[NMSGS];
-Histrow *hr;
 Image *baize, *dark, *light, *blkpc, *whtpc, *hlsq;
 Image *hstbg, *hstfg, *msgbg, *msgfg, *scrbar;
 Image *masks[7];
 char *maskdir = "/sys/games/lib/chess";
-int flipped, em, nhist, histborder, maxmsglen;
 
 Image *
 alloccolor(uint color)
@@ -155,9 +144,7 @@ redraw(Square *s)
 		}
 	}
 	if(s->drawid == 1){
-//		sprint(buf, "%d", s->id);
 		targ.x = s->r.min.x + 5;
-//		targ.y = s->r.min.y + ((s->r.max.y - s->r.min.y) / 2);
 		targ.y = s->r.max.y - 25;
 		string(screen, targ, msgbg, ZP, font, s->binid);
 	}
@@ -173,7 +160,6 @@ squareinit(Guielem*)
 	if(off2 == nil)
 		off2 = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x888888FF);
 	if(on == nil)
-//		on = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x88CC88FF);
 		on = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x10B754FF);
 	if(click == nil)
 		click = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x990000FF);

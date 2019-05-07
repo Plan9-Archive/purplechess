@@ -1,6 +1,6 @@
-6d chessboard?
+6d hypercubic solitaire chess variant with I Ching hexagrams
 
-Hover to see what's connected...
+Legal moves are highlighted in green, and follow a Gray code path from the current square, highlighted in gold.
 
 Issues:
 has a weird mkfile, read what it does differently
