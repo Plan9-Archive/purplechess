@@ -104,14 +104,14 @@ redraw(Square *s)
 			draw(screen, s->r, on, nil, ZP);
 		color = pos->sq[chsq] & WHITE ? whtpc : blkpc;
 		if(s->isgoal == 1){
-			draw(screen, align, click, masks[QUEEN & PC], ZP);
+			draw(screen, align, click, masks[pos->sq[chsq] & PC], ZP);
 		} else
 			draw(screen, align, color, masks[pos->sq[chsq] & PC], ZP);
 	}
 	/* previously visited squares */
 	if(s->active == 2){
 		if(s->isgoal == 1){
-			draw(screen,s->r, goal, nil, ZP);
+			draw(screen,s->r, purple, nil, ZP);
 		} else {
 			if(s->iscurrent == 1) {
 				draw(screen,s->r, orange, nil, ZP);
@@ -127,16 +127,17 @@ redraw(Square *s)
 		dest.x = targ.x + 40;
 		dest.y = targ.y;
 		for(i = 0; i < 6; i++){
-			if(blkpc == nil)
-				sysfatal("blkpc");
+			color = blkpc;
+			if((s->isgoal && (s->active != 2)) || s->isstart)
+				color = whtpc;
 			if(s->binid[i] == '0')
-				line(screen, targ, dest, 0, 0, 2, blkpc, targ);
+				line(screen, targ, dest, 0, 0, 2, color, targ);
 			else {
 				dest.x -= 25;
-				line(screen, targ, dest, 0, 0, 2, blkpc, targ);
+				line(screen, targ, dest, 0, 0, 2, color, targ);
 				targ.x += 25;
 				dest.x += 25;
-				line(screen, targ, dest, 0, 0, 2, blkpc, targ);
+				line(screen, targ, dest, 0, 0, 2, color, targ);
 				targ.x -= 25;
 			}
 			targ.y += 10;
