@@ -11,7 +11,6 @@
 #include "chessdat.h"
 #include "target.c"
 
-int pflag = 0;
 Square saux[64];
 Guielem selems[64];
 Guipart tree[63];
@@ -163,37 +162,31 @@ capallandscore(void)
 		sco = 0;
 		if((pos->sq[i] & TARGET) && (pos->sq[i] != NOPIECE)){
 			if((pos->sq[i] & PC) == PAWN){
-//				print(".pawn.");
 				sco = 25;
 				if(saux[ctgr(i)].active != 2)
 					pcson--; 
 			}
 			if((pos->sq[i] & PC) == KNIGHT){
-//				print(".knight.");
 				sco = 65;
 				if(saux[ctgr(i)].active != 2)
 					pcson--; 
 			}
 			if((pos->sq[i] & PC) == BISHOP){
-//				print(".bishop.");
 				sco = 70;
 				if(saux[ctgr(i)].active != 2)
 					pcson--; 
 			}
 			if((pos->sq[i] & PC) == ROOK){
-//				print(".rook.");
 				sco = 135;
 				if(saux[ctgr(i)].active != 2)
 					pcson--; 
 			}
 			if((pos->sq[i] & PC) == QUEEN){
-//				print(".queen.");
 				sco = 210;
 				if(saux[ctgr(i)].active != 2)
 					pcson--; 
 			}
 			if((pos->sq[i] & PC) == KING){
-//				print(".king.");
 				sco = 175;
 				if(saux[ctgr(i)].active != 2)
 					pcson--; 
@@ -208,14 +201,14 @@ capallandscore(void)
 		}
 	}
 	totalsco += turnsco;
-	sprint(texbuf2, "+ %d points", turnsco);
-	stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
 }
 
 /* print the score and goal completion info */
 void
 printscore(void)
 {
+	sprint(texbuf2, "+ %d points", turnsco);
+	stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
 	if((legalsqs == 0) && (clearflag != 2)){
 		clearflag = 2;
 		turnsco += moves * 50;
@@ -289,7 +282,6 @@ void
 gamereset(void)
 {
 	int i;
-
 
 	for(i = 0; i < 64; i++){
 		saux[i].active = 0;
@@ -376,6 +368,71 @@ instructions(void)
 }
 
 void
+hexatoggle(void)
+{
+	int i;
+
+	hexdisp++;
+	if(hexdisp == 3){
+		saux[start].drawhexa = 1;
+		saux[goal].drawhexa = 1;
+		selems[start].update(&selems[start]);
+		selems[goal].update(&selems[goal]);
+		hexdisp = 0;
+		return;
+	}
+	if(hexdisp == 1){
+		saux[start].drawhexa = 0;
+		saux[goal].drawhexa = 0;
+	}
+	for(i = 0; i < 64; i++){
+		if(saux[i].drawhexa == 0)
+			saux[i].drawhexa = 1;
+		else
+			saux[i].drawhexa = 0;
+		selems[i].update(&selems[i]);
+	}
+}
+
+void
+binarytoggle(void)
+{
+	int i;
+
+	for(i = 0; i < 64; i++){
+		if(saux[i].drawid == 0)
+			saux[i].drawid = 1;
+		else
+			saux[i].drawid = 0;
+		selems[i].update(&selems[i]);
+	}
+}
+
+void
+printseed(void)
+{
+	Point printhere;
+
+	printhere=boardrect.min;
+	sprint(texbuf, "seed: %ld", seed);
+	stringbg(screen, printhere, white, ZP, font, texbuf, black, printhere);
+}
+
+void
+menureset(void)
+{
+	int i;
+
+	seed++;
+	srand(seed);
+	chessinit();
+	gamereset();
+	activehit();
+	for(i = 0; i < 64; i++)
+		selems[i].update(&selems[i]);
+}
+
+void
 threadmain(int argc, char **argv)
 {
 	Keyboardctl *kctl;
@@ -383,7 +440,6 @@ threadmain(int argc, char **argv)
 	Mousectl *mctl;
 	Mouse m;
 	char *userseed;
-	Point printhere;
 	int i;
 
 	seed = 0;
@@ -435,49 +491,16 @@ noflush:
 					instructions();
 					break;
 				case 1:
-					hexdisp++;
-					if(hexdisp == 3){
-						saux[start].drawhexa = 1;
-						saux[goal].drawhexa = 1;
-						selems[start].update(&selems[start]);
-						selems[goal].update(&selems[goal]);
-						hexdisp = 0;
-						break;
-					}
-					if(hexdisp == 1){
-						saux[start].drawhexa = 0;
-						saux[goal].drawhexa = 0;
-					}
-					for(i = 0; i < 64; i++){
-						if(saux[i].drawhexa == 0)
-							saux[i].drawhexa = 1;
-						else
-							saux[i].drawhexa = 0;
-						selems[i].update(&selems[i]);
-					}
+					hexatoggle();
 					break;
 				case 2:
-					for(i = 0; i < 64; i++){
-						if(saux[i].drawid == 0)
-							saux[i].drawid = 1;
-						else
-							saux[i].drawid = 0;
-						selems[i].update(&selems[i]);
-					}
+					binarytoggle();
 					break;
 				case 3:
-					printhere=boardrect.min;
-					sprint(texbuf, "seed: %ld", seed);
-					stringbg(screen, printhere, white, ZP, font, texbuf, black, printhere);
+					printseed();
 					break;
 				case 4:
-					seed++;
-					srand(seed);
-					chessinit();
-					gamereset();
-					activehit();
-					for(i = 0; i < 64; i++)
-						selems[i].update(&selems[i]);
+					menureset();
 					break;
 				case 5:
 					threadexitsall(nil);
