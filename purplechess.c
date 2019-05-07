@@ -18,9 +18,10 @@ Guipart tree[63];
 Guielem pelems[63];
 Guielem *root = &pelems[0];
 Guielem *mousetarg;
-char *buttons3[] = {"Help", "Hexa", "Binary", "Reset", "Exit", nil};
+char *buttons3[] = {"Help", "Hexa", "Binary", "Seed", "Reset", "Exit", nil};
 Menu menu3 = {buttons3};
 int sel, sqi, start, goal, current, oldsq, chessq, legalclick, wscore, bscore, moves, pcson, clearflag, hexdisp, turnsco, totalsco, legalsqs;
+long seed;
 Image *white;
 Image *black;
 Rectangle textrect, textrect2, boardrect;
@@ -289,6 +290,7 @@ gamereset(void)
 {
 	int i;
 
+
 	for(i = 0; i < 64; i++){
 		saux[i].active = 0;
 		saux[i].isgoal = 0;
@@ -380,9 +382,16 @@ threadmain(int argc, char **argv)
 	Rune r;
 	Mousectl *mctl;
 	Mouse m;
+	char *userseed;
+	Point printhere;
 	int i;
 
+	seed = 0;
 	ARGBEGIN{
+	case 's':
+		userseed=EARGF(usage());
+		seed=strtol(userseed, 0, 10);
+		break;
 	default:
 		usage();
 	}ARGEND;
@@ -393,7 +402,9 @@ threadmain(int argc, char **argv)
 		sysfatal("%r");
 	if((kctl = initkeyboard(nil)) == nil)
 		sysfatal("%r");
-	srand(time(0));
+	if(seed == 0)
+		seed=time(0);
+	srand(seed);
 	elemsinit();
 	chessinit();
 	gamereset();
@@ -455,13 +466,20 @@ noflush:
 					}
 					break;
 				case 3:
+					printhere=boardrect.min;
+					sprint(texbuf, "seed: %ld", seed);
+					stringbg(screen, printhere, white, ZP, font, texbuf, black, printhere);
+					break;
+				case 4:
+					seed++;
+					srand(seed);
 					chessinit();
 					gamereset();
 					activehit();
 					for(i = 0; i < 64; i++)
 						selems[i].update(&selems[i]);
 					break;
-				case 4:
+				case 5:
 					threadexitsall(nil);
 					break;
 				default:
