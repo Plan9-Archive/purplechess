@@ -91,6 +91,30 @@ elemsinit(void)
 			saux[i].binid[4] = '1';
 		if(saux[i].id & 1)
 			saux[i].binid[5] = '1';
+		if((saux[i].binid[0] == '0') && (saux[i].binid[1] == '0'))
+			sprint(saux[i].engname, "purple     ");
+		if((saux[i].binid[0] == '0') && (saux[i].binid[1] == '1'))
+			sprint(saux[i].engname, "perfect    ");
+		if((saux[i].binid[0] == '1') && (saux[i].binid[1] == '0'))
+			sprint(saux[i].engname, "steeple    ");
+		if((saux[i].binid[0] == '1') && (saux[i].binid[1] == '1'))
+			sprint(saux[i].engname, "steep-fact ");
+		if((saux[i].binid[2] == '0') && (saux[i].binid[3] == '0'))
+			sprint(saux[i].engname + 11, "chess   ");
+		if((saux[i].binid[2] == '0') && (saux[i].binid[3] == '1'))
+			sprint(saux[i].engname+ 11, "chance  ");
+		if((saux[i].binid[2] == '1') && (saux[i].binid[3] == '0'))
+			sprint(saux[i].engname + 11, "press   ");
+		if((saux[i].binid[2] == '1') && (saux[i].binid[3] == '1'))
+			sprint(saux[i].engname + 11, "prance  ");
+		if((saux[i].binid[4] == '0') && (saux[i].binid[5] == '0'))
+			sprint(saux[i].engname + 19, "fish ");
+		if((saux[i].binid[4] == '0') && (saux[i].binid[5] == '1'))
+			sprint(saux[i].engname + 19, "far ");
+		if((saux[i].binid[4] == '1') && (saux[i].binid[5] == '0'))
+			sprint(saux[i].engname + 19, "wish ");
+		if((saux[i].binid[4] == '1') && (saux[i].binid[5] == '1'))
+			sprint(saux[i].engname + 19, "war ");
 	}
 	a = 1;
 	for(i = 0; i < 31; i++){
@@ -197,11 +221,20 @@ gamereset(void)
 	csum=saux[33].coin + saux[35].coin + saux[37].coin;
 	if((csum == 7) || (csum == 9))
 		start += 32;
+	current=start;
+	goal=63-start;
 	for(i = 0; i < 64; i++)
 		selems[i].update(&selems[i]);
 	draw(screen, textrect, black, nil, ZP);
-	sprint(texbuf, "starting square:");
-	sprint(texbuf2, saux[start].binid);
+//	sprint(texbuf, saux[start].engname);
+	sprint(texbuf, "starting square:  ");
+	sprint(texbuf + 17, saux[start].binid);
+	sprint(texbuf + 23, "  ");
+	sprint(texbuf + 25, saux[start].engname);
+	sprint(texbuf2, "goal square:      ");
+	sprint(texbuf2 + 17, saux[goal].binid);
+	sprint(texbuf2 + 23, "  ");
+	sprint(texbuf2 + 25, saux[goal].engname);
 	stringbg(screen, textrect.min, white, ZP, font, texbuf, black, textrect.min);
 	stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
 }
@@ -216,8 +249,6 @@ aftercoins(void)
 		saux[i].drawpiece = 1;
 		saux[i].coin = 0;
 	}
-	current=start;
-	goal=63-start;
 	saux[start].active = 2;
 	saux[start].iscurrent = 1;
 	saux[start].isstart = 1;
