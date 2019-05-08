@@ -197,6 +197,7 @@ gamereset(void)
 	moves = 0;
 	clearflag = 0;
 	pcson = 32;
+	/* 3 coin method of hexagram generation */
 	for(i=0; i < 6; i++)
 		saux[i].coin = nrand(2) + 2;
 	for(i=16; i < 22; i++)
@@ -211,144 +212,120 @@ gamereset(void)
 		saux[i].line = 1;
 	for(i=40; i < 46; i++)
 		saux[i].line = 1;
+	/* calculate starting position and moving lines */
 	csum=saux[0].coin + saux[2].coin + saux[4].coin;
 	switch(csum){
 	case 6:
+		start +=1;
 		saux[10].line = 3;
 		break;
 	case 7:
+		start +=1;
 		break;
 	case 8:
-		start += 32;
+//		start += 1;
 		saux[10].line = 0;
 		 break;
 	case 9:
-		start += 32;
+//		start += 1;
 		saux[10].line = 2;
 		break;
 	}
-/*
-	if((csum == 8) || (csum == 9)){
-		start += 32;
-		saux[10].line = 0;
-	}
-*/
 	csum=saux[1].coin + saux[3].coin + saux[5].coin;
 	switch(csum){
 	case 6:
+		start += 2;
 		saux[11].line = 3;
 		break;
 	case 7:
+		start += 2;
 		break;
 	case 8:
-		start += 16;
+//		start += 2;
 		saux[11].line = 0;
 		 break;
 	case 9:
-		start += 16;
+//		start += 2;
 		saux[11].line = 2;
 		break;
 	}
-/*
-	if((csum == 8) || (csum == 9)){
-		start += 16;
-		saux[11].line = 0;
-	}
-*/
 	csum=saux[16].coin + saux[18].coin + saux[20].coin;
 	switch(csum){
 	case 6:
+		start += 4;
 		saux[26].line = 3;
 		break;
 	case 7:
+		start += 4;
 		break;
 	case 8:
-		start += 8;
+//		start += 4;
 		saux[26].line = 0;
 		 break;
 	case 9:
-		start += 8;
+//		start += 4;
 		saux[26].line = 2;
 		break;
 	}
-/*
-	if((csum == 8) || (csum == 9)){
-		start += 8;
-		saux[26].line = 0;
-	}
-*/
 	csum=saux[17].coin + saux[19].coin + saux[21].coin;
 	switch(csum){
 	case 6:
+		start += 8;
 		saux[27].line = 3;
 		break;
 	case 7:
+		start += 8;
 		break;
 	case 8:
-		start += 4;
+//		start += 8;
 		saux[27].line = 0;
 		 break;
 	case 9:
-		start += 4;
+//		start += 8;
 		saux[27].line = 2;
 		break;
 	}
-/*
-	if((csum == 8) || (csum == 9)){
-		start += 4;
-		saux[27].line = 0;
-	}
-*/
 	csum=saux[32].coin + saux[34].coin + saux[36].coin;
 	switch(csum){
 	case 6:
+		start += 16;
 		saux[42].line = 3;
 		break;
 	case 7:
+		start += 16;
 		break;
 	case 8:
-		start += 2;
+//		start += 16;
 		saux[42].line = 0;
 		 break;
 	case 9:
-		start += 2;
+//		start += 16;
 		saux[42].line = 2;
 		break;
 	}
-/*
-	if((csum == 8) || (csum == 9)){
-		start += 2;
-		saux[42].line = 0;
-	}
-*/
 	csum=saux[33].coin + saux[35].coin + saux[37].coin;
 	switch(csum){
 	case 6:
+		start += 32;
 		saux[43].line = 3;
 		break;
 	case 7:
+		start += 32;
 		break;
 	case 8:
-		start += 1;
+//		start += 32;
 		saux[43].line = 0;
 		 break;
 	case 9:
-		start += 1;
+//		start += 32;
 		saux[43].line = 2;
 		break;
 	}
-/*
-	if((csum == 8) || (csum == 9)){
-		start += 1;
-		saux[43].line = 0;
-	}
-*/
 	current=start;
 	goal=63-start;
 	for(i = 0; i < 64; i++)
 		selems[i].update(&selems[i]);
 	draw(screen, textrect, black, nil, ZP);
-//	sprint(texbuf, saux[start].engname);
 	sprint(texbuf, "starting square:  ");
 	sprint(texbuf + 17, saux[start].binid);
 	sprint(texbuf + 23, "  ");

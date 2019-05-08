@@ -175,14 +175,14 @@ redraw(Square *s)
 	}
 	if(s->drawhexa == 1){
 		targ.x = s->r.min.x + ((s->r.max.x - s->r.min.x) / 2);
-		targ.y = s->r.min.y + 10;
+		targ.y = s->r.min.y + 60;
 		dest.x = targ.x + 40;
 		dest.y = targ.y;
 		for(i = 0; i < 6; i++){
 			color = blkpc;
 			if((s->isgoal && (s->active != 2)) || s->isstart)
 				color = whtpc;
-			if(s->binid[i] == '0')
+			if(s->binid[i] == '1')
 				line(screen, targ, dest, 0, 0, 2, color, targ);
 			else {
 				dest.x -= 25;
@@ -192,8 +192,8 @@ redraw(Square *s)
 				line(screen, targ, dest, 0, 0, 2, color, targ);
 				targ.x -= 25;
 			}
-			targ.y += 10;
-			dest.y += 10;
+			targ.y -= 10;
+			dest.y -= 10;
 		}
 	}
 	if(s->drawid == 1){
