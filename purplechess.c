@@ -385,32 +385,32 @@ capallandscore(void)
 		sco = 0;
 		if((pos->sq[i] & TARGET) && (pos->sq[i] != NOPIECE)){
 			if((pos->sq[i] & PC) == PAWN){
-				sco = 25;
+				sco = 125;
 				if(saux[ctgr(i)].active != 2)
 					pcson--; 
 			}
 			if((pos->sq[i] & PC) == KNIGHT){
-				sco = 65;
+				sco = 325;
 				if(saux[ctgr(i)].active != 2)
 					pcson--; 
 			}
 			if((pos->sq[i] & PC) == BISHOP){
-				sco = 70;
+				sco = 350;
 				if(saux[ctgr(i)].active != 2)
 					pcson--; 
 			}
 			if((pos->sq[i] & PC) == ROOK){
-				sco = 135;
+				sco = 675;
 				if(saux[ctgr(i)].active != 2)
 					pcson--; 
 			}
 			if((pos->sq[i] & PC) == QUEEN){
-				sco = 210;
+				sco = 1050;
 				if(saux[ctgr(i)].active != 2)
 					pcson--; 
 			}
 			if((pos->sq[i] & PC) == KING){
-				sco = 175;
+				sco = 825;
 				if(saux[ctgr(i)].active != 2)
 					pcson--; 
 			}
@@ -419,7 +419,7 @@ capallandscore(void)
 			if(pos->n == 0)
 				bscore += sco;
 			if(saux[ctgr(i)].moveline == 1)
-				sco = (sco * 2) + 50;
+				sco = (sco * 2) + 250;
 			turnsco += sco;
 			if(i != chessq)
 				pos->sq[i] = NOPIECE;
@@ -439,9 +439,9 @@ printscore(void)
 	stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
 	if((legalsqs == 0) && (clearflag != 2)){
 		clearflag = 2;
-		turnsco += moves * 75;
+		turnsco += moves * 375;
 		if(moves == 64)
-			turnsco += 2000;
+			turnsco += 10000;
 		totalsco += turnsco;
 		sprint(texbuf2, "No moves, %d remain, + %d", 64 - moves, turnsco);
 		stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
@@ -450,13 +450,13 @@ printscore(void)
 		if((11 - moves) > 0){
 			turnsco += (11 - moves) * totalsco;
 		}
-		turnsco += 200;
+		turnsco += 1000;
 		totalsco += turnsco;
 		sprint(texbuf2, "+ %d, GOAL REACHED!", turnsco);
 		stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
 	}
 	if((clearflag == 0) && (pcson == 0)){
-		turnsco += (64 - moves) * 100;
+		turnsco += (64 - moves) * 500;
 		totalsco += turnsco;
 		sprint(texbuf2, "+ %d, ALL PIECES SCORED", turnsco);
 		stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
@@ -549,16 +549,22 @@ instructions(void)
 	sprint(texbuf, "Then see how much of the rest of the board you can fill in.");
 	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
 	printat.y +=25;
-	sprint(texbuf, "Points: P-25 Kt-65 B-70 R-135 K-175 Q-210");
+	sprint(texbuf, "Points: P-125 Kt-325 B-350 R-675 K-825 Q-1050");
+	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
+	printat.y +=25;
+	sprint(texbuf, "Squares marked with + score double and 250 extra");
 	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
 	printat.y +=25;
 	sprint(texbuf, "Fast goal bonus: 4x score for 6 moves, 2x score for 8");
 	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
 	printat.y +=25;
-	sprint(texbuf, "Piece clear score: 50 * (64 - moves)");
+	sprint(texbuf, "Piece clear score: 500 * (64 - moves)");
 	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
 	printat.y +=25;
-	sprint(texbuf, "Cube fill score: 50 * squares filled");
+	sprint(texbuf, "Cube fill score: 350 * squares filled");
+	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
+	printat.y +=25;
+	sprint(texbuf, "Fill all squares bonus 10000 points");
 	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
 	printat.y +=25;
 }
