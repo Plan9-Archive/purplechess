@@ -154,6 +154,7 @@ redraw(Square *s)
 			draw(screen,s->r, purple, nil, ZP);
 		} else
 			draw(screen, s->r, on, nil, ZP);
+
 		break;
 	case 2: /* previously visited squares */
 		if(s->isgoal == 1){
@@ -165,6 +166,18 @@ redraw(Square *s)
 				draw(screen, s->r, click, nil, ZP);
 		}
 		break;
+	}
+	if(s->moveline == 1){
+		targ.x = s->r.min.x;
+		targ.y = s->r.min.y + ((s->r.max.y - s->r.min.y) / 2);
+		dest.x = s->r.max.x;
+		dest.y = targ.y;
+		line(screen, targ, dest, 0, 0, 4, baize, targ);
+		targ.y = s->r.min.y;
+		targ.x = s->r.min.x + ((s->r.max.x - s->r.min.x) / 2);
+		dest.y = s->r.max.y;
+		dest.x = targ.x;
+		line(screen, targ, dest, 0, 0, 4, baize, targ);
 	}
 	if(s->drawpiece == 1){
 		color = pos->sq[chsq] & WHITE ? whtpc : blkpc;

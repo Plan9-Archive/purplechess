@@ -11,6 +11,7 @@ struct Square {
 	int drawpiece;
 	int coin;
 	int line;
+	int moveline;
 	char binid[7];
 	char engname[64];
 	/* internal */

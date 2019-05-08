@@ -24,6 +24,7 @@ long seed;
 Image *white;
 Image *black;
 Rectangle textrect, textrect2, boardrect;
+char moving[6];
 char texbuf[512];
 char texbuf2[512];
 
@@ -187,6 +188,7 @@ gamereset(void)
 		saux[i].drawhexa = 0;
 		saux[i].drawpiece = 0;
 		saux[i].coin = 0;
+		saux[i].moveline = 0;
 	}
 	start = 0;
 	totalsco = 0;
@@ -198,8 +200,10 @@ gamereset(void)
 	clearflag = 0;
 	pcson = 32;
 	/* 3 coin method of hexagram generation */
-	for(i=0; i < 6; i++)
+	for(i=0; i < 6; i++){
 		saux[i].coin = nrand(2) + 2;
+		moving[i] = '0';
+	}
 	for(i=16; i < 22; i++)
 		saux[i].coin = nrand(2) + 2;
 	for(i=32; i < 38; i++)
@@ -218,6 +222,7 @@ gamereset(void)
 	case 6:
 		start +=1;
 		saux[10].line = 3;
+		moving[5] = '1';
 		break;
 	case 7:
 		start +=1;
@@ -229,6 +234,7 @@ gamereset(void)
 	case 9:
 //		start += 1;
 		saux[10].line = 2;
+		moving[5] = '1';
 		break;
 	}
 	csum=saux[1].coin + saux[3].coin + saux[5].coin;
@@ -236,6 +242,7 @@ gamereset(void)
 	case 6:
 		start += 2;
 		saux[11].line = 3;
+		moving[4] = '1';
 		break;
 	case 7:
 		start += 2;
@@ -247,6 +254,7 @@ gamereset(void)
 	case 9:
 //		start += 2;
 		saux[11].line = 2;
+		moving[4] = '1';
 		break;
 	}
 	csum=saux[16].coin + saux[18].coin + saux[20].coin;
@@ -254,6 +262,7 @@ gamereset(void)
 	case 6:
 		start += 4;
 		saux[26].line = 3;
+		moving[3] = '1';
 		break;
 	case 7:
 		start += 4;
@@ -265,6 +274,7 @@ gamereset(void)
 	case 9:
 //		start += 4;
 		saux[26].line = 2;
+		moving[3] = '1';
 		break;
 	}
 	csum=saux[17].coin + saux[19].coin + saux[21].coin;
@@ -272,6 +282,7 @@ gamereset(void)
 	case 6:
 		start += 8;
 		saux[27].line = 3;
+		moving[2] = '1';
 		break;
 	case 7:
 		start += 8;
@@ -283,6 +294,7 @@ gamereset(void)
 	case 9:
 //		start += 8;
 		saux[27].line = 2;
+		moving[2] = '1';
 		break;
 	}
 	csum=saux[32].coin + saux[34].coin + saux[36].coin;
@@ -290,6 +302,7 @@ gamereset(void)
 	case 6:
 		start += 16;
 		saux[42].line = 3;
+		moving[1] = '1';
 		break;
 	case 7:
 		start += 16;
@@ -301,6 +314,7 @@ gamereset(void)
 	case 9:
 //		start += 16;
 		saux[42].line = 2;
+		moving[1] = '1';
 		break;
 	}
 	csum=saux[33].coin + saux[35].coin + saux[37].coin;
@@ -308,6 +322,7 @@ gamereset(void)
 	case 6:
 		start += 32;
 		saux[43].line = 3;
+		moving[0] = '1';
 		break;
 	case 7:
 		start += 32;
@@ -319,6 +334,7 @@ gamereset(void)
 	case 9:
 //		start += 32;
 		saux[43].line = 2;
+		moving[0] = '1';
 		break;
 	}
 	current=start;
@@ -348,6 +364,12 @@ aftercoins(void)
 		saux[i].drawpiece = 1;
 		saux[i].coin = 0;
 		saux[i].line = 0;
+	}
+	for(i = 0; i < 6; i++){
+		if(moving[i] == '1'){
+			sqi = start ^ (1<<i);
+			saux[sqi].moveline = 1;
+		}
 	}
 	saux[start].active = 2;
 	saux[start].iscurrent = 1;
@@ -408,6 +430,8 @@ capallandscore(void)
 				wscore += sco;
 			if(pos->n == 0)
 				bscore += sco;
+			if(saux[ctgr(i)].moveline == 1)
+				sco += sco;
 			turnsco += sco;
 			if(i != chessq)
 				pos->sq[i] = NOPIECE;
