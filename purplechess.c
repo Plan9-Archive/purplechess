@@ -203,24 +203,44 @@ gamereset(void)
 		saux[i].coin = nrand(2) + 2;
 	for(i=32; i < 38; i++)
 		saux[i].coin = nrand(2) + 2;
+	for(i=8; i < 14; i++)
+		saux[i].line = 1;
+	for(i=8; i < 14; i++)
+		saux[i].line = 1;
+	for(i=24; i < 30; i++)
+		saux[i].line = 1;
+	for(i=40; i < 46; i++)
+		saux[i].line = 1;
 	csum=saux[0].coin + saux[2].coin + saux[4].coin;
-	if((csum == 7) || (csum == 9))
-		start += 1;
-	csum=saux[1].coin + saux[3].coin + saux[5].coin;
-	if((csum == 7) || (csum == 9))
-		start += 2;
-	csum=saux[16].coin + saux[18].coin + saux[20].coin;
-	if((csum == 7) || (csum == 9))
-		start += 4;
-	csum=saux[17].coin + saux[19].coin + saux[21].coin;
-	if((csum == 7) || (csum == 9))
-		start += 8;
-	csum=saux[32].coin + saux[34].coin + saux[36].coin;
-	if((csum == 7) || (csum == 9))
-		start += 16;
-	csum=saux[33].coin + saux[35].coin + saux[37].coin;
-	if((csum == 7) || (csum == 9))
+	if((csum == 7) || (csum == 9)){
 		start += 32;
+		saux[10].line = 0;
+	}
+	csum=saux[1].coin + saux[3].coin + saux[5].coin;
+	if((csum == 7) || (csum == 9)){
+		start += 16;
+		saux[11].line = 0;
+	}
+	csum=saux[16].coin + saux[18].coin + saux[20].coin;
+	if((csum == 7) || (csum == 9)){
+		start += 8;
+		saux[26].line = 0;
+	}
+	csum=saux[17].coin + saux[19].coin + saux[21].coin;
+	if((csum == 7) || (csum == 9)){
+		start += 4;
+		saux[27].line = 0;
+	}
+	csum=saux[32].coin + saux[34].coin + saux[36].coin;
+	if((csum == 7) || (csum == 9)){
+		start += 2;
+		saux[42].line = 0;
+	}
+	csum=saux[33].coin + saux[35].coin + saux[37].coin;
+	if((csum == 7) || (csum == 9)){
+		start += 1;
+		saux[43].line = 0;
+	}
 	current=start;
 	goal=63-start;
 	for(i = 0; i < 64; i++)
@@ -248,6 +268,7 @@ aftercoins(void)
 	for(i = 0; i < 64; i++){
 		saux[i].drawpiece = 1;
 		saux[i].coin = 0;
+		saux[i].line = 0;
 	}
 	saux[start].active = 2;
 	saux[start].iscurrent = 1;

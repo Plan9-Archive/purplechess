@@ -10,6 +10,7 @@ struct Square {
 	int drawhexa;
 	int drawpiece;
 	int coin;
+	int line;
 	char binid[7];
 	char engname[64];
 	/* internal */

@@ -131,6 +131,13 @@ redraw(Square *s)
 			color=whtpc;
 		fillellipse(screen, targ, ell1, ell1, color, targ);
 	}
+	if(s->line == 1){
+		targ.x = s->r.min.x;
+		targ.y = s->r.min.y + ((s->r.max.y - s->r.min.y) / 2);
+		dest.x = s->r.max.x;
+		dest.y = targ.y;
+		line(screen, targ, dest, 0, 0, 4, blkpc, targ);
+	}
 	if(s->drawhexa == 1){
 		targ.x = s->r.min.x + ((s->r.max.x - s->r.min.x) / 2);
 		targ.y = s->r.min.y + 10;
