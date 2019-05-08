@@ -131,12 +131,47 @@ redraw(Square *s)
 			color=whtpc;
 		fillellipse(screen, targ, ell1, ell1, color, targ);
 	}
-	if(s->line == 1){
+	switch(s->line){
+	case 1:
 		targ.x = s->r.min.x;
 		targ.y = s->r.min.y + ((s->r.max.y - s->r.min.y) / 2);
 		dest.x = s->r.max.x;
 		dest.y = targ.y;
 		line(screen, targ, dest, 0, 0, 4, blkpc, targ);
+		break;
+	case 2:
+		targ.x = s->r.min.x;
+		targ.y = s->r.min.y + ((s->r.max.y - s->r.min.y) / 2);
+		dest.x = s->r.max.x;
+		dest.y = targ.y;
+		line(screen, targ, dest, 0, 0, 4, blkpc, targ);
+		ell1=(s->r.max.x - s->r.min.x) / 2;
+		ell2=(s->r.max.y - s->r.min.y) / 2;
+		targ.x = s->r.min.x + ell1;
+		targ.y = s->r.min.y + ell2;
+		if(ell2 < ell1)
+			ell1 = ell2;
+		ell1 = ell1 - 25;
+		color=blkpc;
+		ellipse(screen, targ, ell1, ell1, 4, color, targ);
+		break;
+	case 3:
+		targ.x = s->r.min.x;
+		targ.y = s->r.min.y + ((s->r.max.y - s->r.min.y) / 2);
+		dest.x = s->r.max.x;
+		dest.y = targ.y;
+		line(screen, targ, dest, 0, 0, 4, blkpc, targ);
+		targ.x = s->r.min.x + ((s->r.max.x - s->r.min.x) / 4);
+		targ.y = s->r.min.y + ((s->r.max.y - s->r.min.y) / 4);
+		dest.x = s->r.max.x - ((s->r.max.x - s->r.min.x) / 4);
+		dest.y = s->r.max.y - ((s->r.max.y - s->r.min.y) / 4);
+		line(screen, targ, dest, 0, 0, 4, blkpc, targ);
+		targ.x = s->r.min.x + ((s->r.max.x - s->r.min.x) / 4);
+		targ.y = s->r.max.y - ((s->r.max.y - s->r.min.y) / 4);
+		dest.x = s->r.max.x - ((s->r.max.x - s->r.min.x) / 4);
+		dest.y = s->r.min.y + ((s->r.max.y - s->r.min.y) / 4);
+		line(screen, targ, dest, 0, 0, 4, blkpc, targ);
+		break;
 	}
 	if(s->drawhexa == 1){
 		targ.x = s->r.min.x + ((s->r.max.x - s->r.min.x) / 2);
