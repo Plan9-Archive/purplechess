@@ -228,11 +228,9 @@ gamereset(void)
 		start +=1;
 		break;
 	case 8:
-//		start += 1;
 		saux[10].line = 0;
 		 break;
 	case 9:
-//		start += 1;
 		saux[10].line = 2;
 		moving[5] = '1';
 		break;
@@ -248,11 +246,9 @@ gamereset(void)
 		start += 2;
 		break;
 	case 8:
-//		start += 2;
 		saux[11].line = 0;
 		 break;
 	case 9:
-//		start += 2;
 		saux[11].line = 2;
 		moving[4] = '1';
 		break;
@@ -268,11 +264,9 @@ gamereset(void)
 		start += 4;
 		break;
 	case 8:
-//		start += 4;
 		saux[26].line = 0;
 		 break;
 	case 9:
-//		start += 4;
 		saux[26].line = 2;
 		moving[3] = '1';
 		break;
@@ -288,11 +282,9 @@ gamereset(void)
 		start += 8;
 		break;
 	case 8:
-//		start += 8;
 		saux[27].line = 0;
 		 break;
 	case 9:
-//		start += 8;
 		saux[27].line = 2;
 		moving[2] = '1';
 		break;
@@ -308,11 +300,9 @@ gamereset(void)
 		start += 16;
 		break;
 	case 8:
-//		start += 16;
 		saux[42].line = 0;
 		 break;
 	case 9:
-//		start += 16;
 		saux[42].line = 2;
 		moving[1] = '1';
 		break;
@@ -328,11 +318,9 @@ gamereset(void)
 		start += 32;
 		break;
 	case 8:
-//		start += 32;
 		saux[43].line = 0;
 		 break;
 	case 9:
-//		start += 32;
 		saux[43].line = 2;
 		moving[0] = '1';
 		break;
@@ -431,7 +419,7 @@ capallandscore(void)
 			if(pos->n == 0)
 				bscore += sco;
 			if(saux[ctgr(i)].moveline == 1)
-				sco += sco;
+				sco = (sco * 2) + 50;
 			turnsco += sco;
 			if(i != chessq)
 				pos->sq[i] = NOPIECE;
@@ -451,7 +439,9 @@ printscore(void)
 	stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
 	if((legalsqs == 0) && (clearflag != 2)){
 		clearflag = 2;
-		turnsco += moves * 50;
+		turnsco += moves * 75;
+		if(moves == 64)
+			turnsco += 2000;
 		totalsco += turnsco;
 		sprint(texbuf2, "No moves, %d remain, + %d", 64 - moves, turnsco);
 		stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
@@ -466,7 +456,7 @@ printscore(void)
 		stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
 	}
 	if((clearflag == 0) && (pcson == 0)){
-		turnsco += (64 - moves) * 50;
+		turnsco += (64 - moves) * 100;
 		totalsco += turnsco;
 		sprint(texbuf2, "+ %d, ALL PIECES SCORED", turnsco);
 		stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
