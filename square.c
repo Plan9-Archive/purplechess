@@ -168,16 +168,19 @@ redraw(Square *s)
 		break;
 	}
 	if(s->moveline == 1){
+		color = baize;
+		if(s->active == 2)
+			color = purple;
 		targ.x = s->r.min.x;
 		targ.y = s->r.min.y + ((s->r.max.y - s->r.min.y) / 2);
 		dest.x = s->r.max.x;
 		dest.y = targ.y;
-		line(screen, targ, dest, 0, 0, 4, baize, targ);
+		line(screen, targ, dest, 0, 0, 4, color, targ);
 		targ.y = s->r.min.y;
 		targ.x = s->r.min.x + ((s->r.max.x - s->r.min.x) / 2);
 		dest.y = s->r.max.y;
 		dest.x = targ.x;
-		line(screen, targ, dest, 0, 0, 4, baize, targ);
+		line(screen, targ, dest, 0, 0, 4, color, targ);
 	}
 	if(s->drawpiece == 1){
 		color = pos->sq[chsq] & WHITE ? whtpc : blkpc;

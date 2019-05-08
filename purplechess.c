@@ -540,13 +540,13 @@ instructions(void)
 	sprint(texbuf, "Each piece you move onto captures everything it can.");
 	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
 	printat.y +=25;
-	sprint(texbuf, "Travel from the gold starting square to the blue goal.");
+	sprint(texbuf, "First travel from the gold square to the blue goal.");
 	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
 	printat.y +=25;
-	sprint(texbuf, "Next select or capture every piece on the board as fast as you can.");
+	sprint(texbuf, "Next select or capture every piece as fast as you can.");
 	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
 	printat.y +=25;
-	sprint(texbuf, "Then see how much of the rest of the board you can fill in.");
+	sprint(texbuf, "Then attempt to visit all remaining squares.");
 	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
 	printat.y +=25;
 	sprint(texbuf, "Points: P-125 Kt-325 B-350 R-675 K-825 Q-1050");
@@ -555,7 +555,7 @@ instructions(void)
 	sprint(texbuf, "Squares marked with + score double and 250 extra");
 	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
 	printat.y +=25;
-	sprint(texbuf, "Fast goal bonus: 4x score for 6 moves, 2x score for 8");
+	sprint(texbuf, "Goal bonus 1000 + 4x score for 6 moves, 2x score for 8");
 	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
 	printat.y +=25;
 	sprint(texbuf, "Piece clear score: 500 * (64 - moves)");
