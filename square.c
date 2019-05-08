@@ -80,7 +80,9 @@ redraw(Square *s)
 
 	chsq=gtc[s->id];
 	align.min.x = s->r.min.x;
-	align.min.y = s->r.min.y + 10;
+	align.min.y = s->r.min.y;
+	if((s->r.max.y - s->r.min.y) > 75)
+		align.min.y = s->r.min.y +10;
 	align.max.x = s->r.max.x;
 	align.max.y = s->r.max.y;
 	
@@ -174,26 +176,32 @@ redraw(Square *s)
 		break;
 	}
 	if(s->drawhexa == 1){
+		ell1 = 1;
+		ell2 = 1;
+		if((s->r.max.x - s->r.min.x) < 82)
+			ell1 = 2;
+		if((s->r.max.y - s->r.min.y) < 82)
+			ell2 = 2;
 		targ.x = s->r.min.x + ((s->r.max.x - s->r.min.x) / 2);
-		targ.y = s->r.min.y + 60;
-		dest.x = targ.x + 40;
+		targ.y = s->r.min.y + (60/ell2);
+		dest.x = targ.x + (40/ell1);
 		dest.y = targ.y;
 		for(i = 0; i < 6; i++){
 			color = blkpc;
 			if((s->isgoal && (s->active != 2)) || s->isstart)
 				color = whtpc;
 			if(s->binid[i] == '1')
-				line(screen, targ, dest, 0, 0, 2, color, targ);
+				line(screen, targ, dest, 0, 0, 2/ell2, color, targ);
 			else {
-				dest.x -= 25;
-				line(screen, targ, dest, 0, 0, 2, color, targ);
-				targ.x += 25;
-				dest.x += 25;
-				line(screen, targ, dest, 0, 0, 2, color, targ);
-				targ.x -= 25;
+				dest.x -= (25/ell1);
+				line(screen, targ, dest, 0, 0, 2/ell2, color, targ);
+				targ.x += (25/ell1);
+				dest.x += (25/ell1);
+				line(screen, targ, dest, 0, 0, 2/ell2, color, targ);
+				targ.x -= (25/ell1);
 			}
-			targ.y -= 10;
-			dest.y -= 10;
+			targ.y -= (10/ell2);
+			dest.y -= (10/ell2);
 		}
 	}
 	if(s->drawid == 1){
