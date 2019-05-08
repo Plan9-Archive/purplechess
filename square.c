@@ -17,15 +17,13 @@ static Image *click;
 static Image *goal;
 static Image *purple;
 static Image *orange;
-
-int gtc[64] = {56,48,57,49,58,50,59,51,60,52,61,53,62,54,63,55,40,32,41,33,42,34,43,35,44,36,45,37,46,38,47,39,24,16,25,17,26,18,27,19,28,20,29,21,30,22,31,23,8,0,9,1,10,2,11,3,12,4,13,5,14,6,15,7};
-
-enum{NPATH = 256};
-
 Image *baize, *dark, *light, *blkpc, *whtpc, *hlsq;
 Image *hstbg, *hstfg, *msgbg, *msgfg, *scrbar;
 Image *masks[7];
 char *maskdir = "/sys/games/lib/chess";
+enum{NPATH = 256};
+
+int gtc[64] = {56,48,57,49,58,50,59,51,60,52,61,53,62,54,63,55,40,32,41,33,42,34,43,35,44,36,45,37,46,38,47,39,24,16,25,17,26,18,27,19,28,20,29,21,30,22,31,23,8,0,9,1,10,2,11,3,12,4,13,5,14,6,15,7};
 
 Image *
 alloccolor(uint color)
@@ -67,6 +65,60 @@ allocmask(char *m)
 		sysfatal("cannot load image: %r");
 	close(fd);
 	return tmp;
+}
+
+Point
+squareinit(Guielem*)
+{
+	Point p = {1,1};
+
+	/* is this really the right place for all this stuff? */
+	if(off == nil){
+		off = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x666666FF);
+		off2 = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x888888FF);
+		on = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x10B754FF);
+		click = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x990000FF);
+		goal = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x4C95FFFF);
+		purple = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0xAA55EEFF);
+		orange = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0xE4A02AFF);
+		baize = alloccolor(DDarkgreen);
+		dark = alloccolor(DYellowgreen);
+		light = alloccolor(DPaleyellow);
+		blkpc = alloccolor(DBlack);
+		whtpc = alloccolormix(DGreyblue, DWhite);
+		hlsq = alloccolor(setalpha(DRed, 0xc8));
+		hstbg = alloccolormix(DPurpleblue, DWhite);
+		hstfg = alloccolor(DPurpleblue);
+		msgbg = alloccolor(DWhite);
+		msgfg = alloccolor(DBlack);
+		scrbar = alloccolor(0x999999FF);
+		masks[NOPIECE] = allocmask("nopiece");
+		masks[PAWN] = allocmask("pawn");
+		masks[KNIGHT] = allocmask("knight");
+		masks[BISHOP] = allocmask("bishop");
+		masks[ROOK] = allocmask("rook");
+		masks[QUEEN] = allocmask("queen");
+		masks[KING] = allocmask("king");
+	}
+	return p;
+}
+
+/* Gonna break convention by not updating ->active and redrawing, for simplicity. */
+int
+squaremouse(Guielem *e, Mouse m)
+{
+	Square *s;
+	
+	s = e->aux;
+	if(ptinrect(m.xy, s->r))
+		return e->tag;
+	return -1;
+}
+
+int
+squarekeyboard(Guielem*, Rune)
+{
+	return -1;
 }
 
 static
@@ -186,6 +238,10 @@ redraw(Square *s)
 		targ.y = s->r.min.y + (60/ell2);
 		dest.x = targ.x + (40/ell1);
 		dest.y = targ.y;
+		targ.x += ell1;
+		targ.y += ell2;
+		dest.x += ell1;
+		dest.y += ell2;
 		for(i = 0; i < 6; i++){
 			color = blkpc;
 			if((s->isgoal && (s->active != 2)) || s->isstart)
@@ -211,42 +267,6 @@ redraw(Square *s)
 	}
 }
 
-Point
-squareinit(Guielem*)
-{
-	Point p = {1,1};
-
-	/* is this really the right place for all this stuff? */
-	if(off == nil){
-		off = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x666666FF);
-		off2 = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x888888FF);
-		on = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x10B754FF);
-		click = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x990000FF);
-		goal = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x4C95FFFF);
-		purple = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0xAA55EEFF);
-		orange = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0xE4A02AFF);
-		baize = alloccolor(DDarkgreen);
-		dark = alloccolor(DYellowgreen);
-		light = alloccolor(DPaleyellow);
-		blkpc = alloccolor(DBlack);
-		whtpc = alloccolormix(DGreyblue, DWhite);
-		hlsq = alloccolor(setalpha(DRed, 0xc8));
-		hstbg = alloccolormix(DPurpleblue, DWhite);
-		hstfg = alloccolor(DPurpleblue);
-		msgbg = alloccolor(DWhite);
-		msgfg = alloccolor(DBlack);
-		scrbar = alloccolor(0x999999FF);
-		masks[NOPIECE] = allocmask("nopiece");
-		masks[PAWN] = allocmask("pawn");
-		masks[KNIGHT] = allocmask("knight");
-		masks[BISHOP] = allocmask("bishop");
-		masks[ROOK] = allocmask("rook");
-		masks[QUEEN] = allocmask("queen");
-		masks[KING] = allocmask("king");
-	}
-	return p;
-}
-
 void
 squareresize(Guielem *e, Rectangle r)
 {
@@ -264,22 +284,4 @@ squareupdate(Guielem *e)
 	
 	s = e->aux;
 	redraw(s);
-}
-
-/* Gonna break convention by not updating ->active and redrawing, for simplicity. */
-int
-squaremouse(Guielem *e, Mouse m)
-{
-	Square *s;
-	
-	s = e->aux;
-	if(ptinrect(m.xy, s->r))
-		return e->tag;
-	return -1;
-}
-
-int
-squarekeyboard(Guielem*, Rune)
-{
-	return -1;
 }
