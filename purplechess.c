@@ -17,7 +17,7 @@ Guipart tree[63];
 Guielem pelems[63];
 Guielem *root = &pelems[0];
 Guielem *mousetarg;
-char *buttons3[] = {"Help", "Hexa", "Binary", "Seed", "Reset", "Exit", nil};
+char *buttons3[] = {"Help", "Hexa", "Binary", "Seed", "Reset", "Retry", "Exit", nil};
 Menu menu3 = {buttons3};
 int sel, sqi, start, goal, current, oldsq, chessq, legalclick, wscore, bscore, moves, pcson, clearflag, hexdisp, turnsco, totalsco, legalsqs;
 long seed;
@@ -626,11 +626,12 @@ printseed(void)
 
 /* menu option "Reset" to start new game */
 void
-menureset(void)
+menureset(int retry)
 {
 	int i;
 
-	seed++;
+	if(!retry)
+		seed++;
 	srand(seed);
 	chessinit();
 	gamereset();
@@ -704,9 +705,12 @@ noflush:
 					printseed();
 					break;
 				case 4:
-					menureset();
+					menureset(0);
 					break;
 				case 5:
+					menureset(1);
+					break;
+				case 6:
 					threadexitsall(nil);
 					break;
 				default:
