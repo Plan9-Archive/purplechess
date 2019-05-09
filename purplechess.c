@@ -17,7 +17,7 @@ Guipart tree[63];
 Guielem pelems[63];
 Guielem *root = &pelems[0];
 Guielem *mousetarg;
-char *buttons3[] = {"Help", "Hexa", "Binary", "Seed", "Reset", "Retry", "Exit", nil};
+char *buttons3[] = {"Help", "Hexa", "Binary", "Seed", "Reset", "Retry", "Vis", "Exit", nil};
 Menu menu3 = {buttons3};
 int sel, sqi, start, goal, current, oldsq, chessq, legalclick, wscore, bscore, moves, pcson, clearflag, hexdisp, turnsco, totalsco, legalsqs;
 long seed;
@@ -640,6 +640,36 @@ menureset(int retry)
 }
 
 void
+vis(void)
+{
+	int i,j;
+	Point a,b,c,d;
+
+	for(i = 0; i < 64; i++){
+		a.x=saux[i].r.min.x;
+		a.y=saux[i].r.min.y;
+		b.x=saux[i].r.min.x;
+		b.y=saux[i].r.max.y;
+		for(j = 0; j < 6; j++){
+			b.x=saux[i].r.min.x;
+			b.y=saux[i].r.max.y;
+			sqi = i ^ (1<<j);
+			d.x=saux[sqi].r.min.x;
+			d.y=saux[sqi].r.min.y;
+			c.x=saux[sqi].r.min.x;
+			c.y=saux[sqi].r.max.y;
+			if(a.x == d.x){
+				b.x=saux[i].r.max.x;
+				b.y=saux[i].r.min.y;
+				c.x=saux[sqi].r.max.x;
+				c.y=saux[sqi].r.min.y;
+			}
+			bezier(screen, a, b, c, d, 0, 0, 1, white, a);
+		}
+	}
+}
+
+void
 threadmain(int argc, char **argv)
 {
 	Keyboardctl *kctl;
@@ -711,6 +741,9 @@ noflush:
 					menureset(1);
 					break;
 				case 6:
+					vis();
+					break;
+				case 7:
 					threadexitsall(nil);
 					break;
 				default:
