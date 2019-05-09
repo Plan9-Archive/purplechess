@@ -183,6 +183,7 @@ gamereset(void)
 
 	for(i = 0; i < 64; i++){
 		saux[i].active = 0;
+		saux[i].isstart = 0;
 		saux[i].isgoal = 0;
 		saux[i].iscurrent = 0;
 		saux[i].drawhexa = 0;
