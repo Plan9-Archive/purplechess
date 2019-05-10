@@ -22,10 +22,9 @@ Menu menu3 = {buttons3};
 int sel, sqi, start, goal, current, oldsq, chessq, legalclick, wscore, bscore, moves, pcson, clearflag, hexdisp, turnsco, totalsco, legalsqs;
 long seed;
 Image *colorray[8];
-Rectangle textrect, textrect2, boardrect;
+Rectangle textrect, textrect2, textrect3, boardrect;
 char moving[6];
-char texbuf[512];
-char texbuf2[512];
+char texbuf[512], texbuf2[512], texbuf3[512];;
 
 /* this array converts from gray id to chess square id and is duplicated in square.c */
 int grtc[64] = {56,48,57,49,58,50,59,51,60,52,61,53,62,54,63,55,40,32,41,33,42,34,43,35,44,36,45,37,46,38,47,39,24,16,25,17,26,18,27,19,28,20,29,21,30,22,31,23,8,0,9,1,10,2,11,3,12,4,13,5,14,6,15,7};
@@ -435,6 +434,7 @@ printscore(void)
 {
 	sprint(texbuf2, "+ %d points", turnsco);
 	if(saux[sel].isgoal == 1){
+		clearflag++;
 		if((11 - moves) > 0){
 			turnsco += (11 - moves) * totalsco;
 		}
@@ -443,15 +443,15 @@ printscore(void)
 		sprint(texbuf2, "+ %d, GOAL REACHED!", turnsco);
 		stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
 	}
-	if((clearflag == 0) && (pcson == 0)){
+	if((clearflag < 2) && (pcson == 0)){
+		clearflag++;
 		turnsco += (64 - moves) * 500;
 		totalsco += turnsco;
 		sprint(texbuf2, "+ %d, ALL PIECES SCORED!", turnsco);
 		stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
-		clearflag = 1;
 	}
-	if((legalsqs == 0) && (clearflag != 2)){
-		clearflag = 2;
+	if((legalsqs == 0) && (clearflag != 3)){
+		clearflag = 3;
 		turnsco += moves * 375;
 		if(moves == 64)
 			turnsco += 10000;
@@ -459,8 +459,24 @@ printscore(void)
 		sprint(texbuf2, "NO MOVES, %d remain, + %d", 64 - moves, turnsco);
 		stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
 	}
+	switch(clearflag){
+	case 0:
+		sprint(texbuf3, "GOAL: reach the blue/purple square");
+		break;
+	case 1:
+		sprint(texbuf3, "GOAL: capture/select all pieces");
+		break;
+	case 2:
+		sprint(texbuf3, "GOAL: fill all squares");
+		break;
+	case 3:
+		sprint(texbuf3, "Game Over, reset from right-button menu");
+		break;
+	}
 //	sprint(texbuf, "sco: %d w: %d b: %d move: %d avg: %d  pcs: %d", totalsco, wscore, bscore, moves, (wscore + bscore) / moves, pcson);
 	sprint(texbuf, "score: %d  move: %d  pieces: %d", totalsco, moves, pcson);
+	textrect3.min.x = screen->r.max.x - (stringwidth(font, texbuf3) + 10);
+	stringbg(screen, textrect3.min, white, ZP, font, texbuf3, black, textrect3.min);
 	stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
 	stringbg(screen, textrect.min, white, ZP, font, texbuf, black, textrect.min);
 }
@@ -553,13 +569,17 @@ boardsize(void)
 	boardrect.max.x = screen->r.max.x;
 	boardrect.max.y = screen->r.max.y - 60;
 	textrect.min.x = screen->r.min.x + 5;
-	textrect.min.y = screen->r.max.y - 45;
+	textrect.min.y = screen->r.max.y - 50;
 	textrect.max.x = screen->r.max.x;
 	textrect.max.y = screen->r.max.y;
 	textrect2.min.x = screen->r.min.x + 5;
 	textrect2.min.y = screen->r.max.y - 25;
 	textrect2.max.x = screen->r.max.x;
 	textrect2.max.y = screen->r.max.y;
+	textrect3.min.x = screen->r.min.x + 300;
+	textrect3.min.y = screen->r.max.y - 25;
+	textrect3.max.x = screen->r.max.x;
+	textrect3.max.y = screen->r.max.y;
 }
 
 /* menu option "Info" */
