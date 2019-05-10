@@ -19,10 +19,10 @@ Guielem *root = &pelems[0];
 Guielem *mousetarg;
 char *buttons3[] = {"Help", "Hexa", "Binary", "Seed", "Reset", "Retry", "Vis", "Exit", nil};
 Menu menu3 = {buttons3};
-int sel, sqi, start, goal, current, oldsq, chessq, legalclick, wscore, bscore, moves, pcson, clearflag, hexdisp, turnsco, totalsco, legalsqs;
+int sel, sqi, start, goal, current, oldsq, chessq, legalclick, wscore, bscore, moves, pcson, clearflag, hexdisp, turnsco, totalsco, legalsqs, visflag;
 long seed;
-Image *white;
-Image *black;
+Image *black, *white, *re, *or, *ye, *gr, *bl, *in, *vi;
+Image *colorray[8];
 Rectangle textrect, textrect2, boardrect;
 char moving[6];
 char texbuf[512];
@@ -639,12 +639,17 @@ menureset(int retry)
 		selems[i].update(&selems[i]);
 }
 
+/* menu option "Vis" to show hypercubic connections */
 void
 vis(void)
 {
-	int i,j;
+	int col,i,j;
 	Point a,b,c,d;
 
+	visflag++;
+	col=1;
+	if(visflag > 3)
+		draw(screen, boardrect, black, nil, ZP);
 	for(i = 0; i < 64; i++){
 		a.x=saux[i].r.min.x;
 		a.y=saux[i].r.min.y;
@@ -664,9 +669,13 @@ vis(void)
 				c.x=saux[sqi].r.max.x;
 				c.y=saux[sqi].r.min.y;
 			}
-			bezier(screen, a, b, c, d, 0, 0, 1, white, a);
+			if(visflag % 2)
+				col=j+2;
+			bezier(screen, a, b, c, d, 0, 0, 1, colorray[col], a);
 		}
 	}
+	if(visflag == 5)
+		visflag = 1;
 }
 
 void
@@ -682,6 +691,7 @@ threadmain(int argc, char **argv)
 
 	seed = 0;
 	hexdisp = 0;
+	visflag = 1;
 	ARGBEGIN{
 	case 's':
 		userseed=EARGF(usage());
@@ -704,6 +714,21 @@ threadmain(int argc, char **argv)
 	};
 	white = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0xFFFFFFFF);
 	black = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x000000FF);
+	re = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0xFF3D60FF);
+	or = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0xFFB347FF);	
+	ye = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0xFFFF4FFF);
+	gr = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x67FF53FF);
+	bl = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x39C1FFFF);
+	in = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x4026FFFF);
+	vi = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0xB614FFFF);
+	colorray[0]=black;
+	colorray[1]=white;
+	colorray[2]=re;
+	colorray[3]=or;
+	colorray[4]=gr;
+	colorray[5]=bl;
+	colorray[6]=in;
+	colorray[7]=vi;
 	if(seed == 0)
 		seed=time(0);
 	srand(seed);
