@@ -140,10 +140,14 @@ redraw(Square *s)
 	
 	switch(s->active){
 	case 0: /* base checkerboard pattern of inactive squares */
-		if(s->isgoal == 1)
+		if(s->isgoal == 1){
 			draw(screen,s->r, goal, nil, ZP);
-		if(visflag > 3)
 			break;
+		}
+		if(visflag > 3){
+			draw(screen,s->r, black, nil, ZP);
+			break;
+		}
 		if((s->id % 4 == 0) || (s->id % 4 == 3))
 			draw(screen, s->r, off, nil, ZP);
 		else 
