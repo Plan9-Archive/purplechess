@@ -17,7 +17,7 @@ Guipart tree[63];
 Guielem pelems[63];
 Guielem *root = &pelems[0];
 Guielem *mousetarg;
-char *buttons3[] = {"Help", "Hexa", "Binary", "Seed", "Reset", "Retry", "Vis", "Exit", nil};
+char *buttons3[] = {"Help", "Hexa", "Binary", "View", "Seed", "Reset", "Retry", "Exit", nil};
 Menu menu3 = {buttons3};
 int sel, sqi, start, goal, current, oldsq, chessq, legalclick, wscore, bscore, moves, pcson, clearflag, hexdisp, turnsco, totalsco, legalsqs;
 long seed;
@@ -433,20 +433,7 @@ capallandscore(void)
 void
 printscore(void)
 {
-	if(moves == 0){
-		return;
-	}
 	sprint(texbuf2, "+ %d points", turnsco);
-	stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
-	if((legalsqs == 0) && (clearflag != 2)){
-		clearflag = 2;
-		turnsco += moves * 375;
-		if(moves == 64)
-			turnsco += 10000;
-		totalsco += turnsco;
-		sprint(texbuf2, "No moves, %d remain, + %d", 64 - moves, turnsco);
-		stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
-	}
 	if(saux[sel].isgoal == 1){
 		if((11 - moves) > 0){
 			turnsco += (11 - moves) * totalsco;
@@ -459,11 +446,22 @@ printscore(void)
 	if((clearflag == 0) && (pcson == 0)){
 		turnsco += (64 - moves) * 500;
 		totalsco += turnsco;
-		sprint(texbuf2, "+ %d, ALL PIECES SCORED", turnsco);
+		sprint(texbuf2, "+ %d, ALL PIECES SCORED!", turnsco);
 		stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
 		clearflag = 1;
 	}
-	sprint(texbuf, "sco: %d w: %d b: %d move: %d avg: %d  pcs: %d", totalsco, wscore, bscore, moves, (wscore + bscore) / moves, pcson);
+	if((legalsqs == 0) && (clearflag != 2)){
+		clearflag = 2;
+		turnsco += moves * 375;
+		if(moves == 64)
+			turnsco += 10000;
+		totalsco += turnsco;
+		sprint(texbuf2, "NO MOVES, %d remain, + %d", 64 - moves, turnsco);
+		stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
+	}
+//	sprint(texbuf, "sco: %d w: %d b: %d move: %d avg: %d  pcs: %d", totalsco, wscore, bscore, moves, (wscore + bscore) / moves, pcson);
+	sprint(texbuf, "score: %d  move: %d  pieces: %d", totalsco, moves, pcson);
+	stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
 	stringbg(screen, textrect.min, white, ZP, font, texbuf, black, textrect.min);
 }
 
@@ -769,16 +767,16 @@ noflush:
 					binarytoggle();
 					break;
 				case 3:
-					printseed();
+					vis();
 					break;
 				case 4:
-					menureset(0);
+					printseed();
 					break;
 				case 5:
-					menureset(1);
+					menureset(0);
 					break;
 				case 6:
-					vis();
+					menureset(1);
 					break;
 				case 7:
 					threadexitsall(nil);
