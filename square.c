@@ -140,14 +140,14 @@ redraw(Square *s)
 	
 	switch(s->active){
 	case 0: /* base checkerboard pattern of inactive squares */
-		if(s->isgoal == 1){
+		if(s->isgoal == 1)
 			draw(screen,s->r, goal, nil, ZP);
-		} else {
-			if((s->id % 4 == 0) || (s->id % 4 == 3)){
-				draw(screen, s->r, off, nil, ZP);
-			} else 
-				draw(screen, s->r, off2, nil, ZP);
-		}
+		if(visflag > 3)
+			break;
+		if((s->id % 4 == 0) || (s->id % 4 == 3))
+			draw(screen, s->r, off, nil, ZP);
+		else 
+			draw(screen, s->r, off2, nil, ZP);
 		break;
 	case 1: /* legal target squares, green unless they are the purple goal */
 		if(s->isgoal == 1){
@@ -186,6 +186,8 @@ redraw(Square *s)
 		color = pos->sq[chsq] & WHITE ? whtpc : blkpc;
 		if((s->active == 1) && (s->isgoal == 1))
 			color = click;
+		if((color == blkpc) && (visflag > 3))
+			color = in;
 		draw(screen, align, color, masks[pos->sq[chsq] & PC], ZP);
 	}
 	if(s->coin != 0){

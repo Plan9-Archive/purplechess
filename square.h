@@ -24,3 +24,5 @@ extern void squareresize(Guielem*, Rectangle);
 extern void squareupdate(Guielem*);
 extern int squaremouse(Guielem*, Mouse);
 extern int squarekeyboard(Guielem*, Rune);
+int visflag;
+Image *black, *white, *re, *or, *ye, *gr, *bl, *in, *vi;

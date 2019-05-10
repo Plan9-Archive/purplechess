@@ -19,9 +19,8 @@ Guielem *root = &pelems[0];
 Guielem *mousetarg;
 char *buttons3[] = {"Help", "Hexa", "Binary", "Seed", "Reset", "Retry", "Vis", "Exit", nil};
 Menu menu3 = {buttons3};
-int sel, sqi, start, goal, current, oldsq, chessq, legalclick, wscore, bscore, moves, pcson, clearflag, hexdisp, turnsco, totalsco, legalsqs, visflag;
+int sel, sqi, start, goal, current, oldsq, chessq, legalclick, wscore, bscore, moves, pcson, clearflag, hexdisp, turnsco, totalsco, legalsqs;
 long seed;
-Image *black, *white, *re, *or, *ye, *gr, *bl, *in, *vi;
 Image *colorray[8];
 Rectangle textrect, textrect2, boardrect;
 char moving[6];
@@ -181,6 +180,7 @@ gamereset(void)
 {
 	int i, csum;
 
+	draw(screen, boardrect, black, nil, ZP);
 	for(i = 0; i < 64; i++){
 		saux[i].active = 0;
 		saux[i].isstart = 0;
@@ -467,6 +467,40 @@ printscore(void)
 	stringbg(screen, textrect.min, white, ZP, font, texbuf, black, textrect.min);
 }
 
+/* optionally draw hypercubic connection arcs */
+void
+overlay(void)
+{
+	int col,i,j;
+	Point a,b,c,d;
+
+	col=1;
+	for(i = 0; i < 64; i++){
+		a.x=saux[i].r.min.x;
+		a.y=saux[i].r.min.y;
+		b.x=saux[i].r.min.x;
+		b.y=saux[i].r.max.y;
+		for(j = 0; j < 6; j++){
+			b.x=saux[i].r.min.x;
+			b.y=saux[i].r.max.y;
+			sqi = i ^ (1<<j);
+			d.x=saux[sqi].r.min.x;
+			d.y=saux[sqi].r.min.y;
+			c.x=saux[sqi].r.min.x;
+			c.y=saux[sqi].r.max.y;
+			if(a.x == d.x){
+				b.x=saux[i].r.max.x;
+				b.y=saux[i].r.min.y;
+				c.x=saux[sqi].r.max.x;
+				c.y=saux[sqi].r.min.y;
+			}
+			if(visflag % 2)
+				col=j+2;
+			bezier(screen, a, b, c, d, 0, 0, 1, colorray[col], a);
+		}
+	}
+}
+
 /* this is the main game logic which triggers on a click of a valid target square */
 void
 activehit(void)
@@ -509,6 +543,8 @@ activehit(void)
 	for(i = 0; i < 64; i++)
 		selems[i].update(&selems[i]);
 	printscore();
+	if(visflag != 1)
+		overlay();
 }
 
 void
@@ -639,43 +675,19 @@ menureset(int retry)
 		selems[i].update(&selems[i]);
 }
 
-/* menu option "Vis" to show hypercubic connections */
+/* menu option "Vis" to 5-way toggle hypercubic connection display */
 void
 vis(void)
 {
-	int col,i,j;
-	Point a,b,c,d;
+	int i;
 
 	visflag++;
-	col=1;
-	if(visflag > 3)
-		draw(screen, boardrect, black, nil, ZP);
-	for(i = 0; i < 64; i++){
-		a.x=saux[i].r.min.x;
-		a.y=saux[i].r.min.y;
-		b.x=saux[i].r.min.x;
-		b.y=saux[i].r.max.y;
-		for(j = 0; j < 6; j++){
-			b.x=saux[i].r.min.x;
-			b.y=saux[i].r.max.y;
-			sqi = i ^ (1<<j);
-			d.x=saux[sqi].r.min.x;
-			d.y=saux[sqi].r.min.y;
-			c.x=saux[sqi].r.min.x;
-			c.y=saux[sqi].r.max.y;
-			if(a.x == d.x){
-				b.x=saux[i].r.max.x;
-				b.y=saux[i].r.min.y;
-				c.x=saux[sqi].r.max.x;
-				c.y=saux[sqi].r.min.y;
-			}
-			if(visflag % 2)
-				col=j+2;
-			bezier(screen, a, b, c, d, 0, 0, 1, colorray[col], a);
-		}
-	}
-	if(visflag == 5)
+	if(visflag == 6)
 		visflag = 1;
+	for(i = 0; i < 64; i++)
+		selems[i].update(&selems[i]);
+	if(visflag != 1)
+		overlay();
 }
 
 void
