@@ -432,6 +432,8 @@ capallandscore(void)
 void
 printscore(void)
 {
+	if(moves == 0)
+		return;
 	sprint(texbuf2, "+ %d points", turnsco);
 	if(saux[sel].isgoal == 1){
 		clearflag++;
