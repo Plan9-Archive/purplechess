@@ -34,6 +34,7 @@ ctgr(int find)
 {
 	int i;
 
+	return find;
 	for(i=0; i <64; i++)
 		if(grtc[i] == find)
 			return i;
@@ -59,7 +60,7 @@ dogetwindow(void)
 void
 elemsinit(void)
 {
-	int i, a; /* index, aux index */
+	int i, a, b; /* index, aux index, adjust */
 	Divtype dt;
 	
 	for(i = 0; i < 64; i++){
@@ -117,7 +118,7 @@ elemsinit(void)
 	}
 	a = 1;
 	for(i = 0; i < 31; i++){
-		if(i > 2)
+		if(i > 6)
 			dt = Vdiv;
 		else
 			dt = Hdiv;
@@ -128,14 +129,18 @@ elemsinit(void)
 		tree[i].rb = &pelems[a+1];
 		a += 2;
 	}
-	a = 0;
+	a = 62;
+	b = -3;
 	for(i = 31; i < 63; i++){
-		tree[i].vh = Hdiv;
+		tree[i].vh = Vdiv;
 		tree[i].w = 1;
 		tree[i].d = 0.5;
-		tree[i].lt = &selems[a];
-		tree[i].rb = &selems[a+1];
-		a += 2;
+		tree[i].lt = &selems[a + (b * 2)];
+		tree[i].rb = &selems[a+1 + (b * 2)];
+		a -= 2;
+		b += 2;
+		if(b == 5)
+			b = -3;
 	}
 	for(i = 0; i < nelem(pelems); i++){
 		pelems[i] = (Guielem){i, &tree[i], guipartinit, guipartresize, guipartupdate, guipartmouse, guipartkeyboard};
@@ -370,7 +375,7 @@ aftercoins(void)
 		saux[sqi].active = 1;
 	}
 	sel=current;
-	if(pos->sq[grtc[current]] != NOPIECE)
+	if(pos->sq[current] != NOPIECE)
 		pcson--;
 }
 
@@ -530,7 +535,8 @@ activehit(void)
 	saux[current].iscurrent = 0;
 	oldsq = current;
 	current = sel;
-	chessq = grtc[sel];
+//	chessq = grtc[sel];
+	chessq = sel;
 	/* the chess code uses the move # pos->n to determine capture color legality */
 	pos->n = 0;
 	if(pos->sq[chessq] & BLACK)

@@ -130,7 +130,8 @@ redraw(Square *s)
 	Point targ, dest;
 	Rectangle align;
 
-	chsq=gtc[s->id];
+//	chsq=gtc[s->id];
+	chsq=s->id;
 	align.min.x = s->r.min.x;
 	align.min.y = s->r.min.y;
 	if((s->r.max.y - s->r.min.y) > 75)
