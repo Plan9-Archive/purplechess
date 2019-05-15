@@ -29,16 +29,24 @@ char texbuf[512], texbuf2[512], texbuf3[512];;
 /* this array converts from gray id to chess square id and is duplicated in square.c */
 int grtc[64] = {56,48,57,49,58,50,59,51,60,52,61,53,62,54,63,55,40,32,41,33,42,34,43,35,44,36,45,37,46,38,47,39,24,16,25,17,26,18,27,19,28,20,29,21,30,22,31,23,8,0,9,1,10,2,11,3,12,4,13,5,14,6,15,7};
 
+int grtoch[64] = {56, 57, 48, 49, 58, 59, 50, 51, 40, 41, 32, 33, 42, 43, 34, 35, 60, 61, 52, 53, 62, 63, 54, 55, 44, 45, 36, 37, 46, 47, 38, 39, 24, 25, 16, 17, 26, 27, 18, 19, 8, 9, 0, 1, 10, 11, 2, 3, 28, 29, 20, 21, 30, 31, 22, 23, 12, 13, 4, 5, 14, 15, 6, 7};
+
 int
-ctgr(int find)
+chtogr(int find)
 {
 	int i;
 
-	return find;
 	for(i=0; i <64; i++)
-		if(grtc[i] == find)
+		if(grtoch[i] == find)
 			return i;
+	sysfatal("chtogr not found");
 	return 0;
+}
+
+int
+ctgr(int find)
+{
+	return find;
 }
 
 void
@@ -60,9 +68,11 @@ dogetwindow(void)
 void
 elemsinit(void)
 {
-	int i, a, b; /* index, aux index, adjust */
+	int i, a, b, conv; /* index, aux index, adjust */
 	Divtype dt;
-	
+
+	for(i = 0; i < 64; i++)
+		saux[i].id = i;
 	for(i = 0; i < 64; i++){
 		selems[i].tag = i;
 		selems[i].aux = &saux[i];
@@ -71,7 +81,7 @@ elemsinit(void)
 		selems[i].update = squareupdate;
 		selems[i].mouse = squaremouse;
 		selems[i].keyboard = squarekeyboard;
-		saux[i].id = i;
+//		saux[i].id = i;
 		saux[i].isstart = 0;
 		saux[i].active = 0;
 		saux[i].isgoal = 0;
@@ -79,18 +89,25 @@ elemsinit(void)
 		saux[i].drawid = 0;
 		saux[i].drawhexa = 0;
 		sprint(saux[i].binid, "000000");
-		if(saux[i].id & 32)
+		conv=chtogr(i);
+//		conv=i;
+		if(saux[conv].id > 0)
+			print(".");
+		if(saux[conv].id & 32){
+//			sysfatal("32 bit found");
 			saux[i].binid[0] = '1';
-		if(saux[i].id & 16)
+		}
+		if(saux[conv].id & 16)
 			saux[i].binid[1] = '1';
-		if(saux[i].id & 8)
+		if(saux[conv].id & 8)
 			saux[i].binid[2] = '1';
-		if(saux[i].id & 4)
+		if(saux[conv].id & 4)
 			saux[i].binid[3] = '1';
-		if(saux[i].id & 2)
+		if(saux[conv].id & 2)
 			saux[i].binid[4] = '1';
-		if(saux[i].id & 1)
+		if(saux[conv].id & 1)
 			saux[i].binid[5] = '1';
+		print("i: %d chtogr: %d binid: %s\n", i, conv, saux[i].binid);
 		if((saux[i].binid[0] == '0') && (saux[i].binid[1] == '0'))
 			sprint(saux[i].engname, "purple     ");
 		if((saux[i].binid[0] == '0') && (saux[i].binid[1] == '1'))
