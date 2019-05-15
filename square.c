@@ -23,8 +23,6 @@ Image *masks[7];
 char *maskdir = "/sys/games/lib/chess";
 enum{NPATH = 256};
 
-int gtc[64] = {56,48,57,49,58,50,59,51,60,52,61,53,62,54,63,55,40,32,41,33,42,34,43,35,44,36,45,37,46,38,47,39,24,16,25,17,26,18,27,19,28,20,29,21,30,22,31,23,8,0,9,1,10,2,11,3,12,4,13,5,14,6,15,7};
-
 Image *
 alloccolor(uint color)
 {
@@ -130,7 +128,6 @@ redraw(Square *s)
 	Point targ, dest;
 	Rectangle align;
 
-//	chsq=gtc[s->id];
 	chsq=s->id;
 	align.min.x = s->r.min.x;
 	align.min.y = s->r.min.y;

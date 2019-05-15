@@ -26,9 +26,6 @@ Rectangle textrect, textrect2, textrect3, boardrect;
 char moving[6];
 char texbuf[512], texbuf2[512], texbuf3[512];;
 
-/* this array converts from gray id to chess square id and is duplicated in square.c */
-int grtc[64] = {56,48,57,49,58,50,59,51,60,52,61,53,62,54,63,55,40,32,41,33,42,34,43,35,44,36,45,37,46,38,47,39,24,16,25,17,26,18,27,19,28,20,29,21,30,22,31,23,8,0,9,1,10,2,11,3,12,4,13,5,14,6,15,7};
-
 int grtoch[64] = {56, 57, 48, 49, 58, 59, 50, 51, 40, 41, 32, 33, 42, 43, 34, 35, 60, 61, 52, 53, 62, 63, 54, 55, 44, 45, 36, 37, 46, 47, 38, 39, 24, 25, 16, 17, 26, 27, 18, 19, 8, 9, 0, 1, 10, 11, 2, 3, 28, 29, 20, 21, 30, 31, 22, 23, 12, 13, 4, 5, 14, 15, 6, 7};
 
 int
@@ -41,12 +38,6 @@ chtogr(int find)
 			return i;
 	sysfatal("chtogr not found");
 	return 0;
-}
-
-int
-ctgr(int find)
-{
-	return find;
 }
 
 void
@@ -81,7 +72,6 @@ elemsinit(void)
 		selems[i].update = squareupdate;
 		selems[i].mouse = squaremouse;
 		selems[i].keyboard = squarekeyboard;
-//		saux[i].id = i;
 		saux[i].isstart = 0;
 		saux[i].active = 0;
 		saux[i].isgoal = 0;
@@ -90,13 +80,8 @@ elemsinit(void)
 		saux[i].drawhexa = 0;
 		sprint(saux[i].binid, "000000");
 		conv=chtogr(i);
-//		conv=i;
-		if(saux[conv].id > 0)
-			print(".");
-		if(saux[conv].id & 32){
-//			sysfatal("32 bit found");
+		if(saux[conv].id & 32)
 			saux[i].binid[0] = '1';
-		}
 		if(saux[conv].id & 16)
 			saux[i].binid[1] = '1';
 		if(saux[conv].id & 8)
@@ -107,7 +92,6 @@ elemsinit(void)
 			saux[i].binid[4] = '1';
 		if(saux[conv].id & 1)
 			saux[i].binid[5] = '1';
-		print("i: %d chtogr: %d binid: %s\n", i, conv, saux[i].binid);
 		if((saux[i].binid[0] == '0') && (saux[i].binid[1] == '0'))
 			sprint(saux[i].engname, "purple     ");
 		if((saux[i].binid[0] == '0') && (saux[i].binid[1] == '1'))
@@ -413,39 +397,40 @@ capallandscore(void)
 		if((pos->sq[i] & TARGET) && (pos->sq[i] != NOPIECE)){
 			if((pos->sq[i] & PC) == PAWN){
 				sco = 125;
-				if(saux[ctgr(i)].active != 2)
+				if(saux[i].active != 2)
 					pcson--; 
 			}
 			if((pos->sq[i] & PC) == KNIGHT){
 				sco = 325;
-				if(saux[ctgr(i)].active != 2)
+				if(saux[i].active != 2)
 					pcson--; 
 			}
 			if((pos->sq[i] & PC) == BISHOP){
 				sco = 350;
-				if(saux[ctgr(i)].active != 2)
+				if(saux[i].active != 2)
 					pcson--; 
 			}
 			if((pos->sq[i] & PC) == ROOK){
 				sco = 675;
-				if(saux[ctgr(i)].active != 2)
+				if(saux[i].active != 2)
 					pcson--; 
 			}
 			if((pos->sq[i] & PC) == QUEEN){
 				sco = 1050;
-				if(saux[ctgr(i)].active != 2)
+				if(saux[i].active != 2)
 					pcson--; 
 			}
 			if((pos->sq[i] & PC) == KING){
 				sco = 825;
-				if(saux[ctgr(i)].active != 2)
+				if(saux[i].active != 2)
 					pcson--; 
 			}
+
 			if(pos->n == 1)
 				wscore += sco;
 			if(pos->n == 0)
 				bscore += sco;
-			if(saux[ctgr(i)].moveline == 1)
+			if(saux[i].moveline == 1)
 				sco = (sco * 2) + 250;
 			turnsco += sco;
 			if(i != chessq)
