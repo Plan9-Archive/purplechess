@@ -169,7 +169,7 @@ redraw(Square *s)
 		}
 		break;
 	}
-	if(s->moveline == 1){
+	if(s->moveline == 1){ /* adds cross to squares given bonus via coinflips */
 		color = baize;
 		if(s->active == 2)
 			color = purple;
@@ -206,7 +206,7 @@ redraw(Square *s)
 		fillellipse(screen, targ, ell1, ell1, color, targ);
 	}
 	switch(s->line){
-	case 1:
+	case 1: /* straight line across */
 		color=visflag < 3 ? black : whtpc;
 		targ.x = s->r.min.x;
 		targ.y = s->r.min.y + ((s->r.max.y - s->r.min.y) / 2);
@@ -214,7 +214,7 @@ redraw(Square *s)
 		dest.y = targ.y;
 		line(screen, targ, dest, 0, 0, 4, color, targ);
 		break;
-	case 2:
+	case 2: /* line plus overlapping circle */
 		color=visflag < 3 ? black : whtpc;
 		targ.x = s->r.min.x;
 		targ.y = s->r.min.y + ((s->r.max.y - s->r.min.y) / 2);
@@ -230,7 +230,7 @@ redraw(Square *s)
 		ell1 = ell1 - 25;
 		ellipse(screen, targ, ell1, ell1, 4, color, targ);
 		break;
-	case 3:
+	case 3: /* line with an X across it */
 		color=visflag < 3 ? black : whtpc;
 		targ.x = s->r.min.x;
 		targ.y = s->r.min.y + ((s->r.max.y - s->r.min.y) / 2);
@@ -250,6 +250,7 @@ redraw(Square *s)
 		break;
 	}
 	if(s->drawhexa == 1){
+		/* ell1 and ell2 are scaling factors setting to 2 shrinks that dimension */
 		ell1 = 1;
 		ell2 = 1;
 		if((s->r.max.x - s->r.min.x) < 82)

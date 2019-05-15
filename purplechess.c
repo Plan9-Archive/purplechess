@@ -19,15 +19,17 @@ Guielem *root = &pelems[0];
 Guielem *mousetarg;
 char *buttons3[] = {"Help", "Hexa", "Binary", "View", "Seed", "Reset", "Retry", "Exit", nil};
 Menu menu3 = {buttons3};
-int sel, sqi, start, goal, current, oldsq, chessq, legalclick, wscore, bscore, moves, pcson, clearflag, hexdisp, turnsco, totalsco, legalsqs;
+int sel, sqi, start, goal, current, oldsq, legalclick, wscore, bscore, moves, pcson, clearflag, hexdisp, turnsco, totalsco, legalsqs;
 long seed;
 Image *colorray[8];
 Rectangle textrect, textrect2, textrect3, boardrect;
 char moving[6];
 char texbuf[512], texbuf2[512], texbuf3[512];;
 
+/* convert gray code ids to chess square ids */
 int grtoch[64] = {56, 57, 48, 49, 58, 59, 50, 51, 40, 41, 32, 33, 42, 43, 34, 35, 60, 61, 52, 53, 62, 63, 54, 55, 44, 45, 36, 37, 46, 47, 38, 39, 24, 25, 16, 17, 26, 27, 18, 19, 8, 9, 0, 1, 10, 11, 2, 3, 28, 29, 20, 21, 30, 31, 22, 23, 12, 13, 4, 5, 14, 15, 6, 7};
 
+/* and vice versa, chess ids to gray ids */
 int
 chtogr(int find)
 {
@@ -36,8 +38,8 @@ chtogr(int find)
 	for(i=0; i <64; i++)
 		if(grtoch[i] == find)
 			return i;
-	sysfatal("chtogr not found");
-	return 0;
+	sysfatal("fatal error, nonexistent square id in chtogr()");
+	return -1;
 }
 
 void
@@ -55,7 +57,7 @@ dogetwindow(void)
 	draw(screen, screen->r, display->black, nil, ZP);
 }
 
-/* breadth-first generation, 6 tree layers deep only */
+/* generate board structure and id metadata */
 void
 elemsinit(void)
 {
@@ -64,6 +66,7 @@ elemsinit(void)
 
 	for(i = 0; i < 64; i++)
 		saux[i].id = i;
+	/* the base id has to be set prior to the next loop for the binid setting to work */
 	for(i = 0; i < 64; i++){
 		selems[i].tag = i;
 		selems[i].aux = &saux[i];
@@ -79,6 +82,7 @@ elemsinit(void)
 		saux[i].drawid = 0;
 		saux[i].drawhexa = 0;
 		sprint(saux[i].binid, "000000");
+		/* convert chess id to gray id and use bitshifts to generate gray binary id */
 		conv=chtogr(i);
 		if(saux[conv].id & 32)
 			saux[i].binid[0] = '1';
@@ -130,6 +134,7 @@ elemsinit(void)
 		tree[i].rb = &pelems[a+1];
 		a += 2;
 	}
+	/* the convoluted adjustments here are to get the numbering to match the chess code */
 	a = 62;
 	b = -3;
 	for(i = 31; i < 63; i++){
@@ -148,6 +153,7 @@ elemsinit(void)
 	}
 }
 
+/* initialize a fresh chessboard of pieces and randomize their positions */
 void
 chessinit(void)
 {
@@ -180,6 +186,7 @@ chessinit(void)
 	}
 }
 
+/* set initial ingame variables, flip coins for starting hexagram */
 void
 gamereset(void)
 {
@@ -208,6 +215,7 @@ gamereset(void)
 	/* 3 coin method of hexagram generation */
 	for(i=0; i < 6; i++)
 		moving[i] = '0';
+	/* for no good reason we use gray ids for generating flips */
 	for(i=0; i < 5; i++)	
 		saux[grtoch[i]].coin = nrand(2) + 2;
 	saux[grtoch[6]].coin = nrand(2) + 2;
@@ -226,7 +234,7 @@ gamereset(void)
 	for(i=48; i < 53; i++)
 		saux[grtoch[i]].line = 1;
 	saux[grtoch[54]].line = 1;
-	/* calculate starting position and moving lines */
+	/* calculate starting position and moving lines, we switch to chess ids here */
 	csum=saux[56].coin + saux[57].coin + saux[58].coin;
 	switch(csum){
 	case 6:
@@ -433,7 +441,7 @@ capallandscore(void)
 			if(saux[i].moveline == 1)
 				sco = (sco * 2) + 250;
 			turnsco += sco;
-			if(i != chessq)
+			if(i != sel)
 				pos->sq[i] = NOPIECE;
 		}
 	}
@@ -447,6 +455,7 @@ printscore(void)
 	if(moves == 0)
 		return;
 	sprint(texbuf2, "+ %d points", turnsco);
+	/* intial bit-inverse goal square reached */
 	if(saux[sel].isgoal == 1){
 		clearflag++;
 		if((11 - moves) > 0){
@@ -457,6 +466,7 @@ printscore(void)
 		sprint(texbuf2, "+ %d, GOAL REACHED!", turnsco);
 		stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
 	}
+	/* all pieces captured or highlighted by path */
 	if((clearflag < 2) && (pcson == 0)){
 		clearflag++;
 		turnsco += (64 - moves) * 500;
@@ -464,6 +474,7 @@ printscore(void)
 		sprint(texbuf2, "+ %d, ALL PIECES SCORED!", turnsco);
 		stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
 	}
+	/* no moves available, game is over */
 	if((legalsqs == 0) && (clearflag != 3)){
 		clearflag = 3;
 		turnsco += moves * 375;
@@ -487,7 +498,6 @@ printscore(void)
 		sprint(texbuf3, "Game Over, reset from right-button menu");
 		break;
 	}
-//	sprint(texbuf, "sco: %d w: %d b: %d move: %d avg: %d  pcs: %d", totalsco, wscore, bscore, moves, (wscore + bscore) / moves, pcson);
 	sprint(texbuf, "score: %d  move: %d  pieces: %d", totalsco, moves, pcson);
 	textrect3.min.x = screen->r.max.x - (stringwidth(font, texbuf3) + 10);
 	stringbg(screen, textrect3.min, white, ZP, font, texbuf3, black, textrect3.min);
@@ -542,14 +552,12 @@ activehit(void)
 	saux[current].iscurrent = 0;
 	oldsq = current;
 	current = sel;
-//	chessq = grtc[sel];
-	chessq = sel;
 	/* the chess code uses the move # pos->n to determine capture color legality */
 	pos->n = 0;
-	if(pos->sq[chessq] & BLACK)
+	if(pos->sq[sel] & BLACK)
 		pos->n = 1;
 	cleartargs();
-	findtargs(chessq);
+	findtargs(sel);
 	capallandscore();
 	saux[sel].active = 2;
 	saux[sel].iscurrent = 1;
@@ -576,6 +584,7 @@ activehit(void)
 		overlay();
 }
 
+/* calculate window divisions into board and text areas */
 void
 boardsize(void)
 {
@@ -708,7 +717,7 @@ menureset(int retry)
 		selems[i].update(&selems[i]);
 }
 
-/* menu option "Vis" to 5-way toggle hypercubic connection display */
+/* menu option "View" to 5-way toggle hypercubic connection display */
 void
 vis(void)
 {
@@ -723,6 +732,7 @@ vis(void)
 		overlay();
 }
 
+/* initialize state and enter main gameloop */
 void
 threadmain(int argc, char **argv)
 {
@@ -768,11 +778,11 @@ threadmain(int argc, char **argv)
 	vi = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0xB614FFFF);
 	colorray[0]=black;
 	colorray[1]=white;
-	colorray[2]=re;
+	colorray[2]=bl;
 	colorray[3]=or;
-	colorray[4]=gr;
-	colorray[5]=bl;
-	colorray[6]=in;
+	colorray[4]=in;
+	colorray[5]=gr;
+	colorray[6]=re;
 	colorray[7]=vi;
 	if(seed == 0)
 		seed=time(0);
