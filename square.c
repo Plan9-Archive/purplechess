@@ -147,7 +147,7 @@ redraw(Square *s)
 			draw(screen,s->r, black, nil, ZP);
 			break;
 		}
-		if((s->id % 4 == 0) || (s->id % 4 == 3))
+		if((s->id % 2 == (s->id / 8) % 2))
 			draw(screen, s->r, off, nil, ZP);
 		else 
 			draw(screen, s->r, off2, nil, ZP);
