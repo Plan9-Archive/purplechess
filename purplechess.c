@@ -774,13 +774,13 @@ threadmain(int argc, char **argv)
 	ye = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0xFFFF4FFF);
 	gr = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x67FF53FF);
 	bl = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x39C1FFFF);
-	in = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x4026FFFF);
+	in = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x0000FFFF);
 	vi = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0xB614FFFF);
 	colorray[0]=black;
 	colorray[1]=white;
-	colorray[2]=bl;
+	colorray[2]=in;
 	colorray[3]=or;
-	colorray[4]=in;
+	colorray[4]=bl;
 	colorray[5]=gr;
 	colorray[6]=re;
 	colorray[7]=vi;

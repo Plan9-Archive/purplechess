@@ -17,7 +17,7 @@ static Image *click;
 static Image *goal;
 static Image *purple;
 static Image *orange;
-Image *baize, *dark, *light, *blkpc, *whtpc, *hlsq;
+Image *baize, *dark, *light, *blkpc, *altblkpc, *whtpc, *hlsq;
 Image *hstbg, *hstfg, *msgbg, *msgfg, *scrbar;
 Image *masks[7];
 char *maskdir = "/sys/games/lib/chess";
@@ -79,6 +79,7 @@ squareinit(Guielem*)
 		goal = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x4C95FFFF);
 		purple = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0xAA55EEFF);
 		orange = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0xE4A02AFF);
+		altblkpc = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x4026FFFF);
 		baize = alloccolor(DDarkgreen);
 		dark = alloccolor(DYellowgreen);
 		light = alloccolor(DPaleyellow);
@@ -189,7 +190,7 @@ redraw(Square *s)
 		if((s->active == 1) && (s->isgoal == 1))
 			color = click;
 		if((color == blkpc) && (visflag > 3))
-			color = in;
+			color = altblkpc;
 		draw(screen, align, color, masks[pos->sq[chsq] & PC], ZP);
 	}
 	if(s->coin != 0){
