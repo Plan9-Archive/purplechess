@@ -222,131 +222,136 @@ gamereset(void)
 	clearflag = 0;
 	pcson = 32;
 	/* 3 coin method of hexagram generation */
-	for(i=0; i < 6; i++){
-		saux[i].coin = nrand(2) + 2;
+	for(i=0; i < 6; i++)
 		moving[i] = '0';
-	}
-	for(i=16; i < 22; i++)
-		saux[i].coin = nrand(2) + 2;
-	for(i=32; i < 38; i++)
-		saux[i].coin = nrand(2) + 2;
-	for(i=8; i < 14; i++)
-		saux[i].line = 1;
-	for(i=8; i < 14; i++)
-		saux[i].line = 1;
-	for(i=24; i < 30; i++)
-		saux[i].line = 1;
-	for(i=40; i < 46; i++)
-		saux[i].line = 1;
+	for(i=0; i < 5; i++)	
+		saux[grtoch[i]].coin = nrand(2) + 2;
+	saux[grtoch[6]].coin = nrand(2) + 2;
+	for(i=8; i < 13; i++)
+		saux[grtoch[i]].coin = nrand(2) + 2;
+	saux[grtoch[14]].coin = nrand(2) + 2;	
+	for(i=32; i < 37; i++)
+		saux[grtoch[i]].coin = nrand(2) + 2;
+	saux[grtoch[38]].coin = nrand(2) + 2;	
+	for(i=16; i < 21; i++)
+		saux[grtoch[i]].line = 1;
+	saux[grtoch[22]].line = 1;
+	for(i=24; i < 29; i++)
+		saux[grtoch[i]].line = 1;
+	saux[grtoch[30]].line = 1;
+	for(i=48; i < 53; i++)
+		saux[grtoch[i]].line = 1;
+	saux[grtoch[54]].line = 1;
 	/* calculate starting position and moving lines */
-	csum=saux[0].coin + saux[2].coin + saux[4].coin;
+	csum=saux[56].coin + saux[57].coin + saux[58].coin;
 	switch(csum){
 	case 6:
 		start +=1;
-		saux[10].line = 3;
+		saux[61].line = 3;
 		moving[5] = '1';
 		break;
 	case 7:
 		start +=1;
 		break;
 	case 8:
-		saux[10].line = 0;
+		saux[61].line = 0;
 		 break;
 	case 9:
-		saux[10].line = 2;
+		saux[61].line = 2;
 		moving[5] = '1';
 		break;
 	}
-	csum=saux[1].coin + saux[3].coin + saux[5].coin;
+	csum=saux[48].coin + saux[49].coin + saux[50].coin;
 	switch(csum){
 	case 6:
 		start += 2;
-		saux[11].line = 3;
+		saux[53].line = 3;
 		moving[4] = '1';
 		break;
 	case 7:
 		start += 2;
 		break;
 	case 8:
-		saux[11].line = 0;
+		saux[53].line = 0;
 		 break;
 	case 9:
-		saux[11].line = 2;
+		saux[53].line = 2;
 		moving[4] = '1';
 		break;
 	}
-	csum=saux[16].coin + saux[18].coin + saux[20].coin;
+	csum=saux[40].coin + saux[41].coin + saux[42].coin;
 	switch(csum){
 	case 6:
 		start += 4;
-		saux[26].line = 3;
+		saux[45].line = 3;
 		moving[3] = '1';
 		break;
 	case 7:
 		start += 4;
 		break;
 	case 8:
-		saux[26].line = 0;
+		saux[45].line = 0;
 		 break;
 	case 9:
-		saux[26].line = 2;
+		saux[45].line = 2;
 		moving[3] = '1';
 		break;
 	}
-	csum=saux[17].coin + saux[19].coin + saux[21].coin;
+	csum=saux[32].coin + saux[33].coin + saux[34].coin;
 	switch(csum){
 	case 6:
 		start += 8;
-		saux[27].line = 3;
+		saux[37].line = 3;
 		moving[2] = '1';
 		break;
 	case 7:
 		start += 8;
 		break;
 	case 8:
-		saux[27].line = 0;
+		saux[37].line = 0;
 		 break;
 	case 9:
-		saux[27].line = 2;
+		saux[37].line = 2;
 		moving[2] = '1';
 		break;
 	}
-	csum=saux[32].coin + saux[34].coin + saux[36].coin;
+	csum=saux[24].coin + saux[25].coin + saux[26].coin;
 	switch(csum){
 	case 6:
 		start += 16;
-		saux[42].line = 3;
+		saux[29].line = 3;
 		moving[1] = '1';
 		break;
 	case 7:
 		start += 16;
 		break;
 	case 8:
-		saux[42].line = 0;
+		saux[29].line = 0;
 		 break;
 	case 9:
-		saux[42].line = 2;
+		saux[29].line = 2;
 		moving[1] = '1';
 		break;
 	}
-	csum=saux[33].coin + saux[35].coin + saux[37].coin;
+	csum=saux[16].coin + saux[17].coin + saux[18].coin;
 	switch(csum){
 	case 6:
 		start += 32;
-		saux[43].line = 3;
+		saux[21].line = 3;
 		moving[0] = '1';
 		break;
 	case 7:
 		start += 32;
 		break;
 	case 8:
-		saux[43].line = 0;
+		saux[21].line = 0;
 		 break;
 	case 9:
-		saux[43].line = 2;
+		saux[21].line = 2;
 		moving[0] = '1';
 		break;
 	}
+	start=grtoch[start];
 	current=start;
 	goal=63-start;
 	for(i = 0; i < 64; i++)
