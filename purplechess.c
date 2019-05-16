@@ -64,7 +64,7 @@ elemsinit(void)
 	int i, a, b, conv; /* index, aux index, adjust */
 	Divtype dt;
 
-	for(i = 0; i < 64; i++)
+	for(i=0; i < 64; i++)
 		saux[i].id = i;
 	/* the base id has to be set prior to the next loop for the binid setting to work */
 	for(i = 0; i < 64; i++){
@@ -122,7 +122,7 @@ elemsinit(void)
 			sprint(saux[i].engname + 19, "war ");
 	}
 	a = 1;
-	for(i = 0; i < 31; i++){
+	for(i=0; i < 31; i++){
 		if(i > 6)
 			dt = Vdiv;
 		else
@@ -137,7 +137,7 @@ elemsinit(void)
 	/* the convoluted adjustments here are to get the numbering to match the chess code */
 	a = 62;
 	b = -3;
-	for(i = 31; i < 63; i++){
+	for(i=31; i < 63; i++){
 		tree[i].vh = Vdiv;
 		tree[i].w = 1;
 		tree[i].d = 0.5;
@@ -148,7 +148,7 @@ elemsinit(void)
 		if(b == 5)
 			b = -3;
 	}
-	for(i = 0; i < nelem(pelems); i++)
+	for(i=0; i < nelem(pelems); i++)
 		pelems[i] = (Guielem){i, &tree[i], guipartinit, guipartresize, guipartupdate, guipartmouse, guipartkeyboard};
 }
 
@@ -168,20 +168,20 @@ chessinit(void)
 	pos->sq[2] = pos->sq[5] = pos->sq[58] = pos->sq[61] = BISHOP;
 	pos->sq[3] = pos->sq[59] = QUEEN;
 	pos->sq[4] = pos->sq[60] = KING;
-	for(i = 0; i < 8; i++)
+	for(i=0; i < 8; i++)
 		pos->sq[i+8] = pos->sq[i + 48] = PAWN;
-	for(i = 0; i < 16; i++)
+	for(i=0; i < 16; i++)
 		pos->sq[i] |= WHITE;
-	for(i = 48; i < 64; i++)
+	for(i=48; i < 64; i++)
 		pos->sq[i] |= BLACK;
-	for(i = 16; i < 48; i++)
+	for(i=16; i < 48; i++)
 		pos->sq[i] = NOPIECE;
 	/* in-place fisher-yates shuffle randomization of pieces on board */
-	for(i = 63; i >= 0; i--){
-		j=nrand(i+1);
-		tmp=pos->sq[i];
-		pos->sq[i]=pos->sq[j];
-		pos->sq[j]=tmp;
+	for(i=63; i >= 0; i--){
+		j = nrand(i+1);
+		tmp = pos->sq[i];
+		pos->sq[i] = pos->sq[j];
+		pos->sq[j] = tmp;
 	}
 }
 
@@ -237,12 +237,12 @@ gamereset(void)
 	csum=saux[56].coin + saux[57].coin + saux[58].coin;
 	switch(csum){
 	case 6:
-		start +=1;
+		start += 1;
 		saux[61].line = 3;
 		moving[5] = '1';
 		break;
 	case 7:
-		start +=1;
+		start += 1;
 		break;
 	case 8:
 		saux[61].line = 0;
@@ -366,12 +366,12 @@ aftercoins(void)
 {
 	int i;
 
-	for(i = 0; i < 64; i++){
+	for(i=0; i < 64; i++){
 		saux[i].drawpiece = 1;
 		saux[i].coin = 0;
 		saux[i].line = 0;
 	}
-	for(i = 0; i < 6; i++){
+	for(i=0; i < 6; i++){
 		if(moving[i] == '1'){
 			sqi = start ^ (1<<i);
 			saux[sqi].moveline = 1;
@@ -432,7 +432,6 @@ capallandscore(void)
 				if(saux[i].active != 2)
 					pcson--; 
 			}
-
 			if(pos->n == 1)
 				wscore += sco;
 			if(pos->n == 0)
@@ -513,26 +512,26 @@ overlay(void)
 
 	col=1;
 	for(i = 0; i < 64; i++){
-		a.x=saux[i].r.min.x;
-		a.y=saux[i].r.min.y;
-		b.x=saux[i].r.min.x;
-		b.y=saux[i].r.max.y;
+		a.x = saux[i].r.min.x;
+		a.y = saux[i].r.min.y;
+		b.x = saux[i].r.min.x;
+		b.y = saux[i].r.max.y;
 		for(j = 0; j < 6; j++){
-			b.x=saux[i].r.min.x;
-			b.y=saux[i].r.max.y;
+			b.x = saux[i].r.min.x;
+			b.y = saux[i].r.max.y;
 			sqi = i ^ (1<<j);
-			d.x=saux[sqi].r.min.x;
-			d.y=saux[sqi].r.min.y;
-			c.x=saux[sqi].r.min.x;
-			c.y=saux[sqi].r.max.y;
+			d.x = saux[sqi].r.min.x;
+			d.y = saux[sqi].r.min.y;
+			c.x = saux[sqi].r.min.x;
+			c.y = saux[sqi].r.max.y;
 			if(a.x == d.x){
-				b.x=saux[i].r.max.x;
-				b.y=saux[i].r.min.y;
-				c.x=saux[sqi].r.max.x;
-				c.y=saux[sqi].r.min.y;
+				b.x = saux[i].r.max.x;
+				b.y = saux[i].r.min.y;
+				c.x = saux[sqi].r.max.x;
+				c.y = saux[sqi].r.min.y;
 			}
 			if(visflag % 2)
-				col=j+2;
+				col = j + 2;
 			bezier(screen, a, b, c, d, 0, 0, 1, colorray[col], a);
 		}
 	}
@@ -614,37 +613,37 @@ instructions(void)
 	printat=boardrect.min;
 	sprint(texbuf, "Navigate the 6d hypercube along a Gray code path.");
 	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
-	printat.y +=25;
+	printat.y += 25;
 	sprint(texbuf, "Each piece you move onto captures everything it can.");
 	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
-	printat.y +=25;
+	printat.y += 25;
 	sprint(texbuf, "First travel from the gold square to the blue goal.");
 	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
-	printat.y +=25;
+	printat.y += 25;
 	sprint(texbuf, "Next select or capture every piece as fast as you can.");
 	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
-	printat.y +=25;
+	printat.y += 25;
 	sprint(texbuf, "Then attempt to visit all remaining squares.");
 	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
-	printat.y +=25;
+	printat.y += 25;
 	sprint(texbuf, "Points: P-125 Kt-325 B-350 R-675 K-825 Q-1050");
 	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
-	printat.y +=25;
+	printat.y += 25;
 	sprint(texbuf, "Squares marked with + score double and 250 extra");
 	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
-	printat.y +=25;
+	printat.y += 25;
 	sprint(texbuf, "Goal bonus 1000 + 4x score for 6 moves, 2x score for 8");
 	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
-	printat.y +=25;
+	printat.y += 25;
 	sprint(texbuf, "Piece clear score: 500 * (64 - moves)");
 	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
-	printat.y +=25;
+	printat.y += 25;
 	sprint(texbuf, "Cube fill score: 350 * squares filled");
 	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
-	printat.y +=25;
+	printat.y += 25;
 	sprint(texbuf, "Fill all squares bonus 10000 points");
 	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
-	printat.y +=25;
+	printat.y += 25;
 }
 
 /* menu option "Hexa" 3-way toggle */
@@ -681,7 +680,7 @@ binarytoggle(void)
 {
 	int i;
 
-	for(i = 0; i < 64; i++){
+	for(i=0; i < 64; i++){
 		if(saux[i].drawid == 0)
 			saux[i].drawid = 1;
 		else
@@ -712,7 +711,7 @@ menureset(int retry)
 	srand(seed);
 	chessinit();
 	gamereset();
-	for(i = 0; i < 64; i++)
+	for(i=0; i < 64; i++)
 		selems[i].update(&selems[i]);
 }
 
@@ -725,7 +724,7 @@ vis(void)
 	visflag++;
 	if(visflag == 6)
 		visflag = 1;
-	for(i = 0; i < 64; i++)
+	for(i=0; i < 64; i++)
 		selems[i].update(&selems[i]);
 	if(visflag != 1)
 		overlay();
@@ -775,16 +774,16 @@ threadmain(int argc, char **argv)
 	bl = alloccolor(0x39C1FFFF);
 	in = alloccolor(0x0000FFFF);
 	vi = alloccolor(0xB614FFFF);
-	colorray[0]=black;
-	colorray[1]=white;
-	colorray[2]=in;
-	colorray[3]=or;
-	colorray[4]=bl;
-	colorray[5]=gr;
-	colorray[6]=re;
-	colorray[7]=vi;
+	colorray[0] = black;
+	colorray[1] = white;
+	colorray[2] = in;
+	colorray[3] = or;
+	colorray[4] = bl;
+	colorray[5] = gr;
+	colorray[6] = re;
+	colorray[7] = vi;
 	if(seed == 0)
-		seed=time(0);
+		seed = time(0);
 	srand(seed);
 	elemsinit();
 	dogetwindow();
@@ -832,7 +831,7 @@ noflush:
 			}
 			/* the standard libguiparts mouse check is inconsistent; the loop of all selems is a workaround */
 //			sel = root->mouse(root, m);
-			for(i = 0; i < 64; i++){
+			for(i=0; i < 64; i++){
 				mousetarg = &selems[i];
 				sel = mousetarg->mouse(&selems[i], m);
 				if(sel != -1)
@@ -841,7 +840,6 @@ noflush:
 			if(m.buttons == 1){
 				if(sel < 0)
 					break;
-//				print(" (%d %d)", sel, grtc[sel]);
 				if((saux[sel].active == 1) || (moves == 0)){
 					legalclick = 1;
 					activehit();
@@ -863,7 +861,6 @@ noflush:
 				threadexitsall(nil);
 			goto noflush;
 		case NONE:
-			print("I'm a woodchuck, not a woodchucker! (thanks for playing)\n");
 			goto noflush;
 		}
 	}

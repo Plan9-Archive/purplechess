@@ -136,7 +136,6 @@ redraw(Square *s)
 		align.min.y = s->r.min.y +10;
 	align.max.x = s->r.max.x;
 	align.max.y = s->r.max.y;
-	
 	switch(s->active){
 	case 0: /* base checkerboard pattern of inactive squares */
 		if(s->isgoal == 1){
@@ -157,7 +156,6 @@ redraw(Square *s)
 			draw(screen,s->r, purple, nil, ZP);
 		else
 			draw(screen, s->r, on, nil, ZP);
-
 		break;
 	case 2: /* previously visited squares */
 		if(s->isgoal == 1)
@@ -194,16 +192,16 @@ redraw(Square *s)
 		draw(screen, align, color, masks[pos->sq[chsq] & PC], ZP);
 	}
 	if(s->coin != 0){
-		ell1=(s->r.max.x - s->r.min.x) / 2;
-		ell2=(s->r.max.y - s->r.min.y) / 2;
+		ell1 = (s->r.max.x - s->r.min.x) / 2;
+		ell2 = (s->r.max.y - s->r.min.y) / 2;
 		targ.x = s->r.min.x + ell1;
 		targ.y = s->r.min.y + ell2;
 		if(ell2 < ell1)
 			ell1 = ell2;
 		ell1 = ell1 - 5;
-		color=blkpc;
+		color = blkpc;
 		if((s->coin % 2) == 1)
-			color=whtpc;
+			color = whtpc;
 		fillellipse(screen, targ, ell1, ell1, color, targ);
 	}
 	switch(s->line){
@@ -232,7 +230,7 @@ redraw(Square *s)
 		ellipse(screen, targ, ell1, ell1, 4, color, targ);
 		break;
 	case 3: /* line with an X across it */
-		color=visflag < 3 ? black : whtpc;
+		color = visflag < 3 ? black : whtpc;
 		targ.x = s->r.min.x;
 		targ.y = s->r.min.y + ((s->r.max.y - s->r.min.y) / 2);
 		dest.x = s->r.max.x;
