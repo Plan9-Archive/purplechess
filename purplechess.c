@@ -148,9 +148,8 @@ elemsinit(void)
 		if(b == 5)
 			b = -3;
 	}
-	for(i = 0; i < nelem(pelems); i++){
+	for(i = 0; i < nelem(pelems); i++)
 		pelems[i] = (Guielem){i, &tree[i], guipartinit, guipartresize, guipartupdate, guipartmouse, guipartkeyboard};
-	}
 }
 
 /* initialize a fresh chessboard of pieces and randomize their positions */

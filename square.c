@@ -153,19 +153,19 @@ redraw(Square *s)
 			draw(screen, s->r, off2, nil, ZP);
 		break;
 	case 1: /* legal target squares, green unless they are the purple goal */
-		if(s->isgoal == 1){
+		if(s->isgoal == 1)
 			draw(screen,s->r, purple, nil, ZP);
-		} else
+		else
 			draw(screen, s->r, on, nil, ZP);
 
 		break;
 	case 2: /* previously visited squares */
-		if(s->isgoal == 1){
+		if(s->isgoal == 1)
 			draw(screen,s->r, purple, nil, ZP);
-		} else {
-			if(s->iscurrent == 1) {
+		else {
+			if(s->iscurrent == 1)
 				draw(screen,s->r, orange, nil, ZP);
-			} else
+			else
 				draw(screen, s->r, click, nil, ZP);
 		}
 		break;
