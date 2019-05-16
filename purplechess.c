@@ -767,15 +767,15 @@ threadmain(int argc, char **argv)
 		[KEYS] = {kctl->c, &r, CHANRCV},
 		[NONE] =  {nil, nil, CHANEND}
 	};
-	white = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0xFFFFFFFF);
-	black = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x000000FF);
-	re = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0xFF3D60FF);
-	or = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0xFFB347FF);	
-	ye = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0xFFFF4FFF);
-	gr = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x67FF53FF);
-	bl = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x39C1FFFF);
-	in = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x0000FFFF);
-	vi = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0xB614FFFF);
+	white = alloccolor(0xFFFFFFFF);
+	black = alloccolor(0x000000FF);
+	re = alloccolor(0xFF3D60FF);
+	or = alloccolor(0xFFB347FF);
+	ye = alloccolor(0xFFFF4FFF);
+	gr = alloccolor(0x67FF53FF);
+	bl = alloccolor(0x39C1FFFF);
+	in = alloccolor(0x0000FFFF);
+	vi = alloccolor(0xB614FFFF);
 	colorray[0]=black;
 	colorray[1]=white;
 	colorray[2]=in;

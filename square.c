@@ -72,14 +72,14 @@ squareinit(Guielem*)
 
 	/* is this really the right place for all this stuff? */
 	if(off == nil){
-		off = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x666666FF);
-		off2 = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x888888FF);
-		on = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x10B754FF);
-		click = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x990000FF);
-		goal = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x4C95FFFF);
-		purple = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0xAA55EEFF);
-		orange = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0xE4A02AFF);
-		altblkpc = allocimage(display, Rect(0,0,1,1), RGB24, 1, 0x4026FFFF);
+		off = alloccolor(0x666666FF);
+		off2 = alloccolor(0x888888FF);
+		on = alloccolor(0x10B754FF);
+		click = alloccolor(0x990000FF);
+		goal = alloccolor(0x4C95FFFF);
+		purple = alloccolor(0xAA55EEFF);
+		orange = alloccolor(0xE4A02AFF);
+		altblkpc = alloccolor(0x4026FFFF);
 		baize = alloccolor(DDarkgreen);
 		dark = alloccolor(DYellowgreen);
 		light = alloccolor(DPaleyellow);
