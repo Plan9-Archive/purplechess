@@ -10,96 +10,17 @@
 #include "square.h"
 #include "chessdat.h"
 
-static Image *on;
-static Image *off;
-static Image *off2;
-static Image *click;
-static Image *goal;
-static Image *purple;
-static Image *orange;
-Image *baize, *dark, *light, *blkpc, *altblkpc, *whtpc, *hlsq;
-Image *hstbg, *hstfg, *msgbg, *msgfg, *scrbar;
-Image *masks[7];
-char *maskdir = "/sys/games/lib/chess";
-enum{NPATH = 256};
-
-Image *
-alloccolor(uint color)
-{
-	Image *tmp;
-
-	tmp = allocimage(display, Rect(0,0,1,1), RGBA32, 1, color);
-	if(tmp == nil)
-		sysfatal("cannot allocate buffer image: %r");
-	return tmp;
-}
-
-Image *
-alloccolormix(uint color1, uint color2)
-{
-	Image *tmp;
-
-	tmp = allocimagemix(display, color1, color2);
-	if(tmp == nil)
-		sysfatal("cannot allocate buffer image: %r");
-	return tmp;
-}
-
-Image *
-allocmask(char *m)
-{
-	Image *tmp;
-	int fd;
-	char path[NPATH];
-
-	snprint(path, NPATH, "%s/%s.bit", maskdir, m);
-	fd = open(path, OREAD);
-	if(fd < 0) {
-		fprint(2, "cannot open image file %s: %r\n", path);
-		exits("image");
-	}
-	tmp = readimage(display, fd, 0);
-	if(tmp == nil)
-		sysfatal("cannot load image: %r");
-	close(fd);
-	return tmp;
-}
-
 Point
 squareinit(Guielem*)
 {
 	Point p = {1,1};
-
-	/* is this really the right place for all this stuff? */
-	if(off == nil){
-		off = alloccolor(0x666666FF);
-		off2 = alloccolor(0x888888FF);
-		on = alloccolor(0x10B754FF);
-		click = alloccolor(0x990000FF);
-		goal = alloccolor(0x4C95FFFF);
-		purple = alloccolor(0xAA55EEFF);
-		orange = alloccolor(0xE4A02AFF);
-		altblkpc = alloccolor(0x4026FFFF);
-		baize = alloccolor(DDarkgreen);
-		dark = alloccolor(DYellowgreen);
-		light = alloccolor(DPaleyellow);
-		blkpc = alloccolor(DBlack);
-		whtpc = alloccolormix(DGreyblue, DWhite);
-		hlsq = alloccolor(setalpha(DRed, 0xc8));
-		hstbg = alloccolormix(DPurpleblue, DWhite);
-		hstfg = alloccolor(DPurpleblue);
-		msgbg = alloccolor(DWhite);
-		msgfg = alloccolor(DBlack);
-		scrbar = alloccolor(0x999999FF);
-		masks[NOPIECE] = allocmask("nopiece");
-		masks[PAWN] = allocmask("pawn");
-		masks[KNIGHT] = allocmask("knight");
-		masks[BISHOP] = allocmask("bishop");
-		masks[ROOK] = allocmask("rook");
-		masks[QUEEN] = allocmask("queen");
-		masks[KING] = allocmask("king");
-	}
 	return p;
+}
+
+int
+squarekeyboard(Guielem*, Rune)
+{
+	return -1;
 }
 
 /* Gonna break convention by not updating ->active and redrawing, for simplicity. */
@@ -114,12 +35,6 @@ squaremouse(Guielem *e, Mouse m)
 	return -1;
 }
 
-int
-squarekeyboard(Guielem*, Rune)
-{
-	return -1;
-}
-
 static
 void
 redraw(Square *s)
@@ -129,7 +44,7 @@ redraw(Square *s)
 	Point targ, dest;
 	Rectangle align;
 
-	chsq=s->id;
+	chsq = s->id;
 	align.min.x = s->r.min.x;
 	align.min.y = s->r.min.y;
 	if((s->r.max.y - s->r.min.y) > 75)
@@ -139,7 +54,7 @@ redraw(Square *s)
 	switch(s->active){
 	case 0: /* base checkerboard pattern of inactive squares */
 		if(s->isgoal == 1){
-			draw(screen,s->r, goal, nil, ZP);
+			draw(screen,s->r, destination, nil, ZP);
 			break;
 		}
 		if(visflag > 3){
@@ -147,15 +62,15 @@ redraw(Square *s)
 			break;
 		}
 		if((s->id % 2 == (s->id / 8) % 2))
-			draw(screen, s->r, off, nil, ZP);
+			draw(screen, s->r, lightsq, nil, ZP);
 		else 
-			draw(screen, s->r, off2, nil, ZP);
+			draw(screen, s->r, darksq, nil, ZP);
 		break;
-	case 1: /* legal target squares, green unless they are the purple goal */
+	case 1: /* legal target squares, green unless they are the purple destination */
 		if(s->isgoal == 1)
 			draw(screen,s->r, purple, nil, ZP);
 		else
-			draw(screen, s->r, on, nil, ZP);
+			draw(screen, s->r, legaltarget, nil, ZP);
 		break;
 	case 2: /* previously visited squares */
 		if(s->isgoal == 1)

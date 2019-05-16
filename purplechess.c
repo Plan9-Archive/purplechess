@@ -10,6 +10,7 @@
 #include "square.h"
 #include "chessdat.h"
 #include "target.c"
+#include "graphics.c"
 
 Square saux[64];
 Guielem selems[64];
@@ -21,10 +22,9 @@ char *buttons3[] = {"Help", "Hexa", "Binary", "View", "Seed", "Reset", "Retry", 
 Menu menu3 = {buttons3};
 int sel, sqi, start, goal, current, oldsq, legalclick, wscore, bscore, moves, pcson, clearflag, hexdisp, turnsco, totalsco, legalsqs;
 long seed;
-Image *colorray[8];
 Rectangle textrect, textrect2, textrect3, boardrect;
 char moving[6];
-char texbuf[512], texbuf2[512], texbuf3[512];;
+char texbuf[512], texbuf2[512], texbuf3[512];
 
 /* convert gray code ids to chess square ids */
 int grtoch[64] = {56, 57, 48, 49, 58, 59, 50, 51, 40, 41, 32, 33, 42, 43, 34, 35, 60, 61, 52, 53, 62, 63, 54, 55, 44, 45, 36, 37, 46, 47, 38, 39, 24, 25, 16, 17, 26, 27, 18, 19, 8, 9, 0, 1, 10, 11, 2, 3, 28, 29, 20, 21, 30, 31, 22, 23, 12, 13, 4, 5, 14, 15, 6, 7};
@@ -742,6 +742,7 @@ threadmain(int argc, char **argv)
 	int i;
 	enum { MOUSE, RESIZE, KEYS, NONE };
 
+	maskdir = "/sys/games/lib/chess";
 	seed = 0;
 	hexdisp = 0;
 	visflag = 1;
@@ -765,26 +766,10 @@ threadmain(int argc, char **argv)
 		[KEYS] = {kctl->c, &r, CHANRCV},
 		[NONE] =  {nil, nil, CHANEND}
 	};
-	white = alloccolor(0xFFFFFFFF);
-	black = alloccolor(0x000000FF);
-	re = alloccolor(0xFF3D60FF);
-	or = alloccolor(0xFFB347FF);
-	ye = alloccolor(0xFFFF4FFF);
-	gr = alloccolor(0x67FF53FF);
-	bl = alloccolor(0x39C1FFFF);
-	in = alloccolor(0x0000FFFF);
-	vi = alloccolor(0xB614FFFF);
-	colorray[0] = black;
-	colorray[1] = white;
-	colorray[2] = in;
-	colorray[3] = or;
-	colorray[4] = bl;
-	colorray[5] = gr;
-	colorray[6] = re;
-	colorray[7] = vi;
 	if(seed == 0)
 		seed = time(0);
 	srand(seed);
+	setupimages();
 	elemsinit();
 	dogetwindow();
 	root->init(root);
