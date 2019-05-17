@@ -45,6 +45,7 @@ long seed, hitotseed, hip1seed, hip2seed, hip3seed;
 char moving[6];
 char texbuf[512], texbuf2[512], texbuf3[512], texbuf4[512], texbuf5[512];
 char scoretxt[1024];
+char scorefile[1024];
 
 /* chess logic by Umbraticus */
 enum {

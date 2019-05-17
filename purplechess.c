@@ -34,7 +34,7 @@ chtogr(int find)
 void
 usage(void)
 {
-	fprint(2, "usage: %s [-s seed]\n", argv0);
+	fprint(2, "usage: %s [-s seed] [-f scorefile]\n", argv0);
 	threadexitsall("usage");
 }
 
@@ -731,15 +731,23 @@ threadmain(int argc, char **argv)
 	Mousectl *mctl;
 	Mouse m;
 	char *userseed;
+	char *username;
+	char *userfile;
 	int i;
 	enum { MOUSE, RESIZE, KEYS, NONE };
 
 	root = &pelems[0];
 	maskdir = "/sys/games/lib/chess";
+	username=getenv("user");
+	sprint(scorefile, "/usr/%s/lib/purplescores", username);
 	seed = 0;
 	hexdisp = 0;
 	visflag = 1;
 	ARGBEGIN{
+	case 'f':
+		userfile=EARGF(usage());
+		sprint(scorefile, userfile);
+		break;
 	case 's':
 		userseed=EARGF(usage());
 		seed=strtol(userseed, 0, 10);
@@ -759,7 +767,7 @@ threadmain(int argc, char **argv)
 		[KEYS] = {kctl->c, &r, CHANRCV},
 		[NONE] =  {nil, nil, CHANEND}
 	};
-	writescores = open("purplescores", ORDWR);
+	writescores = open(scorefile, ORDWR);
 	if(writescores > 0){
 		i = read(writescores, scoretxt, 1023);
 		if(i == 1023)
