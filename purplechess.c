@@ -1,6 +1,7 @@
 /* Mycroftiv, Amavect!, Umbraticus */
 #include <u.h>
 #include <libc.h>
+#include <stdio.h>
 #include <draw.h>
 #include <cursor.h>
 #include <thread.h>
@@ -63,7 +64,7 @@ elemsinit(void)
 		saux[i].drawhexa = 0;
 		sprint(saux[i].binid, "000000");
 		/* convert chess id to gray id and use bitshifts to generate gray binary id */
-		conv=chtogr(i);
+		conv = chtogr(i);
 		if(saux[conv].id & 32)
 			saux[i].binid[0] = '1';
 		if(saux[conv].id & 16)
@@ -426,6 +427,21 @@ capallandscore(void)
 	totalsco += turnsco;
 }
 
+/* write high scores to disk file if it exists */
+
+void
+savescores(int writefd)
+{
+	int n;
+
+	if(writefd <= 0)
+		return;
+	sprint(scoretxt, "%d %ld\n%d %ld\n%d %ld\n%d %ld\n", hitot, hitotseed, hip1, hip1seed, hip2, hip2seed, hip3, hip3seed);
+	n = pwrite(writefd, scoretxt, 1023, 0);
+	if(n != 1023)
+		writescores = -1;
+}
+
 /* print the score and goal completion info */
 void
 printscore(void)
@@ -448,6 +464,7 @@ printscore(void)
 			hip1seed = seed;
 			textrect4.min.x = screen->r.max.x - (stringwidth(font, texbuf4) + 10);
 			stringbg(screen, textrect4.min, white, ZP, font, texbuf4, black, textrect4.min);
+			savescores(writescores);
 		}
 		sprint(texbuf2, "+ %d, GOAL REACHED!", turnsco);
 		stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
@@ -464,6 +481,7 @@ printscore(void)
 			hip2seed = seed;
 			textrect4.min.x = screen->r.max.x - (stringwidth(font, texbuf4) + 10);
 			stringbg(screen, textrect4.min, white, ZP, font, texbuf4, black, textrect4.min);
+			savescores(writescores);
 		}
 		sprint(texbuf2, "+ %d, ALL PIECES SCORED!", turnsco);
 		stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
@@ -482,12 +500,14 @@ printscore(void)
 			hip3seed = seed;
 			textrect4.min.x = screen->r.max.x - (stringwidth(font, texbuf4) + 10);
 			stringbg(screen, textrect4.min, white, ZP, font, texbuf4, black, textrect4.min);
+			savescores(writescores);
 		}
 		if(totalsco > hitot){
 			sprint(texbuf5," New high score %d!!! prev: %d", totalsco, hitot);
 			stringbg(screen, boardrect.min, white, ZP, font, texbuf5, black, boardrect.min);
 			hitot = totalsco;
 			hitotseed = seed;
+			savescores(writescores);
 		}
 		sprint(texbuf2, "%d remain, + %d, p1: %d, p2: %d", 64 - moves, turnsco, p1sco, p2sco);
 		stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
@@ -739,6 +759,12 @@ threadmain(int argc, char **argv)
 		[KEYS] = {kctl->c, &r, CHANRCV},
 		[NONE] =  {nil, nil, CHANEND}
 	};
+	writescores = open("purplescores", ORDWR);
+	if(writescores > 0){
+		i = read(writescores, scoretxt, 1023);
+		if(i == 1023)
+			sscanf(scoretxt, "%d %ld %d %ld %d %ld %d %ld", &hitot, &hitotseed, &hip1, &hip1seed, &hip2, &hip2seed, &hip3, &hip3seed);
+	}
 	if(seed == 0)
 		seed = time(0);
 	srand(seed);
