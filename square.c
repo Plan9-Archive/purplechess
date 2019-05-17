@@ -7,8 +7,7 @@
 #include <keyboard.h>
 #include <mouse.h>
 #include <guiparts.h>
-#include "square.h"
-#include "chessdat.h"
+#include "purple.h"
 
 Point
 squareinit(Guielem*)

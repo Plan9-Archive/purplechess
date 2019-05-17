@@ -3,7 +3,7 @@
 TARG=purplechess
 NAMES=$TARG square
 OFILES=${NAMES:%=%.$O}
-HFILES=square.h
+HFILES=purple.h
 LIBS=libguiparts
 INCLUDEFILES=libguiparts/guiparts.h
 CLEANFILES=
