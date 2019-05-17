@@ -11,7 +11,7 @@
 #include "target.c"
 #include "graphics.c"
 
-char *buttons3[] = {"Help", "Hexa", "Binary", "View", "Seed", "Reset", "Retry", "Exit", nil};
+char *buttons3[] = {"Help", "Hexa", "Binary", "View", "Seed", "Reset", "Retry", "Scores", "Exit", nil};
 Menu menu3 = {buttons3};
 
 /* convert gray code ids to chess square ids */
@@ -442,6 +442,13 @@ printscore(void)
 		turnsco += 1000;
 		totalsco += turnsco;
 		p1sco = totalsco;
+		if(p1sco > hip1){
+			sprint(texbuf4, "New phase 1 high! prev: %d", hip1);
+			hip1 = p1sco;
+			hip1seed = seed;
+			textrect4.min.x = screen->r.max.x - (stringwidth(font, texbuf4) + 10);
+			stringbg(screen, textrect4.min, white, ZP, font, texbuf4, black, textrect4.min);
+		}
 		sprint(texbuf2, "+ %d, GOAL REACHED!", turnsco);
 		stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
 	}
@@ -451,6 +458,13 @@ printscore(void)
 		turnsco += (64 - moves) * 500;
 		totalsco += turnsco;
 		p2sco = totalsco - p1sco;
+		if(p2sco > hip2){
+			sprint(texbuf4, "New phase 2 high! prev: %d", hip2);
+			hip2 = p2sco;
+			hip2seed = seed;
+			textrect4.min.x = screen->r.max.x - (stringwidth(font, texbuf4) + 10);
+			stringbg(screen, textrect4.min, white, ZP, font, texbuf4, black, textrect4.min);
+		}
 		sprint(texbuf2, "+ %d, ALL PIECES SCORED!", turnsco);
 		stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
 	}
@@ -462,10 +476,20 @@ printscore(void)
 			turnsco += 10000;
 		totalsco += turnsco;
 		p3sco = (totalsco - p1sco) - p2sco;
-		sprint(texbuf4, "p1: %d p2: %d p3: %d", p1sco, p2sco, p3sco);
-		textrect4.min.x = screen->r.max.x - (stringwidth(font, texbuf4) + 10);
-		stringbg(screen, textrect4.min, white, ZP, font, texbuf4, black, textrect4.min);
-		sprint(texbuf2, "NO MOVES, %d remain, + %d", 64 - moves, turnsco);
+		if(p3sco > hip3){
+			sprint(texbuf4, "New phase 3 high! prev: %d", hip3);
+			hip3 = p3sco;
+			hip3seed = seed;
+			textrect4.min.x = screen->r.max.x - (stringwidth(font, texbuf4) + 10);
+			stringbg(screen, textrect4.min, white, ZP, font, texbuf4, black, textrect4.min);
+		}
+		if(totalsco > hitot){
+			sprint(texbuf5," New high score %d!!! prev: %d", totalsco, hitot);
+			stringbg(screen, boardrect.min, white, ZP, font, texbuf5, black, boardrect.min);
+			hitot = totalsco;
+			hitotseed = seed;
+		}
+		sprint(texbuf2, "%d remain, + %d, p1: %d, p2: %d", 64 - moves, turnsco, p1sco, p2sco);
 		stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
 	}
 	switch(clearflag){
@@ -623,11 +647,8 @@ binarytoggle(void)
 void
 printseed(void)
 {
-	Point printhere;
-
-	printhere=boardrect.min;
 	sprint(texbuf, "seed: %ld", seed);
-	stringbg(screen, printhere, white, ZP, font, texbuf, black, printhere);
+	stringbg(screen, boardrect.min, white, ZP, font, texbuf, black, boardrect.min);
 }
 
 /* menu option "Reset" to start new game */
@@ -658,6 +679,27 @@ vis(void)
 		selems[i].update(&selems[i]);
 	if(visflag != 1)
 		overlay();
+}
+
+/* menu option "Scores" to view hiscores and seeds */
+void
+scores(void)
+{
+	Point printat;
+
+	printat=boardrect.min;
+	sprint(texbuf, "High score: %d seed: %ld", hitot, hitotseed);
+	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
+	printat.y += 25;
+	sprint(texbuf, "p1 high score: %d seed: %ld", hip1, hip1seed);
+	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
+	printat.y += 25;
+	sprint(texbuf, "p2 high score: %d seed: %ld", hip2, hip2seed);
+	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
+	printat.y += 25;
+	sprint(texbuf, "p3 high score: %d seed: %ld", hip3, hip3seed);
+	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
+	printat.y += 25;
 }
 
 /* initialize state and enter main gameloop */
@@ -738,6 +780,9 @@ noflush:
 					menureset(1);
 					break;
 				case 7:
+					scores();
+					break;
+				case 8:
 					threadexitsall(nil);
 					break;
 				default:

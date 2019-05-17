@@ -43,7 +43,7 @@ int hitot, hip1, hip2, hip3, p1sco, p2sco, p3sco;
 int hexdisp, visflag;
 long seed, hitotseed, hip1seed, hip2seed, hip3seed;
 char moving[6];
-char texbuf[512], texbuf2[512], texbuf3[512], texbuf4[512];
+char texbuf[512], texbuf2[512], texbuf3[512], texbuf4[512], texbuf5[512];
 
 /* chess logic by Umbraticus */
 enum {
