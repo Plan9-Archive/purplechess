@@ -428,16 +428,15 @@ capallandscore(void)
 }
 
 /* write high scores to disk file if it exists */
-
 void
-savescores(int writefd)
+savescores(void)
 {
 	int n;
 
-	if(writefd <= 0)
+	if(writescores <= 0)
 		return;
 	sprint(scoretxt, "%d %ld\n%d %ld\n%d %ld\n%d %ld\n", hitot, hitotseed, hip1, hip1seed, hip2, hip2seed, hip3, hip3seed);
-	n = pwrite(writefd, scoretxt, 1023, 0);
+	n = pwrite(writescores, scoretxt, 1023, 0);
 	if(n != 1023)
 		writescores = -1;
 }
@@ -464,7 +463,7 @@ printscore(void)
 			hip1seed = seed;
 			textrect4.min.x = screen->r.max.x - (stringwidth(font, texbuf4) + 10);
 			stringbg(screen, textrect4.min, white, ZP, font, texbuf4, black, textrect4.min);
-			savescores(writescores);
+			savescores();
 		}
 		sprint(texbuf2, "+ %d, GOAL REACHED!", turnsco);
 		stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
@@ -481,7 +480,7 @@ printscore(void)
 			hip2seed = seed;
 			textrect4.min.x = screen->r.max.x - (stringwidth(font, texbuf4) + 10);
 			stringbg(screen, textrect4.min, white, ZP, font, texbuf4, black, textrect4.min);
-			savescores(writescores);
+			savescores();
 		}
 		sprint(texbuf2, "+ %d, ALL PIECES SCORED!", turnsco);
 		stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
@@ -500,14 +499,14 @@ printscore(void)
 			hip3seed = seed;
 			textrect4.min.x = screen->r.max.x - (stringwidth(font, texbuf4) + 10);
 			stringbg(screen, textrect4.min, white, ZP, font, texbuf4, black, textrect4.min);
-			savescores(writescores);
+			savescores();
 		}
 		if(totalsco > hitot){
 			sprint(texbuf5," New high score %d!!! prev: %d", totalsco, hitot);
 			stringbg(screen, boardrect.min, white, ZP, font, texbuf5, black, boardrect.min);
 			hitot = totalsco;
 			hitotseed = seed;
-			savescores(writescores);
+			savescores();
 		}
 		sprint(texbuf2, "%d remain, + %d, p1: %d, p2: %d", 64 - moves, turnsco, p1sco, p2sco);
 		stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
@@ -578,99 +577,6 @@ activehit(void)
 		overlay();
 }
 
-/* menu option "Info" */
-void
-instructions(void)
-{
-	Point printat;
-
-	printat=boardrect.min;
-	sprint(texbuf, "Navigate the 6d hypercube along a Gray code path.");
-	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
-	printat.y += 25;
-	sprint(texbuf, "Each piece you move onto captures everything it can.");
-	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
-	printat.y += 25;
-	sprint(texbuf, "First travel from the gold square to the blue goal.");
-	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
-	printat.y += 25;
-	sprint(texbuf, "Next select or capture every piece as fast as you can.");
-	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
-	printat.y += 25;
-	sprint(texbuf, "Then attempt to visit all remaining squares.");
-	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
-	printat.y += 25;
-	sprint(texbuf, "Points: P-125 Kt-325 B-350 R-675 K-825 Q-1050");
-	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
-	printat.y += 25;
-	sprint(texbuf, "Squares marked with + score double and 250 extra");
-	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
-	printat.y += 25;
-	sprint(texbuf, "Goal bonus 1000 + 4x score for 6 moves, 2x score for 8");
-	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
-	printat.y += 25;
-	sprint(texbuf, "Piece clear score: 500 * (64 - moves)");
-	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
-	printat.y += 25;
-	sprint(texbuf, "Cube fill score: 350 * squares filled");
-	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
-	printat.y += 25;
-	sprint(texbuf, "Fill all squares bonus 10000 points");
-	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
-	printat.y += 25;
-}
-
-/* menu option "Hexa" 3-way toggle */
-void
-hexatoggle(void)
-{
-	int i;
-
-	hexdisp++;
-	if(hexdisp == 3){
-		saux[start].drawhexa = 1;
-		saux[goal].drawhexa = 1;
-		selems[start].update(&selems[start]);
-		selems[goal].update(&selems[goal]);
-		hexdisp = 0;
-		return;
-	}
-	if(hexdisp == 1){
-		saux[start].drawhexa = 0;
-		saux[goal].drawhexa = 0;
-	}
-	for(i = 0; i < 64; i++){
-		if(saux[i].drawhexa == 0)
-			saux[i].drawhexa = 1;
-		else
-			saux[i].drawhexa = 0;
-		selems[i].update(&selems[i]);
-	}
-}
-
-/* menu option "Binary" for node/square id display */
-void
-binarytoggle(void)
-{
-	int i;
-
-	for(i=0; i < 64; i++){
-		if(saux[i].drawid == 0)
-			saux[i].drawid = 1;
-		else
-			saux[i].drawid = 0;
-		selems[i].update(&selems[i]);
-	}
-}
-
-/* menu option "Seed" to display the random seed to produce this game */
-void
-printseed(void)
-{
-	sprint(texbuf, "seed: %ld", seed);
-	stringbg(screen, boardrect.min, white, ZP, font, texbuf, black, boardrect.min);
-}
-
 /* menu option "Reset" to start new game */
 void
 menureset(int retry)
@@ -684,42 +590,6 @@ menureset(int retry)
 	gamereset();
 	for(i=0; i < 64; i++)
 		selems[i].update(&selems[i]);
-}
-
-/* menu option "View" to 5-way toggle hypercubic connection display */
-void
-vis(void)
-{
-	int i;
-
-	visflag++;
-	if(visflag == 6)
-		visflag = 1;
-	for(i=0; i < 64; i++)
-		selems[i].update(&selems[i]);
-	if(visflag != 1)
-		overlay();
-}
-
-/* menu option "Scores" to view hiscores and seeds */
-void
-scores(void)
-{
-	Point printat;
-
-	printat=boardrect.min;
-	sprint(texbuf, "High score: %d seed: %ld", hitot, hitotseed);
-	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
-	printat.y += 25;
-	sprint(texbuf, "p1 high score: %d seed: %ld", hip1, hip1seed);
-	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
-	printat.y += 25;
-	sprint(texbuf, "p2 high score: %d seed: %ld", hip2, hip2seed);
-	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
-	printat.y += 25;
-	sprint(texbuf, "p3 high score: %d seed: %ld", hip3, hip3seed);
-	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
-	printat.y += 25;
 }
 
 /* initialize state and enter main gameloop */
