@@ -153,4 +153,8 @@ boardsize(void)
 	textrect3.min.y = screen->r.max.y - 25;
 	textrect3.max.x = screen->r.max.x;
 	textrect3.max.y = screen->r.max.y;
+	textrect4.min.x = screen->r.min.x + 300;
+	textrect4.min.y = screen->r.max.y - 50;
+	textrect4.max.x = screen->r.max.x;
+	textrect4.max.y = screen->r.max.y;
 }

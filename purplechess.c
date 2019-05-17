@@ -441,6 +441,7 @@ printscore(void)
 		}
 		turnsco += 1000;
 		totalsco += turnsco;
+		p1sco = totalsco;
 		sprint(texbuf2, "+ %d, GOAL REACHED!", turnsco);
 		stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
 	}
@@ -449,6 +450,7 @@ printscore(void)
 		clearflag++;
 		turnsco += (64 - moves) * 500;
 		totalsco += turnsco;
+		p2sco = totalsco - p1sco;
 		sprint(texbuf2, "+ %d, ALL PIECES SCORED!", turnsco);
 		stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
 	}
@@ -459,6 +461,10 @@ printscore(void)
 		if(moves == 64)
 			turnsco += 10000;
 		totalsco += turnsco;
+		p3sco = (totalsco - p1sco) - p2sco;
+		sprint(texbuf4, "p1: %d p2: %d p3: %d", p1sco, p2sco, p3sco);
+		textrect4.min.x = screen->r.max.x - (stringwidth(font, texbuf4) + 10);
+		stringbg(screen, textrect4.min, white, ZP, font, texbuf4, black, textrect4.min);
 		sprint(texbuf2, "NO MOVES, %d remain, + %d", 64 - moves, turnsco);
 		stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
 	}

@@ -1,5 +1,4 @@
 typedef struct Square Square;
-
 struct Square {
 	int id;
 	int isstart;
@@ -31,18 +30,20 @@ Image *hstbg, *hstfg, *msgbg, *msgfg, *scrbar;
 Image *colorray[8];
 Image *masks[7];
 char *maskdir;
-int visflag;
 Square saux[64];
 Guielem selems[64];
 Guipart tree[63];
 Guielem pelems[63];
 Guielem *root; 
 Guielem *mousetarg;
-int sel, sqi, start, goal, current, oldsq, legalclick, wscore, bscore, moves, pcson, clearflag, hexdisp, turnsco, totalsco, legalsqs;
-long seed;
-Rectangle textrect, textrect2, textrect3, boardrect;
+Rectangle textrect, textrect2, textrect3, textrect4, boardrect;
+int sel, sqi, start, goal, current, oldsq, legalclick, legalsqs;
+int wscore, bscore, moves, pcson, clearflag, turnsco, totalsco;
+int hitot, hip1, hip2, hip3, p1sco, p2sco, p3sco;
+int hexdisp, visflag;
+long seed, hitotseed, hip1seed, hip2seed, hip3seed;
 char moving[6];
-char texbuf[512], texbuf2[512], texbuf3[512];
+char texbuf[512], texbuf2[512], texbuf3[512], texbuf4[512];
 
 /* chess logic by Umbraticus */
 enum {
