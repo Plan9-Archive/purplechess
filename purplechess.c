@@ -12,19 +12,8 @@
 #include "target.c"
 #include "graphics.c"
 
-Square saux[64];
-Guielem selems[64];
-Guipart tree[63];
-Guielem pelems[63];
-Guielem *root = &pelems[0];
-Guielem *mousetarg;
 char *buttons3[] = {"Help", "Hexa", "Binary", "View", "Seed", "Reset", "Retry", "Exit", nil};
 Menu menu3 = {buttons3};
-int sel, sqi, start, goal, current, oldsq, legalclick, wscore, bscore, moves, pcson, clearflag, hexdisp, turnsco, totalsco, legalsqs;
-long seed;
-Rectangle textrect, textrect2, textrect3, boardrect;
-char moving[6];
-char texbuf[512], texbuf2[512], texbuf3[512];
 
 /* convert gray code ids to chess square ids */
 int grtoch[64] = {56, 57, 48, 49, 58, 59, 50, 51, 40, 41, 32, 33, 42, 43, 34, 35, 60, 61, 52, 53, 62, 63, 54, 55, 44, 45, 36, 37, 46, 47, 38, 39, 24, 25, 16, 17, 26, 27, 18, 19, 8, 9, 0, 1, 10, 11, 2, 3, 28, 29, 20, 21, 30, 31, 22, 23, 12, 13, 4, 5, 14, 15, 6, 7};
@@ -47,14 +36,6 @@ usage(void)
 {
 	fprint(2, "usage: %s [-s seed]\n", argv0);
 	threadexitsall("usage");
-}
-
-void
-dogetwindow(void)
-{
-	if(getwindow(display, Refnone) < 0)
-		sysfatal("Cannot reconnect to display: %r");
-	draw(screen, screen->r, display->black, nil, ZP);
 }
 
 /* generate board structure and id metadata */
@@ -503,40 +484,6 @@ printscore(void)
 	stringbg(screen, textrect.min, white, ZP, font, texbuf, black, textrect.min);
 }
 
-/* optionally draw hypercubic connection arcs */
-void
-overlay(void)
-{
-	int col,i,j;
-	Point a,b,c,d;
-
-	col=1;
-	for(i = 0; i < 64; i++){
-		a.x = saux[i].r.min.x;
-		a.y = saux[i].r.min.y;
-		b.x = saux[i].r.min.x;
-		b.y = saux[i].r.max.y;
-		for(j = 0; j < 6; j++){
-			b.x = saux[i].r.min.x;
-			b.y = saux[i].r.max.y;
-			sqi = i ^ (1<<j);
-			d.x = saux[sqi].r.min.x;
-			d.y = saux[sqi].r.min.y;
-			c.x = saux[sqi].r.min.x;
-			c.y = saux[sqi].r.max.y;
-			if(a.x == d.x){
-				b.x = saux[i].r.max.x;
-				b.y = saux[i].r.min.y;
-				c.x = saux[sqi].r.max.x;
-				c.y = saux[sqi].r.min.y;
-			}
-			if(visflag % 2)
-				col = j + 2;
-			bezier(screen, a, b, c, d, 0, 0, 1, colorray[col], a);
-		}
-	}
-}
-
 /* this is the main game logic which triggers on a click of a valid target square */
 void
 activehit(void)
@@ -580,28 +527,6 @@ activehit(void)
 	printscore();
 	if(visflag != 1)
 		overlay();
-}
-
-/* calculate window divisions into board and text areas */
-void
-boardsize(void)
-{
-	boardrect.min.x = screen->r.min.x;
-	boardrect.min.y = screen->r.min.y;
-	boardrect.max.x = screen->r.max.x;
-	boardrect.max.y = screen->r.max.y - 60;
-	textrect.min.x = screen->r.min.x + 5;
-	textrect.min.y = screen->r.max.y - 50;
-	textrect.max.x = screen->r.max.x;
-	textrect.max.y = screen->r.max.y;
-	textrect2.min.x = screen->r.min.x + 5;
-	textrect2.min.y = screen->r.max.y - 25;
-	textrect2.max.x = screen->r.max.x;
-	textrect2.max.y = screen->r.max.y;
-	textrect3.min.x = screen->r.min.x + 300;
-	textrect3.min.y = screen->r.max.y - 25;
-	textrect3.max.x = screen->r.max.x;
-	textrect3.max.y = screen->r.max.y;
 }
 
 /* menu option "Info" */
@@ -742,6 +667,7 @@ threadmain(int argc, char **argv)
 	int i;
 	enum { MOUSE, RESIZE, KEYS, NONE };
 
+	root = &pelems[0];
 	maskdir = "/sys/games/lib/chess";
 	seed = 0;
 	hexdisp = 0;

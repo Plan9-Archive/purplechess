@@ -1,4 +1,4 @@
-/* graphics stuff mostly by Umraticus */
+/* alloc functions by Umbraticus, other stuff by Mycroftiv */
 
 Image *
 alloccolor(uint color)
@@ -40,6 +40,14 @@ allocmask(char *m)
 		sysfatal("cannot load image: %r");
 	close(fd);
 	return tmp;
+}
+
+void
+dogetwindow(void)
+{
+	if(getwindow(display, Refnone) < 0)
+		sysfatal("Cannot reconnect to display: %r");
+	draw(screen, screen->r, display->black, nil, ZP);
 }
 
 /* allocate colors and piece image masks */
@@ -89,4 +97,60 @@ setupimages(void)
 	masks[ROOK] = allocmask("rook");
 	masks[QUEEN] = allocmask("queen");
 	masks[KING] = allocmask("king");
+}
+
+/* optionally draw hypercubic connection arcs */
+void
+overlay(void)
+{
+	int col,i,j;
+	Point a,b,c,d;
+
+	col=1;
+	for(i = 0; i < 64; i++){
+		a.x = saux[i].r.min.x;
+		a.y = saux[i].r.min.y;
+		b.x = saux[i].r.min.x;
+		b.y = saux[i].r.max.y;
+		for(j = 0; j < 6; j++){
+			b.x = saux[i].r.min.x;
+			b.y = saux[i].r.max.y;
+			sqi = i ^ (1<<j);
+			d.x = saux[sqi].r.min.x;
+			d.y = saux[sqi].r.min.y;
+			c.x = saux[sqi].r.min.x;
+			c.y = saux[sqi].r.max.y;
+			if(a.x == d.x){
+				b.x = saux[i].r.max.x;
+				b.y = saux[i].r.min.y;
+				c.x = saux[sqi].r.max.x;
+				c.y = saux[sqi].r.min.y;
+			}
+			if(visflag % 2)
+				col = j + 2;
+			bezier(screen, a, b, c, d, 0, 0, 1, colorray[col], a);
+		}
+	}
+}
+
+/* calculate window divisions into board and text areas */
+void
+boardsize(void)
+{
+	boardrect.min.x = screen->r.min.x;
+	boardrect.min.y = screen->r.min.y;
+	boardrect.max.x = screen->r.max.x;
+	boardrect.max.y = screen->r.max.y - 60;
+	textrect.min.x = screen->r.min.x + 5;
+	textrect.min.y = screen->r.max.y - 50;
+	textrect.max.x = screen->r.max.x;
+	textrect.max.y = screen->r.max.y;
+	textrect2.min.x = screen->r.min.x + 5;
+	textrect2.min.y = screen->r.max.y - 25;
+	textrect2.max.x = screen->r.max.x;
+	textrect2.max.y = screen->r.max.y;
+	textrect3.min.x = screen->r.min.x + 300;
+	textrect3.min.y = screen->r.max.y - 25;
+	textrect3.max.x = screen->r.max.x;
+	textrect3.max.y = screen->r.max.y;
 }

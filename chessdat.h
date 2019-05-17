@@ -29,6 +29,3 @@ struct Position{
 	Position *next;
 };
 Position *pos;
-int defpromotion, sanmoves;
-char *engine, *pgnfile, ai;
-
