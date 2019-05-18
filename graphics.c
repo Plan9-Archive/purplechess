@@ -103,7 +103,7 @@ setupimages(void)
 void
 overlay(void)
 {
-	int col,i,j;
+	int sqi,col,i,j;
 	Point a,b,c,d;
 
 	col=1;
@@ -190,7 +190,10 @@ instructions(void)
 	sprint(texbuf, "Squares marked with + score double and 250 extra");
 	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
 	printat.y += 25;
-	sprint(texbuf, "Goal bonus 1000 + 4x score for 6 clicks, 2x score for 8");
+	sprint(texbuf, "Goal bonus 500 + 4x score for 6 clicks, 2x score for 8");
+	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
+	printat.y += 25;
+	sprint(texbuf, "Sequential capture bonus by 100 per capture");
 	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
 	printat.y += 25;
 	sprint(texbuf, "Piece clear score: 500 * (64 - moves)");

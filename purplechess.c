@@ -195,6 +195,7 @@ gamereset(void)
 	bscore = 0;
 	moves = 0;
 	clearflag = 0;
+	seqcap = 0;
 	pcson = 32;
 	/* 3 coin method of hexagram generation */
 	for(i=0; i < 6; i++)
@@ -349,7 +350,7 @@ gamereset(void)
 void
 aftercoins(void)
 {
-	int i;
+	int i, sqi;
 
 	for(i=0; i < 64; i++){
 		saux[i].drawpiece = 1;
@@ -428,6 +429,12 @@ capallandscore(void)
 				pos->sq[i] = NOPIECE;
 		}
 	}
+	if(turnsco > 0)
+		seqcap++;
+	else
+		seqcap = 0;
+	if(seqcap > 1)
+		turnsco += 100 * (seqcap - 1);
 	totalsco += turnsco;
 }
 
@@ -458,7 +465,7 @@ printscore(void)
 		if((11 - moves) > 0){
 			turnsco += (11 - moves) * totalsco;
 		}
-		turnsco += 1000;
+		turnsco += 500;
 		totalsco += turnsco;
 		p1sco = totalsco;
 		if(p1sco > hip1){
@@ -540,7 +547,7 @@ printscore(void)
 void
 activehit(void)
 {
-	int i;
+	int i, sqi;
 
 	draw(screen, textrect, black, nil, ZP);
 	if(moves == 0)

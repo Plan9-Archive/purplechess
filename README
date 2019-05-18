@@ -20,9 +20,9 @@ Rook - 675
 King - 825
 Queen - 1050
 
-If the captured or highlighted piece is on a square marked with a cross, it scores double. These marked bonus squares also score an additional 250 points.
+If the captured or highlighted piece is on a square marked with a cross, it scores double. These marked bonus squares also score an additional 250 points. Multiple turns in a row in which points are scored score a bonus which grows by 100 per turn.
 
-When the goal square is reached, 1000 bonus points are awarded, and the score is multiplied by a speed bonus depending on the total number of moves used. A 4x multiplier is given for completion by move 7, 2x for completion by move 9. It is always possible to achieve the 4x multiplier because 6 bitflips are sufficient to reach any square on the board.
+When the goal square is reached, 500 bonus points are awarded, and the score is multiplied by a speed bonus depending on the total number of moves used. A 4x multiplier is given for completion by move 7, 2x for completion by move 9. It is always possible to achieve the 4x multiplier because 6 bitflips are sufficient to reach any square on the board.
 
 The second phase of the game is scored the same way as the user races to capture or highlight in red all the remaining pieces on the board. Once this is complete. another bonus is awarded, 500 points for each move less than 64. 
 

@@ -37,7 +37,7 @@ Guielem pelems[63];
 Guielem *root; 
 Guielem *mousetarg;
 Rectangle textrect, textrect2, textrect3, textrect4, boardrect;
-int sel, sqi, start, goal, current, oldsq, legalclick, legalsqs;
+int sel, start, goal, current, oldsq, legalclick, legalsqs, seqcap;
 int wscore, bscore, moves, pcson, clearflag, turnsco, totalsco;
 int hitot, hip1, hip2, hip3, p1sco, p2sco, p3sco;
 int hexdisp, visflag, writescores;
