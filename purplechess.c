@@ -27,14 +27,15 @@ chtogr(int find)
 	for(i=0; i <64; i++)
 		if(grtoch[i] == find)
 			return i;
-	sysfatal("fatal error, nonexistent square id in chtogr()");
+	/* if we didnt find a match something is broken */
+	assert(0);
 	return -1;
 }
 
 void
 usage(void)
 {
-	fprint(2, "usage: %s [-s seed] [-f scorefile]\n", argv0);
+	fprint(2, "usage: %s [-s seed] [-f scorefile] [-m imagedir]\n", argv0);
 	threadexitsall("usage");
 }
 
@@ -615,12 +616,15 @@ threadmain(int argc, char **argv)
 	visflag = 1;
 	ARGBEGIN{
 	case 'f':
-		userfile=EARGF(usage());
+		userfile = EARGF(usage());
 		sprint(scorefile, userfile);
 		break;
+	case 'm':
+		maskdir = EARGF(usage());
+		break;
 	case 's':
-		userseed=EARGF(usage());
-		seed=strtol(userseed, 0, 10);
+		userseed = EARGF(usage());
+		seed = strtol(userseed, 0, 10);
 		break;
 	default:
 		usage();
