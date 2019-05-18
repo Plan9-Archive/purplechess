@@ -22,7 +22,6 @@ squarekeyboard(Guielem*, Rune)
 	return -1;
 }
 
-/* Gonna break convention by not updating ->active and redrawing, for simplicity. */
 int
 squaremouse(Guielem *e, Mouse m)
 {
@@ -34,6 +33,7 @@ squaremouse(Guielem *e, Mouse m)
 	return -1;
 }
 
+/* draw base color, bonus, piece, coin, line, hexagram, id in that order */
 static
 void
 redraw(Square *s)

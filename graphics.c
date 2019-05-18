@@ -169,10 +169,13 @@ instructions(void)
 	sprint(texbuf, "Navigate the 6d hypercube along a Gray code path.");
 	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
 	printat.y += 25;
+	sprint(texbuf, "Click on green squares to move to them.");
+	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
+	printat.y += 25;
 	sprint(texbuf, "Each piece you move onto captures everything it can.");
 	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
 	printat.y += 25;
-	sprint(texbuf, "First travel from the gold square to the blue goal.");
+	sprint(texbuf, "First travel from the gold square to the blue/purple goal.");
 	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
 	printat.y += 25;
 	sprint(texbuf, "Next select or capture every piece as fast as you can.");
@@ -187,7 +190,7 @@ instructions(void)
 	sprint(texbuf, "Squares marked with + score double and 250 extra");
 	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
 	printat.y += 25;
-	sprint(texbuf, "Goal bonus 1000 + 4x score for 6 moves, 2x score for 8");
+	sprint(texbuf, "Goal bonus 1000 + 4x score for 6 clicks, 2x score for 8");
 	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
 	printat.y += 25;
 	sprint(texbuf, "Piece clear score: 500 * (64 - moves)");

@@ -186,6 +186,9 @@ gamereset(void)
 	}
 	start = 0;
 	totalsco = 0;
+	p1sco = 0;
+	p2sco = 0;
+	p3sco = 0;
 	hexdisp = 0;
 	legalclick = 0;
 	wscore = 0;

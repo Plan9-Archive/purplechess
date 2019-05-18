@@ -12,6 +12,8 @@ HFILES=purple.h\
 
 UPDATE=\
 	mkfile\
+	graphics.c\
+	target.c\
 	$HFILES\
 	${OFILES:%.$O=%.c}\
 

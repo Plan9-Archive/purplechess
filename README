@@ -1,12 +1,45 @@
+purplechess [-s seed] [-f scorefile] [-m imagedir]
 6d hypercubic solitaire chess variant with I Ching hexagrams
 
-Legal moves are highlighted in green, and follow a Gray code path from the current square, highlighted in gold.
+The game of purple chess projects a 6d hypercube onto a chessboard. From a random starting square you travel a Gray code path to the the opposite corner of the cube, the bit inverse of your starting I Ching hexagram's binary ID. After completing this initial goal, the next phase consists of capturing or highlighting all pieces on the board. The final phase is to extend the path to as many squares as possible. A game of purple chess begins by generating an I Ching hexagram with the 3-coin method, and selecting a corresponding corner of a 6d hypercube. The opening screen displays the coinflips and corresponding lines. Click any square to begin. 
 
-Issues:
-has a weird mkfile, read what it does differently
+Your current square is marked in gold
+The goal square is marked in blue
+Possible moves are highlighted in green
+Squares which have already been visited are highlighted red
+Squares corresponding to moving lines of the starting hexagram are marked with a cross
+When it is possible to reach the goal square, it will change from blue to purple
+Once visited, the goal square remains purple
 
-Build:
-mk
+When you select a square with a piece on it, that piece will make all legal captures. Every piece has a point value which is scored both when it is captured and when it is selected. The point values are as follows:
 
-Cleaning:
-mk nuke
+Pawn - 125
+Knight - 325
+Bishop - 350
+Rook - 675
+King - 825
+Queen - 1050
+
+If the captured or highlighted piece is on a square marked with a cross, it scores double. These marked bonus squares also score an additional 250 points.
+
+When the goal square is reached, 1000 bonus points are awarded, and the score is multiplied by a speed bonus depending on the total number of moves used. A 4x multiplier is given for completion by move 7, 2x for completion by move 9. It is always possible to achieve the 4x multiplier because 6 bitflips are sufficient to reach any square on the board.
+
+The second phase of the game is scored the same way as the user races to capture or highlight in red all the remaining pieces on the board. Once this is complete. another bonus is awarded, 500 points for each move less than 64. 
+
+The final goal is turning as many of the remaining squares red as possible. When no more moves are possible, another bonus of 375 times the total number of moves is awarded. If the entire board has been filled, an additional 10000 points is given.
+
+-s SEED provides a deterministic seed to the pseudorandom number generator to allow a specific board to be replayed
+-f scorefile allows a specified scorefile to be used to save high scores. If $home/lib/purplescores exists, it will be used by default
+-m imagedir specifies a directory to use for the bit files for the chess pieces. /sys/games/lib/chess is the default and mk install attempts to create it.
+
+The right-button menu options:
+
+Help - print brief instructions and scoring rules
+Hexa - toggle hexagram display between all on, all of, and default starting/ending only
+Binary - toggle display of binary square ids
+View - toggle 4 modes of visualization of hypercubic connections
+Seed - display the seed id of this gameboard. If this is given as a parameter to -s the board can be replayed by any player.
+Reset - start a new game
+Retry - start the identical layout of the current board again
+Scores - view the highest scores achieved overall and in each game phase
+Exit - leave purplechess
