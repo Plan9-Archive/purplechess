@@ -461,6 +461,11 @@ printscore(void)
 	if(moves == 0)
 		return;
 	sprint(texbuf2, "+ %d points", turnsco);
+	if(seqcap > 1){
+		sprint(texbuf4, "%d in a row, + %d", seqcap, 100 * (seqcap - 1));
+		textrect4.min.x = screen->r.max.x - (stringwidth(font, texbuf4) + 10);
+		stringbg(screen, textrect4.min, white, ZP, font, texbuf4, black, textrect4.min);
+	}
 	/* intial bit-inverse goal square reached */
 	if(saux[sel].isgoal == 1){
 		clearflag++;
