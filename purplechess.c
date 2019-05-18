@@ -7,7 +7,7 @@
 #include <thread.h>
 #include <keyboard.h>
 #include <mouse.h>
-#include <guiparts.h>
+#include "guiparts.h"
 #include "purple.h"
 #include "target.c"
 #include "graphics.c"

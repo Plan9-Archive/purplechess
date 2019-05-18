@@ -5,7 +5,7 @@
 #include <thread.h>
 #include <mouse.h>
 #include <keyboard.h>
-#include <guiparts.h>
+#include "guiparts.h"
 
 static
 int

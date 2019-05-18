@@ -1,6 +1,4 @@
 /* Amavect! */
-#pragma src "/sys/src/libguiparts"
-#pragma lib "libguiparts.a"
 
 typedef struct Guielem Guielem;
 typedef struct Guipart Guipart;
