@@ -423,7 +423,7 @@ capallandscore(void)
 			if(pos->n == 0)
 				bscore += sco;
 			if(saux[i].moveline == 1)
-				sco = (sco * 2) + 250;
+				sco = sco * 2;
 			turnsco += sco;
 			if(i != sel)
 				pos->sq[i] = NOPIECE;
@@ -435,6 +435,8 @@ capallandscore(void)
 		seqcap = 0;
 	if(seqcap > 1)
 		turnsco += 100 * (seqcap - 1);
+	if(saux[sel].moveline == 1)
+		turnsco += 250;
 	totalsco += turnsco;
 }
 
