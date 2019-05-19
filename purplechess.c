@@ -40,8 +40,10 @@ usage(void)
 }
 
 void
-squarechange(void *aux, int active)
+squarechange(int elemid, int active)
 {
+//	if(active == 1)
+//		saux[elemid].drawhexa = 1;
 /*
 	int i, a, sqi;
 	
@@ -66,11 +68,11 @@ elemsinit(void)
 		saux[i].id = i;
 	/* the base id has to be set prior to the next loop for the binid setting to work */
 	for(i = 0; i < 64; i++){
-		squareaux[i] = i;
+//		squareaux[i] = i;
 //		selems[i].tag = i;
 		selems[i].aux = &saux[i];
 		saux[i].onchange = squarechange;
-		saux[i].aux = &squareaux[i];
+//		saux[i].aux = &squareaux[i];
 		selems[i].init = squareinit;
 		selems[i].resize = squareresize;
 		selems[i].update = squareupdate;
@@ -747,7 +749,8 @@ noflush:
 */
 			if(root->mouse(root, m)){
 //				print("%d ", sel);
-				flushimage(display, 1);
+//				flushimage(display, 1);
+				sleep(0);
 			}
 			if(m.buttons == 1){
 				if(sel < 0)

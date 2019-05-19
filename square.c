@@ -215,7 +215,8 @@ again:	switch(s->state){
 				s->state = 1;
 			}
 			if(m.buttons == 1)
-				sel = *((int*)(s->aux));
+//				sel = *((int*)(s->aux));
+				sel = s->id;
 		}else{
 			if(s->active == 1){
 //				s->active = 0;
@@ -232,7 +233,7 @@ again:	switch(s->state){
 	}
 	
 	if(c == 1){
-		s->onchange(s->aux, s->active);
+		s->onchange(s->id, s->active);
 		redraw(s);
 	}
 	
