@@ -8,7 +8,7 @@ OFILES=\
 	guipart.$O\
 
 HFILES=purple.h\
-	guiparts.h\
+	elementile.h\
 
 UPDATE=\
 	mkfile\

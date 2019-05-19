@@ -13,10 +13,7 @@ struct Square {
 	int moveline;
 	char binid[7];
 	char engname[64];
-	/* internal */
 	Rectangle r; /* current size */
-	Mouse olde; /* ye olde mouse input */
-	int state;
 };
 
 extern Point squareinit(Elementile*);
