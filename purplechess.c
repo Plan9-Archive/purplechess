@@ -737,21 +737,7 @@ noflush:
 				}
 				break;
 			}
-			/* the standard libguiparts mouse check is inconsistent; the loop of all selems is a workaround */
-//			sel = root->mouse(root, m);
-/*
-			for(i=0; i < 64; i++){
-				mousetarg = &selems[i];
-				sel = mousetarg->mouse(&selems[i], m);
-				if(sel != -1)
-					break;
-			}
-*/
-			if(root->mouse(root, m)){
-//				print("%d ", sel);
-//				flushimage(display, 1);
-				sleep(0);
-			}
+			root->mouse(root, m);
 			if(m.buttons == 1){
 				if(sel < 0)
 					break;
