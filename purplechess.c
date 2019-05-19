@@ -190,7 +190,6 @@ gamereset(void)
 	p2sco = 0;
 	p3sco = 0;
 	hexdisp = 0;
-	legalclick = 0;
 	wscore = 0;
 	bscore = 0;
 	moves = 0;
@@ -608,6 +607,7 @@ menureset(int retry)
 	gamereset();
 	for(i=0; i < 64; i++)
 		selems[i].update(&selems[i]);
+	flushimage(display, 1);
 }
 
 /* initialize state and enter main gameloop */
@@ -675,10 +675,9 @@ threadmain(int argc, char **argv)
 	root->resize(root, boardrect);
 	chessinit();
 	gamereset();
+	flushimage(display, 1);
 
 	for(;;){
-		flushimage(display, 1);
-noflush:
 		switch(alt(alts)){
 		case MOUSE:
 			if(m.buttons == 4){
@@ -720,27 +719,22 @@ noflush:
 				if(sel < 0)
 					break;
 				if((saux[sel].active == 1) || (moves == 0)){
-					legalclick = 1;
 					activehit();
+					flushimage(display, 1);
 				}
 				break;
 			}
-			if(legalclick == 0)
-				goto noflush;
-			legalclick = 0;
 			break;
 		case RESIZE:
 			dogetwindow();
 			boardsize();
 			root->resize(root, boardrect);
 			printscore();
+			flushimage(display, 1);
 			break;
 		case KEYS:
 			if(r == Kdel)
 				threadexitsall(nil);
-			goto noflush;
-		case NONE:
-			goto noflush;
 		}
 	}
 }

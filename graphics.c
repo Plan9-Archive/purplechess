@@ -205,6 +205,7 @@ instructions(void)
 	sprint(texbuf, "Fill all squares bonus 10000 points");
 	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
 	printat.y += 25;
+	flushimage(display, 1);
 }
 
 /* menu option "Hexa" 3-way toggle */
@@ -233,6 +234,7 @@ hexatoggle(void)
 			saux[i].drawhexa = 0;
 		selems[i].update(&selems[i]);
 	}
+	flushimage(display, 1);
 }
 
 /* menu option "Binary" for node/square id display */
@@ -248,6 +250,7 @@ binarytoggle(void)
 			saux[i].drawid = 0;
 		selems[i].update(&selems[i]);
 	}
+	flushimage(display, 1);
 }
 
 /* menu option "Seed" to display the random seed to produce this game */
@@ -256,6 +259,7 @@ printseed(void)
 {
 	sprint(texbuf, "seed: %ld", seed);
 	stringbg(screen, boardrect.min, white, ZP, font, texbuf, black, boardrect.min);
+	flushimage(display, 1);
 }
 
 /* menu option "View" to 5-way toggle hypercubic connection display */
@@ -271,6 +275,7 @@ vis(void)
 		selems[i].update(&selems[i]);
 	if(visflag != 1)
 		overlay();
+	flushimage(display, 1);
 }
 
 /* menu option "Scores" to view hiscores and seeds */
@@ -292,4 +297,5 @@ scores(void)
 	sprint(texbuf, "p3 high score: %d seed: %ld", hip3, hip3seed);
 	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
 	printat.y += 25;
+	flushimage(display, 1);
 }

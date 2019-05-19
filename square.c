@@ -6,7 +6,7 @@
 #include <thread.h>
 #include <keyboard.h>
 #include <mouse.h>
-#include <elementile.h>
+#include "elementile.h"
 #include "purple.h"
 
 Point
