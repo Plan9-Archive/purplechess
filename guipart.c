@@ -137,7 +137,7 @@ guipartmouse(Elementile *e, Mouse m)
 	if(gp->sel != nil)
 		v = gp->sel->mouse(gp->sel, m);
 	
-	if(m.buttons == 0){
+//	if(m.buttons == 0){
 		if(ptinrect(m.xy, gp->ltrect)){
 			if(gp->sel != gp->lt){
 				gp->sel = gp->lt;
@@ -151,7 +151,7 @@ guipartmouse(Elementile *e, Mouse m)
 		}else{
 			gp->sel = nil;
 		}
-	}
+//	}
 	
 	return v;
 }

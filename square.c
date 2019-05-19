@@ -201,7 +201,8 @@ squaremouse(Elementile *e, Mouse m)
 	
 	c = 0;
 	s = e->aux;
-	
+
+/*
 //	print("in squaremouse ");
 	assert(s != nil);
 again:	switch(s->state){
@@ -238,6 +239,11 @@ again:	switch(s->state){
 	}
 	
 	redraw(s);
+*/
+	if(m.buttons == 1)
+		if(ptinrect(m.xy, s->r))
+			sel = s->id;
+
 	return c;
 }
 
