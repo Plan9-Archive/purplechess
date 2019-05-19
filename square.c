@@ -6,32 +6,22 @@
 #include <thread.h>
 #include <keyboard.h>
 #include <mouse.h>
-#include <guiparts.h>
+#include <elementile.h>
 #include "purple.h"
 
 Point
-squareinit(Guielem*)
+squareinit(Elementile*)
 {
 	Point p = {1,1};
 	return p;
 }
 
 int
-squarekeyboard(Guielem*, Rune)
+squarekeyboard(Elementile*, Rune)
 {
-	return -1;
+	return 0;
 }
 
-int
-squaremouse(Guielem *e, Mouse m)
-{
-	Square *s;
-	
-	s = e->aux;
-	if(ptinrect(m.xy, s->r))
-		return e->tag;
-	return -1;
-}
 
 /* draw base color, bonus, piece, coin, line, hexagram, id in that order */
 static
@@ -203,21 +193,79 @@ redraw(Square *s)
 	}
 }
 
+int
+squaremouse(Elementile *e, Mouse m)
+{
+	Square *s;
+	int c;
+	
+	c = 0;
+	s = e->aux;
+	
+//	print("in squaremouse ");
+	assert(s != nil);
+again:	switch(s->state){
+	case 0:
+		if(ptinrect(m.xy, s->r)){
+			if(s->active == 0){
+//				s->active = 1;
+				c = 1;
+			}
+			if(m.buttons != 0){
+				s->state = 1;
+			}
+			if(m.buttons == 1)
+				sel = *((int*)(s->aux));
+		}else{
+			if(s->active == 1){
+//				s->active = 0;
+				c = 1;
+			}
+		}
+		break;
+	case 1:
+		if(m.buttons == 0){
+			s->state = 0;
+			goto again;
+		}
+		break;
+	}
+	
+	if(c == 1){
+		s->onchange(s->aux, s->active);
+		redraw(s);
+	}
+	
+	redraw(s);
+	return c;
+}
+
+
 void
-squareresize(Guielem *e, Rectangle r)
+squareresize(Elementile *e, Rectangle r)
 {
 	Square *s;
 	
 	s = e->aux;
 	s->r = r;
+	
 	redraw(s);
 }
 
-void
-squareupdate(Guielem *e)
+int
+squareupdate(Elementile *e)
 {
 	Square *s;
 	
 	s = e->aux;
+	
 	redraw(s);
+	return 1;
+}
+
+void
+squarefree(Elementile*)
+{
+//	freeimage(sqon);
+//	freeimage(sqoff);
 }

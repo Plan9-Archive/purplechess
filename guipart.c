@@ -5,7 +5,7 @@
 #include <thread.h>
 #include <mouse.h>
 #include <keyboard.h>
-#include "guiparts.h"
+#include <elementile.h>
 
 static
 int
@@ -18,6 +18,7 @@ max(int a, int b)
 }
 
 /* rounds only positive doubles correctly */
+static
 double
 round(double d)
 {
@@ -33,13 +34,13 @@ round(double d)
  * the division type, and the division width.
  */
 Point
-guipartinit(Guielem *e)
+guipartinit(Elementile *e)
 {
 	Guipart *gp;
 	Point p;
 	
 	gp = e->aux;
-	gp->sel = 0;
+	gp->sel = nil;
 	gp->ltmin = gp->lt->init(gp->lt);
 	gp->rbmin = gp->rb->init(gp->rb);
 	if(gp->vh == Hdiv){
@@ -60,7 +61,7 @@ guipartinit(Guielem *e)
  * Recurse into subelements.
  */
 void
-guipartresize(Guielem *e, Rectangle rect)
+guipartresize(Elementile *e, Rectangle rect)
 {
 	Guipart *gp;
 	int w;
@@ -102,48 +103,56 @@ guipartresize(Guielem *e, Rectangle rect)
 /*
  * Update all elements.
  */
-void
-guipartupdate(Guielem *e)
+int
+guipartupdate(Elementile *e)
 {
 	Guipart *gp;
 	
 	gp = e->aux;
 	gp->lt->update(gp->lt);
 	gp->rb->update(gp->rb);
+	
+	return 1;
 }
 
 /*
- * First, send the mouse to the focused element. This allows the mouse release to be sent.
- * Then, if a mouse is not held and has exited the element rectangle, search for a new element.
+ * The mouse input may be routed to the child Elementile, depending on some state.
+ * If currently focused Elementile is not nil, the mouse is passed to it.
+ * Then, if no button is pressed, search for a new Elementile.
+ * If a different Elementile is found, also send the mouse to it.
+ * If no Elementile is found, the selected Elementile becomes nil.
+ * 
+ * Summary of cases for mouse input to be sent to a member Guielem:
+ * mouse entry, exit, movement inside, button presses (anywhere), button releases (anywhere).
  */
 int
-guipartmouse(Guielem *e, Mouse m)
+guipartmouse(Elementile *e, Mouse m)
 {
 	Guipart *gp;
-	int inrect;
 	int v;
 	
 	gp = e->aux;
-	inrect = 0;
-	v = -1;
+	v = 0;
 	
-	if(gp->sel == 0){
-		v = gp->lt->mouse(gp->lt, m);
-		inrect = ptinrect(m.xy, gp->ltrect);
-	}else if(gp->sel == 1){
-		v = gp->rb->mouse(gp->rb, m);
-		inrect = ptinrect(m.xy, gp->rbrect);
-	}
-	if(m.buttons == 0 && !inrect){
-		gp->sel = -1;
+	if(gp->sel != nil)
+		v = gp->sel->mouse(gp->sel, m);
+	
+	if(m.buttons == 0){
 		if(ptinrect(m.xy, gp->ltrect)){
-			gp->sel = 0;
-			return v;
+			if(gp->sel != gp->lt){
+				gp->sel = gp->lt;
+				v |= gp->sel->mouse(gp->sel, m);
+			}
 		}else if(ptinrect(m.xy, gp->rbrect)){
-			gp->sel = 1;
-			return v;
+			if(gp->sel != gp->rb){
+				gp->sel = gp->rb;
+				v |= gp->sel->mouse(gp->sel, m);
+			}
+		}else{
+			gp->sel = nil;
 		}
 	}
+	
 	return v;
 }
 
@@ -151,17 +160,27 @@ guipartmouse(Guielem *e, Mouse m)
  * Just send to the currently selected element.
  */
 int
-guipartkeyboard(Guielem *e, Rune r)
+guipartkeyboard(Elementile *e, Rune r)
 {
 	Guipart *gp;
 	int v;
 	
 	gp = e->aux;
-	v = -1;
+	v = 0;
 	
-	if(gp->sel == 0)
-		v = gp->lt->keyboard(gp->lt, r);
-	else if(gp->sel == 1)
-		v = gp->rb->keyboard(gp->rb, r);
+	if(gp->sel != nil)
+		v = gp->sel->keyboard(gp->sel, r);
+	
 	return v;
+}
+
+void
+guipartfree(Elementile *e)
+{
+	Guipart *gp;
+	
+	gp = e->aux;
+	
+	gp->lt->free(gp->lt);
+	gp->rb->free(gp->rb);
 }

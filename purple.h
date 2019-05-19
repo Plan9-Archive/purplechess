@@ -13,16 +13,21 @@ struct Square {
 	int moveline;
 	char binid[7];
 	char engname[64];
+	void *aux; /* aux passed into */
+	void (*onchange)(void *aux, int active); /* event for when active changes */
 	/* internal */
 	Rectangle r; /* current size */
 	Mouse olde; /* ye olde mouse input */
+	int state;
 };
 
-extern Point squareinit(Guielem*);
-extern void squareresize(Guielem*, Rectangle);
-extern void squareupdate(Guielem*);
-extern int squaremouse(Guielem*, Mouse);
-extern int squarekeyboard(Guielem*, Rune);
+extern Point squareinit(Elementile*);
+extern void squareresize(Elementile*, Rectangle);
+extern int squareupdate(Elementile*);
+extern int squaremouse(Elementile*, Mouse);
+extern int squarekeyboard(Elementile*, Rune);
+extern void squarefree(Elementile*);
+
 Image *black, *white, *re, *or, *ye, *gr, *bl, *in, *vi;
 Image *legaltarget, *lightsq, *darksq, *click, *destination, *purple, *orange;
 Image *baize, *dark, *light, *blkpc, *altblkpc, *whtpc, *hlsq;
@@ -30,12 +35,13 @@ Image *hstbg, *hstfg, *msgbg, *msgfg, *scrbar;
 Image *colorray[8];
 Image *masks[7];
 char *maskdir;
+int squareaux[64];
 Square saux[64];
-Guielem selems[64];
+Elementile selems[64];
 Guipart tree[63];
-Guielem pelems[63];
-Guielem *root; 
-Guielem *mousetarg;
+Elementile pelems[63];
+Elementile *root; 
+Elementile *mousetarg;
 Rectangle textrect, textrect2, textrect3, textrect4, boardrect;
 int sel, start, goal, current, oldsq, legalclick, legalsqs, seqcap;
 int wscore, bscore, moves, pcson, clearflag, turnsco, totalsco;

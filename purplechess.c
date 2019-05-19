@@ -7,7 +7,7 @@
 #include <thread.h>
 #include <keyboard.h>
 #include <mouse.h>
-#include "guiparts.h"
+#include "elementile.h"
 #include "purple.h"
 #include "target.c"
 #include "graphics.c"
@@ -39,6 +39,22 @@ usage(void)
 	threadexitsall("usage");
 }
 
+void
+squarechange(void *aux, int active)
+{
+/*
+	int i, a, sqi;
+	
+	a = *((int*)aux);
+	
+	for(i = 0; i < 6; i++){
+		sqi = a ^ (1<<i);
+		squares[sqi].active = active;
+		squareupdate(&squaretiles[sqi]);
+	}
+*/
+}
+
 /* generate board structure and id metadata */
 void
 elemsinit(void)
@@ -50,13 +66,17 @@ elemsinit(void)
 		saux[i].id = i;
 	/* the base id has to be set prior to the next loop for the binid setting to work */
 	for(i = 0; i < 64; i++){
-		selems[i].tag = i;
+		squareaux[i] = i;
+//		selems[i].tag = i;
 		selems[i].aux = &saux[i];
+		saux[i].onchange = squarechange;
+		saux[i].aux = &squareaux[i];
 		selems[i].init = squareinit;
 		selems[i].resize = squareresize;
 		selems[i].update = squareupdate;
 		selems[i].mouse = squaremouse;
 		selems[i].keyboard = squarekeyboard;
+		selems[i].free = squarefree;
 		saux[i].isstart = 0;
 		saux[i].active = 0;
 		saux[i].isgoal = 0;
@@ -131,7 +151,7 @@ elemsinit(void)
 			b = -3;
 	}
 	for(i=0; i < nelem(pelems); i++)
-		pelems[i] = (Guielem){i, &tree[i], guipartinit, guipartresize, guipartupdate, guipartmouse, guipartkeyboard};
+		pelems[i] = (Elementile){&tree[i], guipartinit, guipartresize, guipartupdate, guipartmouse, guipartkeyboard, guipartfree};
 }
 
 /* initialize a fresh chessboard of pieces and randomize their positions */
@@ -717,11 +737,17 @@ noflush:
 			}
 			/* the standard libguiparts mouse check is inconsistent; the loop of all selems is a workaround */
 //			sel = root->mouse(root, m);
+/*
 			for(i=0; i < 64; i++){
 				mousetarg = &selems[i];
 				sel = mousetarg->mouse(&selems[i], m);
 				if(sel != -1)
 					break;
+			}
+*/
+			if(root->mouse(root, m)){
+//				print("%d ", sel);
+				flushimage(display, 1);
 			}
 			if(m.buttons == 1){
 				if(sel < 0)
