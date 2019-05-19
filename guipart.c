@@ -118,7 +118,7 @@ guipartupdate(Elementile *e)
 /*
  * The mouse input may be routed to the child Elementile, depending on some state.
  * If currently focused Elementile is not nil, the mouse is passed to it.
- * Then, if no button is pressed, search for a new Elementile.
+ * (Then, if no button is pressed, search for a new Elementile.) -tweaked
  * If a different Elementile is found, also send the mouse to it.
  * If no Elementile is found, the selected Elementile becomes nil.
  * 
@@ -136,7 +136,7 @@ guipartmouse(Elementile *e, Mouse m)
 	
 	if(gp->sel != nil)
 		v = gp->sel->mouse(gp->sel, m);
-	
+	/* update position even if mouse button is held -mycro */
 //	if(m.buttons == 0){
 		if(ptinrect(m.xy, gp->ltrect)){
 			if(gp->sel != gp->lt){

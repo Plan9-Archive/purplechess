@@ -14,7 +14,7 @@ struct Square {
 	char binid[7];
 	char engname[64];
 //	void *aux; /* aux passed into */
-	void (*onchange)(int elemid, int active); /* event for when active changes */
+//	void (*onchange)(int elemid, int active); /* event for when active changes */
 	/* internal */
 	Rectangle r; /* current size */
 	Mouse olde; /* ye olde mouse input */

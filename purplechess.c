@@ -39,12 +39,10 @@ usage(void)
 	threadexitsall("usage");
 }
 
+/* CURRENTLY UNUSED
 void
 squarechange(int elemid, int active)
 {
-//	if(active == 1)
-//		saux[elemid].drawhexa = 1;
-/*
 	int i, a, sqi;
 	
 	a = *((int*)aux);
@@ -54,8 +52,8 @@ squarechange(int elemid, int active)
 		squares[sqi].active = active;
 		squareupdate(&squaretiles[sqi]);
 	}
-*/
 }
+*/
 
 /* generate board structure and id metadata */
 void
@@ -70,9 +68,9 @@ elemsinit(void)
 	for(i = 0; i < 64; i++){
 //		squareaux[i] = i;
 //		selems[i].tag = i;
-		selems[i].aux = &saux[i];
-		saux[i].onchange = squarechange;
+//		saux[i].onchange = squarechange;
 //		saux[i].aux = &squareaux[i];
+		selems[i].aux = &saux[i];
 		selems[i].init = squareinit;
 		selems[i].resize = squareresize;
 		selems[i].update = squareupdate;

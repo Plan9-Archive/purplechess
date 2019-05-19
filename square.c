@@ -201,49 +201,9 @@ squaremouse(Elementile *e, Mouse m)
 	
 	c = 0;
 	s = e->aux;
-
-/*
-//	print("in squaremouse ");
-	assert(s != nil);
-again:	switch(s->state){
-	case 0:
-		if(ptinrect(m.xy, s->r)){
-			if(s->active == 0){
-//				s->active = 1;
-				c = 1;
-			}
-			if(m.buttons != 0){
-				s->state = 1;
-			}
-			if(m.buttons == 1)
-//				sel = *((int*)(s->aux));
-				sel = s->id;
-		}else{
-			if(s->active == 1){
-//				s->active = 0;
-				c = 1;
-			}
-		}
-		break;
-	case 1:
-		if(m.buttons == 0){
-			s->state = 0;
-			goto again;
-		}
-		break;
-	}
-	
-	if(c == 1){
-		s->onchange(s->id, s->active);
-		redraw(s);
-	}
-	
-	redraw(s);
-*/
 	if(m.buttons == 1)
 		if(ptinrect(m.xy, s->r))
 			sel = s->id;
-
 	return c;
 }
 
