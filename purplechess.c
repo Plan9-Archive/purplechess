@@ -39,22 +39,6 @@ usage(void)
 	threadexitsall("usage");
 }
 
-/* CURRENTLY UNUSED
-void
-squarechange(int elemid, int active)
-{
-	int i, a, sqi;
-	
-	a = *((int*)aux);
-	
-	for(i = 0; i < 6; i++){
-		sqi = a ^ (1<<i);
-		squares[sqi].active = active;
-		squareupdate(&squaretiles[sqi]);
-	}
-}
-*/
-
 /* generate board structure and id metadata */
 void
 elemsinit(void)
@@ -66,10 +50,6 @@ elemsinit(void)
 		saux[i].id = i;
 	/* the base id has to be set prior to the next loop for the binid setting to work */
 	for(i = 0; i < 64; i++){
-//		squareaux[i] = i;
-//		selems[i].tag = i;
-//		saux[i].onchange = squarechange;
-//		saux[i].aux = &squareaux[i];
 		selems[i].aux = &saux[i];
 		selems[i].init = squareinit;
 		selems[i].resize = squareresize;

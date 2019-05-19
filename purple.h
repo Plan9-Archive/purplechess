@@ -13,8 +13,6 @@ struct Square {
 	int moveline;
 	char binid[7];
 	char engname[64];
-//	void *aux; /* aux passed into */
-//	void (*onchange)(int elemid, int active); /* event for when active changes */
 	/* internal */
 	Rectangle r; /* current size */
 	Mouse olde; /* ye olde mouse input */
@@ -35,7 +33,6 @@ Image *hstbg, *hstfg, *msgbg, *msgfg, *scrbar;
 Image *colorray[8];
 Image *masks[7];
 char *maskdir;
-// int squareaux[64];
 Square saux[64];
 Elementile selems[64];
 Guipart tree[63];

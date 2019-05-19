@@ -215,7 +215,6 @@ squareresize(Elementile *e, Rectangle r)
 	
 	s = e->aux;
 	s->r = r;
-	
 	redraw(s);
 }
 
@@ -225,7 +224,6 @@ squareupdate(Elementile *e)
 	Square *s;
 	
 	s = e->aux;
-	
 	redraw(s);
 	return 1;
 }
@@ -233,6 +231,5 @@ squareupdate(Elementile *e)
 void
 squarefree(Elementile*)
 {
-//	freeimage(sqon);
-//	freeimage(sqoff);
+	return;
 }
