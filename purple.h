@@ -1,5 +1,6 @@
 typedef struct Square Square;
 struct Square {
+	Rectangle r; /* current size */
 	int id;
 	int isstart;
 	int isgoal;
@@ -13,7 +14,6 @@ struct Square {
 	int moveline;
 	char binid[7];
 	char engname[64];
-	Rectangle r; /* current size */
 };
 
 extern Point squareinit(Elementile*);

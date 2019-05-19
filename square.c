@@ -22,6 +22,24 @@ squarekeyboard(Elementile*, Rune)
 	return 0;
 }
 
+void
+squarefree(Elementile*)
+{
+	return;
+}
+
+/* libelementile was designed for the mouse return value to signal the lib if a flushimage was needed but we don't do this, we just return 0 always after modifying the global sel var if the button is pressed in our area */
+int
+squaremouse(Elementile *e, Mouse m)
+{
+	Square *s;
+
+	s = e->aux;
+	if(m.buttons == 1)
+		if(ptinrect(m.xy, s->r))
+			sel = s->id;
+	return 0;
+}
 
 /* draw base color, bonus, piece, coin, line, hexagram, id in that order */
 static
@@ -193,21 +211,6 @@ redraw(Square *s)
 	}
 }
 
-int
-squaremouse(Elementile *e, Mouse m)
-{
-	Square *s;
-	int c;
-	
-	c = 0;
-	s = e->aux;
-	if(m.buttons == 1)
-		if(ptinrect(m.xy, s->r))
-			sel = s->id;
-	return c;
-}
-
-
 void
 squareresize(Elementile *e, Rectangle r)
 {
@@ -226,10 +229,4 @@ squareupdate(Elementile *e)
 	s = e->aux;
 	redraw(s);
 	return 1;
-}
-
-void
-squarefree(Elementile*)
-{
-	return;
 }
