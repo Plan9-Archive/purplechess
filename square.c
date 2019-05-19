@@ -207,7 +207,7 @@ redraw(Square *s)
 	if(s->drawid == 1){
 		targ.x = s->r.min.x + 5;
 		targ.y = s->r.max.y - 25;
-		string(screen, targ, msgbg, ZP, font, s->binid);
+		string(screen, targ, white, ZP, font, s->binid);
 	}
 }
 

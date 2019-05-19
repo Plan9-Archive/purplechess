@@ -1,7 +1,7 @@
 typedef struct Square Square;
 struct Square {
 	Rectangle r; /* current size */
-	int id;
+	int id; /* decimal id follows chess labeling 0 on lower left 63 upper right */
 	int isstart;
 	int isgoal;
 	int iscurrent;
@@ -12,8 +12,8 @@ struct Square {
 	int coin;
 	int line;
 	int moveline;
-	char binid[7];
-	char engname[64];
+	char binid[7]; /* binary id generated after gray code remapping */
+	char engname[64]; /* english 3 word name */
 };
 
 extern Point squareinit(Elementile*);
@@ -26,7 +26,6 @@ extern void squarefree(Elementile*);
 Image *black, *white, *re, *or, *ye, *gr, *bl, *in, *vi;
 Image *legaltarget, *lightsq, *darksq, *click, *destination, *purple, *orange;
 Image *baize, *dark, *light, *blkpc, *altblkpc, *whtpc, *hlsq;
-Image *hstbg, *hstfg, *msgbg, *msgfg, *scrbar;
 Image *colorray[8];
 Image *masks[7];
 char *maskdir;
@@ -34,8 +33,7 @@ Square saux[64];
 Elementile selems[64];
 Guipart tree[63];
 Elementile pelems[63];
-Elementile *root; 
-Elementile *mousetarg;
+Elementile *root;
 Rectangle textrect, textrect2, textrect3, textrect4, boardrect;
 int sel, start, goal, current, oldsq, legalsqs, seqcap;
 int wscore, bscore, moves, pcson, clearflag, turnsco, totalsco;

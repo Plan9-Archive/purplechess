@@ -68,11 +68,6 @@ setupimages(void)
 	blkpc = alloccolor(DBlack);
 	whtpc = alloccolormix(DGreyblue, DWhite);
 	hlsq = alloccolor(setalpha(DRed, 0xc8));
-	hstbg = alloccolormix(DPurpleblue, DWhite);
-	hstfg = alloccolor(DPurpleblue);
-	msgbg = alloccolor(DWhite);
-	msgfg = alloccolor(DBlack);
-	scrbar = alloccolor(0x999999FF);
 	white = alloccolor(0xFFFFFFFF);
 	black = alloccolor(0x000000FF);
 	re = alloccolor(0xFF3D60FF);
