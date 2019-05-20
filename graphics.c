@@ -98,16 +98,16 @@ setupimages(void)
 void
 overlay(void)
 {
-	int sqi,col,i,j;
-	Point a,b,c,d;
+	int sqi, col, i, j;
+	Point a, b, c, d;
 
-	col=1;
-	for(i = 0; i < 64; i++){
+	col = 1;
+	for(i=0; i < 64; i++){
 		a.x = saux[i].r.min.x;
 		a.y = saux[i].r.min.y;
 		b.x = saux[i].r.min.x;
 		b.y = saux[i].r.max.y;
-		for(j = 0; j < 6; j++){
+		for(j=0; j < 6; j++){
 			b.x = saux[i].r.min.x;
 			b.y = saux[i].r.max.y;
 			sqi = i ^ (1<<j);
@@ -160,7 +160,7 @@ instructions(void)
 {
 	Point printat;
 
-	printat=boardrect.min;
+	printat = boardrect.min;
 	sprint(texbuf, "Navigate the 6d hypercube along a Gray code path.");
 	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
 	printat.y += 25;
@@ -222,7 +222,7 @@ hexatoggle(void)
 		saux[start].drawhexa = 0;
 		saux[goal].drawhexa = 0;
 	}
-	for(i = 0; i < 64; i++){
+	for(i=0; i < 64; i++){
 		if(saux[i].drawhexa == 0)
 			saux[i].drawhexa = 1;
 		else
@@ -279,7 +279,7 @@ scores(void)
 {
 	Point printat;
 
-	printat=boardrect.min;
+	printat = boardrect.min;
 	sprint(texbuf, "High score: %d seed: %ld", hitot, hitotseed);
 	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
 	printat.y += 25;

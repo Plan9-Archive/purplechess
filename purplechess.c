@@ -24,7 +24,7 @@ chtogr(int find)
 {
 	int i;
 
-	for(i=0; i <64; i++)
+	for(i=0; i < 64; i++)
 		if(grtoch[i] == find)
 			return i;
 	/* if we didnt find a match something is broken */
@@ -49,7 +49,7 @@ elemsinit(void)
 	for(i=0; i < 64; i++)
 		saux[i].id = i;
 	/* the base id has to be set prior to the next loop for the binid setting to work */
-	for(i = 0; i < 64; i++){
+	for(i=0; i < 64; i++){
 		selems[i].aux = &saux[i];
 		selems[i].init = squareinit;
 		selems[i].resize = squareresize;
@@ -138,7 +138,7 @@ elemsinit(void)
 void
 chessinit(void)
 {
-	int i,j,tmp;
+	int i, j, tmp;
 
 	if(pos == nil)
 		pos = malloc(sizeof(Position));
@@ -174,7 +174,7 @@ gamereset(void)
 	int i, csum;
 
 	draw(screen, boardrect, black, nil, ZP);
-	for(i = 0; i < 64; i++){
+	for(i=0; i < 64; i++){
 		saux[i].active = 0;
 		saux[i].isstart = 0;
 		saux[i].isgoal = 0;
@@ -219,7 +219,7 @@ gamereset(void)
 		saux[grtoch[i]].line = 1;
 	saux[grtoch[54]].line = 1;
 	/* calculate starting position and moving lines, we switch to chess ids here */
-	csum=saux[56].coin + saux[57].coin + saux[58].coin;
+	csum = saux[56].coin + saux[57].coin + saux[58].coin;
 	switch(csum){
 	case 6:
 		start += 1;
@@ -237,7 +237,7 @@ gamereset(void)
 		moving[5] = '1';
 		break;
 	}
-	csum=saux[48].coin + saux[49].coin + saux[50].coin;
+	csum = saux[48].coin + saux[49].coin + saux[50].coin;
 	switch(csum){
 	case 6:
 		start += 2;
@@ -255,7 +255,7 @@ gamereset(void)
 		moving[4] = '1';
 		break;
 	}
-	csum=saux[40].coin + saux[41].coin + saux[42].coin;
+	csum = saux[40].coin + saux[41].coin + saux[42].coin;
 	switch(csum){
 	case 6:
 		start += 4;
@@ -273,7 +273,7 @@ gamereset(void)
 		moving[3] = '1';
 		break;
 	}
-	csum=saux[32].coin + saux[33].coin + saux[34].coin;
+	csum = saux[32].coin + saux[33].coin + saux[34].coin;
 	switch(csum){
 	case 6:
 		start += 8;
@@ -309,7 +309,7 @@ gamereset(void)
 		moving[1] = '1';
 		break;
 	}
-	csum=saux[16].coin + saux[17].coin + saux[18].coin;
+	csum = saux[16].coin + saux[17].coin + saux[18].coin;
 	switch(csum){
 	case 6:
 		start += 32;
@@ -327,10 +327,10 @@ gamereset(void)
 		moving[0] = '1';
 		break;
 	}
-	start=grtoch[start];
-	current=start;
-	goal=63-start;
-	for(i = 0; i < 64; i++)
+	start = grtoch[start];
+	current = start;
+	goal = 63-start;
+	for(i=0; i < 64; i++)
 		selems[i].update(&selems[i]);
 	draw(screen, textrect, black, nil, ZP);
 	sprint(texbuf, "starting square:  ");
@@ -368,11 +368,11 @@ aftercoins(void)
 	saux[start].drawhexa = 1;
 	saux[goal].isgoal = 1;
 	saux[goal].drawhexa = 1;
-	for(i = 0; i < 6; i++){
+	for(i=0; i < 6; i++){
 		sqi = start ^ (1<<i);
 		saux[sqi].active = 1;
 	}
-	sel=current;
+	sel = current;
 	if(pos->sq[current] != NOPIECE)
 		pcson--;
 }
@@ -384,7 +384,7 @@ capallandscore(void)
 	int i, sco;
 
 	turnsco = 0;
-	for(i = 0; i < 64; i++){
+	for(i=0; i < 64; i++){
 		sco = 0;
 		if((pos->sq[i] & TARGET) && (pos->sq[i] != NOPIECE)){
 			if((pos->sq[i] & PC) == PAWN){
@@ -572,14 +572,14 @@ activehit(void)
 	saux[sel].active = 2;
 	saux[sel].iscurrent = 1;
 	/* clear previous active squares */
-	for(i = 0; i < 6; i++){
+	for(i=0; i < 6; i++){
 		sqi = oldsq ^ (1<<i);
 		if(saux[sqi].active == 1)
 			saux[sqi].active = 0;
 	}
 	/* mark new possible targets as valid */
 	legalsqs = 0;
-	for(i = 0; i < 6; i++){
+	for(i=0; i < 6; i++){
 		sqi = current ^ (1<<i);
 		if(saux[sqi].active == 0){
 			saux[sqi].active = 1;
@@ -587,7 +587,7 @@ activehit(void)
 		}
 	}
 	draw(screen, boardrect, black, nil, ZP);
-	for(i = 0; i < 64; i++)
+	for(i=0; i < 64; i++)
 		selems[i].update(&selems[i]);
 	printscore();
 	if(visflag != 1)
@@ -628,7 +628,7 @@ threadmain(int argc, char **argv)
 	maskdir = "/sys/games/lib/chess";
 	username=getenv("user");
 	sprint(scorefile, "/usr/%s/lib/purplescores", username);
-	seed = 0;
+	seed = time(0);
 	hexdisp = 0;
 	visflag = 1;
 	ARGBEGIN{
@@ -664,8 +664,6 @@ threadmain(int argc, char **argv)
 		if(i == 1023)
 			sscanf(scoretxt, "%d %ld %d %ld %d %ld %d %ld", &hitot, &hitotseed, &hip1, &hip1seed, &hip2, &hip2seed, &hip3, &hip3seed);
 	}
-	if(seed == 0)
-		seed = time(0);
 	srand(seed);
 	setupimages();
 	elemsinit();
@@ -718,6 +716,7 @@ threadmain(int argc, char **argv)
 			if(m.buttons == 1){
 				if(sel < 0)
 					break;
+				/* all gamestate changes happen here */
 				if((saux[sel].active == 1) || (moves == 0)){
 					activehit();
 					flushimage(display, 1);

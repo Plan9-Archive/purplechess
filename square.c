@@ -55,7 +55,7 @@ redraw(Square *s)
 	align.min.x = s->r.min.x;
 	align.min.y = s->r.min.y;
 	if((s->r.max.y - s->r.min.y) > 75)
-		align.min.y = s->r.min.y +10;
+		align.min.y = s->r.min.y + 10;
 	align.max.x = s->r.max.x;
 	align.max.y = s->r.max.y;
 	switch(s->active){
@@ -128,7 +128,7 @@ redraw(Square *s)
 	}
 	switch(s->line){
 	case 1: /* straight line across */
-		color=visflag < 3 ? black : whtpc;
+		color = visflag < 3 ? black : whtpc;
 		targ.x = s->r.min.x;
 		targ.y = s->r.min.y + ((s->r.max.y - s->r.min.y) / 2);
 		dest.x = s->r.max.x;
@@ -136,7 +136,7 @@ redraw(Square *s)
 		line(screen, targ, dest, 0, 0, 4, color, targ);
 		break;
 	case 2: /* line plus overlapping circle */
-		color=visflag < 3 ? black : whtpc;
+		color = visflag < 3 ? black : whtpc;
 		targ.x = s->r.min.x;
 		targ.y = s->r.min.y + ((s->r.max.y - s->r.min.y) / 2);
 		dest.x = s->r.max.x;
@@ -179,29 +179,29 @@ redraw(Square *s)
 		if((s->r.max.y - s->r.min.y) < 82)
 			ell2 = 2;
 		targ.x = s->r.min.x + ((s->r.max.x - s->r.min.x) / 2);
-		targ.y = s->r.min.y + (60/ell2);
-		dest.x = targ.x + (40/ell1);
+		targ.y = s->r.min.y + (60 / ell2);
+		dest.x = targ.x + (40 / ell1);
 		dest.y = targ.y;
 		targ.x += ell1;
 		targ.y += ell2;
 		dest.x += ell1;
 		dest.y += ell2;
-		for(i = 0; i < 6; i++){
+		for(i=0; i < 6; i++){
 			color = blkpc;
 			if((s->isgoal && (s->active != 2)) || s->isstart)
 				color = whtpc;
 			if(s->binid[i] == '1')
-				line(screen, targ, dest, 0, 0, 2/ell2, color, targ);
+				line(screen, targ, dest, 0, 0, 2 / ell2, color, targ);
 			else {
-				dest.x -= (25/ell1);
-				line(screen, targ, dest, 0, 0, 2/ell2, color, targ);
-				targ.x += (25/ell1);
-				dest.x += (25/ell1);
-				line(screen, targ, dest, 0, 0, 2/ell2, color, targ);
-				targ.x -= (25/ell1);
+				dest.x -= (25 / ell1);
+				line(screen, targ, dest, 0, 0, 2 / ell2, color, targ);
+				targ.x += (25 / ell1);
+				dest.x += (25 / ell1);
+				line(screen, targ, dest, 0, 0, 2 / ell2, color, targ);
+				targ.x -= (25 / ell1);
 			}
-			targ.y -= (10/ell2);
-			dest.y -= (10/ell2);
+			targ.y -= (10 / ell2);
+			dest.y -= (10 / ell2);
 		}
 	}
 	if(s->drawid == 1){

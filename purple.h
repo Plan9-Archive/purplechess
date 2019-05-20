@@ -5,7 +5,7 @@ struct Square {
 	int isstart;
 	int isgoal;
 	int iscurrent;
-	int active;
+	int active; /* 0 is default, 1 is legal move, 2 is past path */
 	int drawid;
 	int drawhexa;
 	int drawpiece;
