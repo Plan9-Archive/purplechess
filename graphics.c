@@ -42,6 +42,7 @@ allocmask(char *m)
 	return tmp;
 }
 
+/* the dog et the window, get it back */
 void
 dogetwindow(void)
 {

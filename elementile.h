@@ -1,7 +1,4 @@
 /* Amavect! */
-//#pragma src "."
-//#pragma lib "libelementile.a"
-
 typedef struct Elementile Elementile;
 typedef struct Guipart Guipart;
 

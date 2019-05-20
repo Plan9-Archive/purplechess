@@ -555,7 +555,6 @@ activehit(void)
 {
 	int i, sqi;
 
-	draw(screen, textrect, black, nil, ZP);
 	if(moves == 0)
 		aftercoins();
 	moves++;
@@ -587,6 +586,7 @@ activehit(void)
 		}
 	}
 	draw(screen, boardrect, black, nil, ZP);
+	draw(screen, textrect, black, nil, ZP);
 	for(i=0; i < 64; i++)
 		selems[i].update(&selems[i]);
 	printscore();
@@ -712,11 +712,12 @@ threadmain(int argc, char **argv)
 				}
 				break;
 			}
+			/* our squaremouse function sets sel to the selected element if the button is pressed or held */
 			root->mouse(root, m);
 			if(m.buttons == 1){
 				if(sel < 0)
 					break;
-				/* all gamestate changes happen here */
+				/* all gamestate changes happen from activehit() if sel is a legal target square */
 				if((saux[sel].active == 1) || (moves == 0)){
 					activehit();
 					flushimage(display, 1);
