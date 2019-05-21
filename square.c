@@ -10,20 +10,20 @@
 #include "purple.h"
 
 Point
-squareinit(Elementile*)
+squareinit(Elementile* e)
 {
 	Point p = {1,1};
 	return p;
 }
 
 int
-squarekeyboard(Elementile*, Rune)
+squarekeyboard(Elementile* e, Rune r)
 {
 	return 0;
 }
 
 void
-squarefree(Elementile*)
+squarefree(Elementile* e)
 {
 	return;
 }
