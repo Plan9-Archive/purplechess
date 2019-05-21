@@ -33,7 +33,7 @@ allocmask(char *m)
 	fd = open(path, OREAD);
 	if(fd < 0) {
 		fprint(2, "cannot open image file %s: %r\n", path);
-		exits("image");
+		threadexitsall("image");
 	}
 	tmp = readimage(display, fd, 0);
 	if(tmp == nil)

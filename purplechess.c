@@ -525,7 +525,7 @@ printscore(void)
 			hitotseed = seed;
 			savescores();
 		}
-		sprint(texbuf2, "%d remain, + %d, p1: %d, p2: %d", 64 - moves, turnsco, p1sco, p2sco);
+		sprint(texbuf2, "+ %d, p1: %d, p2: %d", turnsco, p1sco, p2sco);
 		stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
 	}
 	switch(clearflag){

@@ -20,7 +20,7 @@ max(int a, int b)
 /* rounds only positive doubles correctly */
 static
 double
-round(double d)
+dubround(double d)
 {
 	double f, i;
 	f = modf(d, &i);
@@ -75,7 +75,7 @@ guipartresize(Elementile *e, Rectangle rect)
 	if(gp->vh == Hdiv){
 		gp->ltrect.max.x = rect.max.x;
 		gp->rbrect.min.x = rect.min.x;
-		gp->ltrect.max.y = (int)round(Dy(rect) * gp->d) + rect.min.y - w;
+		gp->ltrect.max.y = (int)dubround(Dy(rect) * gp->d) + rect.min.y - w;
 		if(Dy(rect) - Dy(gp->ltrect) < gp->rbmin.y)
 			gp->ltrect.max.y = rect.max.y - gp->rbmin.y - 2 * w;
 		if(Dy(gp->ltrect) < gp->ltmin.y)
@@ -86,7 +86,7 @@ guipartresize(Elementile *e, Rectangle rect)
 	}else{
 		gp->ltrect.max.y = rect.max.y;
 		gp->rbrect.min.y = rect.min.y;
-		gp->ltrect.max.x = (int)round(Dx(rect) * gp->d) + rect.min.x - w;
+		gp->ltrect.max.x = (int)dubround(Dx(rect) * gp->d) + rect.min.x - w;
 		if(Dx(rect) - Dx(gp->ltrect) < gp->rbmin.x)
 			gp->ltrect.max.x = rect.max.x - gp->rbmin.x - 2 * w;
 		if(Dx(gp->ltrect) < gp->ltmin.x)
