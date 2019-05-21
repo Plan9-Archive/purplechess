@@ -7,28 +7,6 @@
 #include <keyboard.h>
 #include "elementile.h"
 
-static
-int
-max(int a, int b)
-{
-	if(a > b)
-		return a;
-	else
-		return b;
-}
-
-/* rounds only positive doubles correctly */
-static
-double
-dubround(double d)
-{
-	double f, i;
-	f = modf(d, &i);
-	if(f >= 0.5)
-		i += 1;
-	return i;
-}
-
 /*
  * Calculate minimum size by the minimum sizes of the children,
  * the division type, and the division width.
@@ -44,11 +22,11 @@ guipartinit(Elementile *e)
 	gp->ltmin = gp->lt->init(gp->lt);
 	gp->rbmin = gp->rb->init(gp->rb);
 	if(gp->vh == Hdiv){
-		p.x = max(gp->ltmin.x, gp->rbmin.x);
+		p.x = gp->ltmin.x > gp->rbmin.x ? gp->ltmin.x : gp->rbmin.x;
 		p.y = gp->ltmin.y + gp->rbmin.y + 2*gp->w;
 	}else{
 		p.x = gp->ltmin.x + gp->rbmin.x + 2*gp->w;
-		p.y = max(gp->ltmin.y, gp->rbmin.y);
+		p.y = gp->ltmin.y > gp->rbmin.y ? gp->ltmin.y : gp->rbmin.y;
 	}
 	return p;
 }
@@ -75,7 +53,8 @@ guipartresize(Elementile *e, Rectangle rect)
 	if(gp->vh == Hdiv){
 		gp->ltrect.max.x = rect.max.x;
 		gp->rbrect.min.x = rect.min.x;
-		gp->ltrect.max.y = (int)dubround(Dy(rect) * gp->d) + rect.min.y - w;
+		/* add 0.5 and cast for int rounding */
+		gp->ltrect.max.y = (int)(Dy(rect) * gp->d + 0.5) + rect.min.y - w;
 		if(Dy(rect) - Dy(gp->ltrect) < gp->rbmin.y)
 			gp->ltrect.max.y = rect.max.y - gp->rbmin.y - 2 * w;
 		if(Dy(gp->ltrect) < gp->ltmin.y)
@@ -86,7 +65,8 @@ guipartresize(Elementile *e, Rectangle rect)
 	}else{
 		gp->ltrect.max.y = rect.max.y;
 		gp->rbrect.min.y = rect.min.y;
-		gp->ltrect.max.x = (int)dubround(Dx(rect) * gp->d) + rect.min.x - w;
+		/* add 0.5 and cast for int rounding */
+		gp->ltrect.max.x = (int)(Dx(rect) * gp->d + 0.5) + rect.min.x - w;
 		if(Dx(rect) - Dx(gp->ltrect) < gp->rbmin.x)
 			gp->ltrect.max.x = rect.max.x - gp->rbmin.x - 2 * w;
 		if(Dx(gp->ltrect) < gp->ltmin.x)
