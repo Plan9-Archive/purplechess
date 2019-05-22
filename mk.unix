@@ -1,0 +1,23 @@
+<$PLAN9/src/mkhdr
+
+TARG=purplechess
+OFILES=\
+	purplechess.$O\
+	square.$O\
+	guipart.$O\
+
+HFILES=purple.h\
+	elementile.h\
+
+UPDATE=\
+	mkfile\
+	graphics.c\
+	target.c\
+	$HFILES\
+	${OFILES:%.$O=%.c}\
+
+<$PLAN9/src/mkone
+
+clean:V:
+	rm -f *.[$OS] [$OS].out *.acid $TARG
+
