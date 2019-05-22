@@ -594,19 +594,13 @@ activehit(void)
 		overlay();
 }
 
-/* menu option "Reset" to start new game */
+/* starts/restarts the game - the board will be identical unless seed was changed */
 void
-menureset(int retry)
+gamestart(void)
 {
-	int i;
-
-	if(!retry)
-		seed++;
 	srand(seed);
 	chessinit();
 	gamereset();
-	for(i=0; i < 64; i++)
-		selems[i].update(&selems[i]);
 	flushimage(display, 1);
 }
 
@@ -664,16 +658,13 @@ threadmain(int argc, char **argv)
 		if(i == 1023)
 			sscanf(scoretxt, "%d %ld %d %ld %d %ld %d %ld", &hitot, &hitotseed, &hip1, &hip1seed, &hip2, &hip2seed, &hip3, &hip3seed);
 	}
-	srand(seed);
 	setupimages();
 	elemsinit();
 	dogetwindow();
 	root->init(root);
 	boardsize();
 	root->resize(root, boardrect);
-	chessinit();
-	gamereset();
-	flushimage(display, 1);
+	gamestart();
 
 	for(;;){
 		switch(alt(alts)){
@@ -696,10 +687,11 @@ threadmain(int argc, char **argv)
 					printseed();
 					break;
 				case 5:
-					menureset(0);
+					seed++;
+					gamestart();
 					break;
 				case 6:
-					menureset(1);
+					gamestart();
 					break;
 				case 7:
 					scores();
