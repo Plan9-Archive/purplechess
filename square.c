@@ -13,18 +13,22 @@ Point
 squareinit(Elementile* e)
 {
 	Point p = {1,1};
+	USED(e);
 	return p;
 }
 
 int
 squarekeyboard(Elementile* e, Rune r)
 {
+	USED(e);
+	USED(r);
 	return 0;
 }
 
 void
 squarefree(Elementile* e)
 {
+	USED(e);
 	return;
 }
 
