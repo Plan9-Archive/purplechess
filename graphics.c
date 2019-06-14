@@ -200,7 +200,6 @@ instructions(void)
 	printat.y += 25;
 	sprint(texbuf, "Fill all squares bonus 10000 points");
 	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
-	printat.y += 25;
 	flushimage(display, 1);
 }
 
@@ -292,6 +291,5 @@ scores(void)
 	printat.y += 25;
 	sprint(texbuf, "p3 high score: %d seed: %ld", hip3, hip3seed);
 	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
-	printat.y += 25;
 	flushimage(display, 1);
 }

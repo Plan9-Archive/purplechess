@@ -51,11 +51,10 @@ void
 redraw(Square *s)
 {
 	Image *color;
-	int i, chsq, ell1, ell2;
+	int i, ell1, ell2;
 	Point targ, dest;
 	Rectangle align;
 
-	chsq = s->id;
 	align.min.x = s->r.min.x;
 	align.min.y = s->r.min.y;
 	if((s->r.max.y - s->r.min.y) > 75)
@@ -110,12 +109,12 @@ redraw(Square *s)
 		line(screen, targ, dest, 0, 0, 4, color, targ);
 	}
 	if(s->drawpiece == 1){
-		color = pos->sq[chsq] & WHITE ? whtpc : blkpc;
+		color = pos->sq[s->id] & WHITE ? whtpc : blkpc;
 		if((s->active == 1) && (s->isgoal == 1))
 			color = click;
 		if((color == blkpc) && (visflag > 3))
 			color = altblkpc;
-		draw(screen, align, color, masks[pos->sq[chsq] & PC], ZP);
+		draw(screen, align, color, masks[pos->sq[s->id] & PC], ZP);
 	}
 	if(s->coin != 0){
 		ell1 = (s->r.max.x - s->r.min.x) / 2;

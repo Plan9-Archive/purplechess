@@ -16,7 +16,15 @@ char *buttons3[] = {"Help", "Hexa", "Binary", "View", "Seed", "Reset", "Retry", 
 Menu menu3 = {buttons3};
 
 /* convert gray code ids to chess square ids */
-int grtoch[64] = {56, 57, 48, 49, 58, 59, 50, 51, 40, 41, 32, 33, 42, 43, 34, 35, 60, 61, 52, 53, 62, 63, 54, 55, 44, 45, 36, 37, 46, 47, 38, 39, 24, 25, 16, 17, 26, 27, 18, 19, 8, 9, 0, 1, 10, 11, 2, 3, 28, 29, 20, 21, 30, 31, 22, 23, 12, 13, 4, 5, 14, 15, 6, 7};
+int grtoch[64] = {
+	56, 57, 48, 49, 58, 59, 50, 51, 
+	40, 41, 32, 33, 42, 43, 34, 35, 
+	60, 61, 52, 53, 62, 63, 54, 55, 
+	44, 45, 36, 37, 46, 47, 38, 39, 
+	24, 25, 16, 17, 26, 27, 18, 19, 
+	8, 9, 0, 1, 10, 11, 2, 3, 
+	28, 29, 20, 21, 30, 31, 22, 23, 
+	12, 13, 4, 5, 14, 15, 6, 7 };
 
 /* and vice versa, chess ids to gray ids */
 int
@@ -43,7 +51,7 @@ usage(void)
 void
 elemsinit(void)
 {
-	int i, a, b, conv; /* index, aux index, adjust */
+	int i, a, b, conv;
 	Divtype dt;
 
 	for(i=0; i < 64; i++)
@@ -329,7 +337,7 @@ gamereset(void)
 	}
 	start = grtoch[start];
 	current = start;
-	goal = 63-start;
+	goal = 63 - start;
 	for(i=0; i < 64; i++)
 		selems[i].update(&selems[i]);
 	draw(screen, textrect, black, nil, ZP);
