@@ -1,4 +1,4 @@
-purplechess [-s seed] [-f scorefile] [-m imagedir]
+purplechess [-a] [-s seed] [-f scorefile] [-m imagedir]
 6d hypercubic solitaire chess variant with I Ching hexagrams
 
 The game of purple chess projects a 6d hypercube onto a chessboard. From a random starting square you travel a Gray code path to the the opposite corner of the cube, the bit inverse of your starting I Ching hexagram's binary ID. After completing this initial goal, the next phase consists of capturing or highlighting all pieces on the board. The final phase is to extend the path to as many squares as possible. A game of purple chess begins by generating an I Ching hexagram with the 3-coin method, and selecting a corresponding corner of a 6d hypercube. The opening screen displays the coinflips and corresponding lines. Click any square to begin. 
@@ -28,6 +28,7 @@ The second phase of the game is scored the same way as the user races to capture
 
 The final goal is turning as many of the remaining squares red as possible. When no more moves are possible, another bonus of 375 times the total number of moves is awarded. If the entire board has been filled, an additional 10000 points is given.
 
+-a plays a soundtrack with hypercubic per-square variation based on Amavect's bytebeat0004
 -s SEED provides a deterministic seed to the pseudorandom number generator to allow a specific board to be replayed
 -f scorefile allows a specified scorefile to be used to save high scores. If $home/lib/purplescores exists, it will be used by default
 -m imagedir specifies a directory to use for the bit files for the chess pieces. /sys/games/lib/chess is the default and mk install attempts to create it. The "masks" subdirectory in the repo contains the piece image bitmaps.

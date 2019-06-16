@@ -44,7 +44,7 @@ chtogr(int find)
 void
 usage(void)
 {
-	fprint(2, "usage: %s [-s seed] [-f scorefile] [-m imagedir]\n", argv0);
+	fprint(2, "usage: %s [-a] [-s seed] [-f scorefile] [-m imagedir]\n", argv0);
 	threadexitsall("usage");
 }
 
@@ -558,18 +558,15 @@ printscore(void)
 	stringbg(screen, textrect.min, white, ZP, font, texbuf, black, textrect.min);
 }
 
+/* tweak music generation variables based on selected square binary id */
 void
 setmusicbits(void)
 {
 	me1 = 8;
-	if(saux[sel].binid[0] == '0')
-		ha1 = 256;
-	if(saux[sel].binid[0] == '1')
-		ha1 = 64;
 	if(saux[sel].binid[1] == '0')
 		ki1 = 128;
 	if(saux[sel].binid[1] == '1')
-		ki1 = 32;
+		ki1 = 256;
 	if(saux[sel].binid[2] == '1')
 		me1 = me1 + 8;
 	if(saux[sel].binid[3] == '1')
@@ -578,13 +575,6 @@ setmusicbits(void)
 		me1 = me1 + 24;
 	if(saux[sel].binid[5] == '1')
 		me1 = me1 + 32;
-/*
-	if(saux[sel].binid[2] == '0')
-		me1 = 64;
-	if(saux[sel].binid[2] == '1')
-		me1 = 8;
-*/
-
 }
 
 /* this is the main game logic which triggers on a click of a valid target square */
@@ -633,6 +623,7 @@ activehit(void)
 		overlay();
 }
 
+/* if audio is active, this fn is forked as a separate proc and loops forever */
 void
 soundtrack(void *)
 {
@@ -645,7 +636,9 @@ soundtrack(void *)
 		uvlong hat = ( ((t*t*t)/(t%ha1 + 1))|( (((t<<1) + (1<<15))|(t<<2)|(t<<3)|(t<<4)) ) );
 		uvlong kick = ( (ki1*t * ((1<<5)-((t>>9)%(1<<5)))/(1<<4))|((t<<3)|(t<<2)|(t<<1)) );
 		uvlong melody = ((3*me1*t&t>>7)|(4*me1*t&t>>2)|(5*me1*t&t>>6)|(9*me1*t&t>>4));
-		if(saux[sel].binid[0] == '0')
+		if(saux[sel].binid[1] == '0')
+			melody = kick ^ melody;
+		if(saux[sel].binid[0] == '1')
 			x = (kick + hat) ^ melody;
 		else
 			x = (kick / hat) ^ melody;
