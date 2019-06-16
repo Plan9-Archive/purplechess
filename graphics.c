@@ -189,13 +189,13 @@ instructions(void)
 	sprint(texbuf, "Goal bonus 500 + 4x score for 6 clicks, 2x score for 8");
 	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
 	printat.y += 25;
-	sprint(texbuf, "Sequential capture bonus by 100 per capture");
+	sprint(texbuf, "Sequential capture bonus grows by 100 per capture");
 	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
 	printat.y += 25;
 	sprint(texbuf, "Piece clear score: 500 * (64 - moves)");
 	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
 	printat.y += 25;
-	sprint(texbuf, "Cube fill score: 350 * squares filled");
+	sprint(texbuf, "Cube fill score: 375 * squares filled");
 	stringbg(screen, printat, white, ZP, font, texbuf, black, printat);
 	printat.y += 25;
 	sprint(texbuf, "Fill all squares bonus 10000 points");

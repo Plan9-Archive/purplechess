@@ -14,6 +14,7 @@
 
 char *buttons3[] = {"Help", "Hexa", "Binary", "View", "Seed", "Reset", "Retry", "Scores", "Exit", nil};
 Menu menu3 = {buttons3};
+int audfd, ha1, ha2, ki1, ki2, me1, me2;
 
 /* convert gray code ids to chess square ids */
 int grtoch[64] = {
@@ -557,6 +558,35 @@ printscore(void)
 	stringbg(screen, textrect.min, white, ZP, font, texbuf, black, textrect.min);
 }
 
+void
+setmusicbits(void)
+{
+	me1 = 8;
+	if(saux[sel].binid[0] == '0')
+		ha1 = 256;
+	if(saux[sel].binid[0] == '1')
+		ha1 = 64;
+	if(saux[sel].binid[1] == '0')
+		ki1 = 128;
+	if(saux[sel].binid[1] == '1')
+		ki1 = 32;
+	if(saux[sel].binid[2] == '1')
+		me1 = me1 + 8;
+	if(saux[sel].binid[3] == '1')
+		me1 = me1 + 16;
+	if(saux[sel].binid[4] == '1')
+		me1 = me1 + 24;
+	if(saux[sel].binid[5] == '1')
+		me1 = me1 + 32;
+/*
+	if(saux[sel].binid[2] == '0')
+		me1 = 64;
+	if(saux[sel].binid[2] == '1')
+		me1 = 8;
+*/
+
+}
+
 /* this is the main game logic which triggers on a click of a valid target square */
 void
 activehit(void)
@@ -597,9 +627,33 @@ activehit(void)
 	draw(screen, textrect, black, nil, ZP);
 	for(i=0; i < 64; i++)
 		selems[i].update(&selems[i]);
+	setmusicbits();
 	printscore();
 	if(visflag != 1)
 		overlay();
+}
+
+void
+soundtrack(void *)
+{
+	uvlong t;
+	uvlong x;
+	short s;
+
+	t=0;
+	for(;;){
+		uvlong hat = ( ((t*t*t)/(t%ha1 + 1))|( (((t<<1) + (1<<15))|(t<<2)|(t<<3)|(t<<4)) ) );
+		uvlong kick = ( (ki1*t * ((1<<5)-((t>>9)%(1<<5)))/(1<<4))|((t<<3)|(t<<2)|(t<<1)) );
+		uvlong melody = ((3*me1*t&t>>7)|(4*me1*t&t>>2)|(5*me1*t&t>>6)|(9*me1*t&t>>4));
+		if(saux[sel].binid[0] == '0')
+			x = (kick + hat) ^ melody;
+		else
+			x = (kick / hat) ^ melody;
+		s = (short)(x&0xFFFF);
+		write(audfd, &s, sizeof(s));
+		write(audfd, &s, sizeof(s));
+		t++;
+	}
 }
 
 /* starts/restarts the game - the board will be identical unless seed was changed */
@@ -624,6 +678,7 @@ threadmain(int argc, char **argv)
 	char *username;
 	char *userfile;
 	int i;
+	int audioflag;
 	enum { MOUSE, RESIZE, KEYS, NONE };
 
 	root = &pelems[0];
@@ -632,8 +687,15 @@ threadmain(int argc, char **argv)
 	sprint(scorefile, "/usr/%s/lib/purplescores", username);
 	seed = time(0);
 	hexdisp = 0;
+	audioflag = 0;
 	visflag = 1;
+	ha1 = 256;
+	ki1 = 128;
+	me1  = 64;
 	ARGBEGIN{
+	case 'a':
+		audioflag = 1;
+		break;
 	case 'f':
 		userfile = EARGF(usage());
 		sprint(scorefile, userfile);
@@ -665,6 +727,11 @@ threadmain(int argc, char **argv)
 		i = read(writescores, scoretxt, 1023);
 		if(i == 1023)
 			sscanf(scoretxt, "%d %ld %d %ld %d %ld %d %ld", &hitot, &hitotseed, &hip1, &hip1seed, &hip2, &hip2seed, &hip3, &hip3seed);
+	}
+	if(audioflag){
+		audfd=open("/dev/audio", OWRITE);
+		if(audfd >= 0)
+			proccreate(soundtrack, nil, 8192);
 	}
 	setupimages();
 	elemsinit();

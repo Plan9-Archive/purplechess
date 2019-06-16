@@ -30,7 +30,7 @@ The final goal is turning as many of the remaining squares red as possible. When
 
 -s SEED provides a deterministic seed to the pseudorandom number generator to allow a specific board to be replayed
 -f scorefile allows a specified scorefile to be used to save high scores. If $home/lib/purplescores exists, it will be used by default
--m imagedir specifies a directory to use for the bit files for the chess pieces. /sys/games/lib/chess is the default and mk install attempts to create it.
+-m imagedir specifies a directory to use for the bit files for the chess pieces. /sys/games/lib/chess is the default and mk install attempts to create it. The "masks" subdirectory in the repo contains the piece image bitmaps.
 
 The right-button menu options:
 
