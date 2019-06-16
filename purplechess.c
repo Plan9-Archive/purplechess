@@ -562,19 +562,19 @@ printscore(void)
 void
 setmusicbits(void)
 {
-	me1 = 8;
+	me1 = 5;
 	if(saux[sel].binid[1] == '0')
 		ki1 = 128;
 	if(saux[sel].binid[1] == '1')
 		ki1 = 256;
 	if(saux[sel].binid[2] == '1')
-		me1 = me1 + 8;
+		me1 = me1 + 10;
 	if(saux[sel].binid[3] == '1')
-		me1 = me1 + 16;
+		me1 = me1 + 20;
 	if(saux[sel].binid[4] == '1')
-		me1 = me1 + 24;
+		me1 = me1 + 40;
 	if(saux[sel].binid[5] == '1')
-		me1 = me1 + 32;
+		me1 = me1 + 80;
 }
 
 /* this is the main game logic which triggers on a click of a valid target square */
