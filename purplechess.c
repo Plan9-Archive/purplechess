@@ -566,19 +566,19 @@ setmusicbits(void)
 
 	me1 = 32;
 	incr = 8;
-	if(saux[sel].binid[1] == '0')
+	if(saux[current].binid[1] == '0')
 		ki1 = 128;
-	if(saux[sel].binid[1] == '1')
+	if(saux[current].binid[1] == '1')
 		ki1 = 256;
-	if(saux[sel].binid[2] == '1'){
+	if(saux[current].binid[2] == '1'){
 		incr = 12;
 		me1 = 36;
 	}
-	if(saux[sel].binid[3] == '1')
+	if(saux[current].binid[3] == '1')
 		me1 += incr * 1;
-	if(saux[sel].binid[4] == '1')
+	if(saux[current].binid[4] == '1')
 		me1 += incr * 2;
-	if(saux[sel].binid[5] == '1')
+	if(saux[current].binid[5] == '1')
 		me1 += incr * 4;
 }
 
@@ -632,8 +632,7 @@ activehit(void)
 void
 soundtrack(void* foo)
 {
-	uvlong t;
-	uvlong x;
+	uvlong t, x, hat, kick, melody;
 	short s;
 	short audbuf[2048];
 	int i;
@@ -647,9 +646,12 @@ soundtrack(void* foo)
 				break;
 			sleep(1000);
 		}
-		uvlong hat = ( ((t*t*t)/(t%ha1 + 1))|( (((t<<1) + (1<<15))|(t<<2)|(t<<3)|(t<<4)) ) );
-		uvlong kick = ( (ki1*t * ((1<<5)-((t>>9)%(1<<5)))/(1<<4))|((t<<3)|(t<<2)|(t<<1)) );
-		uvlong melody = ((3*me1*t&t>>7)|(4*me1*t&t>>2)|(5*me1*t&t>>6)|(9*me1*t&t>>4));
+		hat = ( ((t*t*t)/(t%ha1 + 1))|( (((t<<1) + (1<<15))|(t<<2)|(t<<3)|(t<<4)) ) );
+		kick = ( (ki1*t * ((1<<5)-((t>>9)%(1<<5)))/(1<<4))|((t<<3)|(t<<2)|(t<<1)) );
+		if(saux[current].binid[2] == '1')
+			melody = ((3*me1*t&t>>7)|(4*me1*t&t>>2)|(7*me1*t&t>>6)|(9*me1*t&t>>4));
+		else
+			melody = ((3*me1*t&t>>7)|(4*me1*t&t>>2)|(5*me1*t&t>>6)|(9*me1*t&t>>4));
 		if(saux[current].binid[1] == '0')
 			melody = kick ^ melody;
 		if(saux[current].binid[0] == '1')
