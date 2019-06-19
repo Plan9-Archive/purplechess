@@ -630,7 +630,7 @@ activehit(void)
 
 /* if audio is active, this fn is forked as a separate proc and loops forever */
 void
-soundtrack(void *)
+soundtrack(void* foo)
 {
 	uvlong t;
 	uvlong x;
@@ -638,6 +638,7 @@ soundtrack(void *)
 	short audbuf[2048];
 	int i;
 
+	USED(foo);
 	t = 0;
 	i = 0;
 	for(;;){
