@@ -12,7 +12,7 @@
 #include "target.c"
 #include "graphics.c"
 
-char *buttons3[] = {"Help", "Hexa", "Binary", "View", "Seed", "Reset", "Retry", "Scores", "Music", "Exit", nil};
+char *buttons3[] = {"New Game", "Retry", "Help", "Hexa", "Binary", "View", "Seed", "Scores", "Music", "Exit", nil};
 Menu menu3 = {buttons3};
 int audioflag, audfd, ha1, ha2, ki1, ki2, me1, me2;
 
@@ -760,26 +760,26 @@ threadmain(int argc, char **argv)
 			if(m.buttons == 4){
 				switch(menuhit(3, mctl, &menu3, nil)){
 				case 0:
-					instructions();
-					break;
-				case 1:
-					hexatoggle();
-					break;
-				case 2:
-					binarytoggle();
-					break;
-				case 3:
-					vis();
-					break;
-				case 4:
-					printseed();
-					break;
-				case 5:
 					seed++;
 					gamestart();
 					break;
-				case 6:
+				case 1:
 					gamestart();
+					break;
+				case 2:
+					instructions();
+					break;
+				case 3:
+					hexatoggle();
+					break;
+				case 4:
+					binarytoggle();
+					break;
+				case 5:
+					vis();
+					break;
+				case 6:
+					printseed();
 					break;
 				case 7:
 					scores();
