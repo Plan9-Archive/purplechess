@@ -12,9 +12,9 @@
 #include "target.c"
 #include "graphics.c"
 
-char *buttons3[] = {"Help", "Hexa", "Binary", "View", "Seed", "Reset", "Retry", "Scores", "Exit", nil};
+char *buttons3[] = {"Help", "Hexa", "Binary", "View", "Seed", "Reset", "Retry", "Scores", "Music", "Exit", nil};
 Menu menu3 = {buttons3};
-int audfd, ha1, ha2, ki1, ki2, me1, me2;
+int audioflag, audfd, ha1, ha2, ki1, ki2, me1, me2;
 
 /* convert gray code ids to chess square ids */
 int grtoch[64] = {
@@ -642,12 +642,17 @@ soundtrack(void* foo)
 	t = 0;
 	i = 0;
 	for(;;){
+		for(;;){
+			if(audioflag == 1)
+				break;
+			sleep(1000);
+		}
 		uvlong hat = ( ((t*t*t)/(t%ha1 + 1))|( (((t<<1) + (1<<15))|(t<<2)|(t<<3)|(t<<4)) ) );
 		uvlong kick = ( (ki1*t * ((1<<5)-((t>>9)%(1<<5)))/(1<<4))|((t<<3)|(t<<2)|(t<<1)) );
 		uvlong melody = ((3*me1*t&t>>7)|(4*me1*t&t>>2)|(5*me1*t&t>>6)|(9*me1*t&t>>4));
-		if(saux[sel].binid[1] == '0')
+		if(saux[current].binid[1] == '0')
 			melody = kick ^ melody;
-		if(saux[sel].binid[0] == '1')
+		if(saux[current].binid[0] == '1')
 			x = (kick + hat) ^ melody;
 		else
 			x = melody;
@@ -685,7 +690,7 @@ threadmain(int argc, char **argv)
 	char *username;
 	char *userfile;
 	int i;
-	int audioflag;
+
 	enum { MOUSE, RESIZE, KEYS, NONE };
 
 	root = &pelems[0];
@@ -696,6 +701,7 @@ threadmain(int argc, char **argv)
 	hexdisp = 0;
 	audioflag = 0;
 	visflag = 1;
+	audfd = -1;
 	ha1 = 256;
 	ki1 = 128;
 	me1  = 64;
@@ -779,6 +785,17 @@ threadmain(int argc, char **argv)
 					scores();
 					break;
 				case 8:
+					if(audfd < 0){
+						audfd=open("/dev/audio", OWRITE);
+						if(audfd >= 0)
+							proccreate(soundtrack, nil, 8192);
+					}
+					if(audioflag == 0)
+						audioflag = 1;
+					else
+						audioflag = 0;
+					break;
+				case 9:
 					threadexitsall(nil);
 					break;
 				default:
