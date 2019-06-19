@@ -562,19 +562,24 @@ printscore(void)
 void
 setmusicbits(void)
 {
-	me1 = 5;
+	int incr;
+
+	me1 = 32;
+	incr = 8;
 	if(saux[sel].binid[1] == '0')
 		ki1 = 128;
 	if(saux[sel].binid[1] == '1')
 		ki1 = 256;
-	if(saux[sel].binid[2] == '1')
-		me1 = me1 + 10;
+	if(saux[sel].binid[2] == '1'){
+		incr = 12;
+		me1 = 36;
+	}
 	if(saux[sel].binid[3] == '1')
-		me1 = me1 + 20;
+		me1 += incr * 1;
 	if(saux[sel].binid[4] == '1')
-		me1 = me1 + 40;
+		me1 += incr * 2;
 	if(saux[sel].binid[5] == '1')
-		me1 = me1 + 80;
+		me1 += incr * 4;
 }
 
 /* this is the main game logic which triggers on a click of a valid target square */
@@ -630,8 +635,11 @@ soundtrack(void *)
 	uvlong t;
 	uvlong x;
 	short s;
+	short audbuf[2048];
+	int i;
 
-	t=0;
+	t = 0;
+	i = 0;
 	for(;;){
 		uvlong hat = ( ((t*t*t)/(t%ha1 + 1))|( (((t<<1) + (1<<15))|(t<<2)|(t<<3)|(t<<4)) ) );
 		uvlong kick = ( (ki1*t * ((1<<5)-((t>>9)%(1<<5)))/(1<<4))|((t<<3)|(t<<2)|(t<<1)) );
@@ -641,11 +649,16 @@ soundtrack(void *)
 		if(saux[sel].binid[0] == '1')
 			x = (kick + hat) ^ melody;
 		else
-			x = (kick / hat) ^ melody;
+			x = melody;
 		s = (short)(x&0xFFFF);
-		write(audfd, &s, sizeof(s));
-		write(audfd, &s, sizeof(s));
+		audbuf[i] = s;
+		audbuf[i + 1] = s;
 		t++;
+		i += 2;
+		if(i >= 2048){
+			write(audfd, audbuf, sizeof(audbuf));
+			i = 0;
+		}
 	}
 }
 
