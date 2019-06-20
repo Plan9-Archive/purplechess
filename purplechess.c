@@ -14,7 +14,7 @@
 
 char *buttons3[] = {"New Game", "Retry", "Help", "Hexa", "Binary", "View", "Seed", "Scores", "Music", "Exit", nil};
 Menu menu3 = {buttons3};
-int audioflag, audfd, ki1, me1;
+int audioflag, audfd, ki1, me1, me2;
 
 /* convert gray code ids to chess square ids */
 int grtoch[64] = {
@@ -565,14 +565,16 @@ setmusicbits(void)
 	int incr;
 
 	me1 = 32;
+	me2 = 5;
 	incr = 8;
 	if(saux[current].binid[1] == '0')
 		ki1 = 128;
 	if(saux[current].binid[1] == '1')
 		ki1 = 256;
 	if(saux[current].binid[2] == '1'){
-		incr = 12;
 		me1 = 36;
+		me2 = 7;
+		incr = 12;
 	}
 	if(saux[current].binid[3] == '1')
 		me1 += incr * 1;
@@ -648,10 +650,7 @@ soundtrack(void* foo)
 		}
 		hat = ( ((t*t*t)/(t%256 + 1))|( (((t<<1) + (1<<15))|(t<<2)|(t<<3)|(t<<4)) ) );
 		kick = ( (ki1*t * ((1<<5)-((t>>9)%(1<<5)))/(1<<4))|((t<<3)|(t<<2)|(t<<1)) );
-		if(saux[current].binid[2] == '1')
-			melody = ((3*me1*t&t>>7)|(4*me1*t&t>>2)|(7*me1*t&t>>6)|(9*me1*t&t>>4));
-		else
-			melody = ((3*me1*t&t>>7)|(4*me1*t&t>>2)|(5*me1*t&t>>6)|(9*me1*t&t>>4));
+		melody = ((3*me1*t&t>>7)|(4*me1*t&t>>2)|(me2*me1*t&t>>6)|(9*me1*t&t>>4));
 		if(saux[current].binid[1] == '0')
 			melody = kick ^ melody;
 		if(saux[current].binid[0] == '1')
@@ -706,6 +705,7 @@ threadmain(int argc, char **argv)
 	audfd = -1;
 	ki1 = 128;
 	me1  = 64;
+	me2 = 5;
 	ARGBEGIN{
 	case 'a':
 		audioflag = 1;
