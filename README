@@ -35,12 +35,13 @@ The final goal is turning as many of the remaining squares red as possible. When
 
 The right-button menu options:
 
+New Game - start a new game
+Retry - start the identical layout of the current board again
 Help - print brief instructions and scoring rules
 Hexa - toggle hexagram display between all on, all of, and default starting/ending only
 Binary - toggle display of binary square ids
 View - toggle 4 modes of visualization of hypercubic connections
 Seed - display the seed id of this gameboard. If this is given as a parameter to -s the board can be replayed by any player.
-Reset - start a new game
-Retry - start the identical layout of the current board again
 Scores - view the highest scores achieved overall and in each game phase
+Music - toggle the soundtrack on and off, if /dev/audio is available
 Exit - leave purplechess

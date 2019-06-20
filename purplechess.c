@@ -14,7 +14,7 @@
 
 char *buttons3[] = {"New Game", "Retry", "Help", "Hexa", "Binary", "View", "Seed", "Scores", "Music", "Exit", nil};
 Menu menu3 = {buttons3};
-int audioflag, audfd, ki1, me1, me2;
+int audioflag, audfd, ki1, me1, me2;	/* k1 me1 me2 parameterize the soundtrack */
 
 /* convert gray code ids to chess square ids */
 int grtoch[64] = {
@@ -648,6 +648,7 @@ soundtrack(void* foo)
 				break;
 			sleep(1000);
 		}
+		/* music based on Amavect's bytebeat0004.c */
 		hat = ( ((t*t*t)/(t%256 + 1))|( (((t<<1) + (1<<15))|(t<<2)|(t<<3)|(t<<4)) ) );
 		kick = ( (ki1*t * ((1<<5)-((t>>9)%(1<<5)))/(1<<4))|((t<<3)|(t<<2)|(t<<1)) );
 		melody = ((3*me1*t&t>>7)|(4*me1*t&t>>2)|(me2*me1*t&t>>6)|(9*me1*t&t>>4));
@@ -691,7 +692,6 @@ threadmain(int argc, char **argv)
 	char *username;
 	char *userfile;
 	int i;
-
 	enum { MOUSE, RESIZE, KEYS, NONE };
 
 	root = &pelems[0];
