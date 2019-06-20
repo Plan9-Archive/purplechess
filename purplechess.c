@@ -462,9 +462,9 @@ savescores(void)
 		writescores = -1;
 }
 
-/* print the score and goal completion info */
+/* calculate the score and goal completion info */
 void
-printscore(void)
+calcscore(void)
 {
 	if(moves == 0)
 		return;
@@ -492,7 +492,6 @@ printscore(void)
 			savescores();
 		}
 		sprint(texbuf2, "+ %d, GOAL REACHED!", turnsco);
-		stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
 	}
 	/* all pieces captured or highlighted by path */
 	if((clearflag < 2) && (pcson == 0)){
@@ -509,7 +508,6 @@ printscore(void)
 			savescores();
 		}
 		sprint(texbuf2, "+ %d, ALL PIECES SCORED!", turnsco);
-		stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
 	}
 	/* no moves available, game is over */
 	if((legalsqs == 0) && (clearflag != 3)){
@@ -535,7 +533,6 @@ printscore(void)
 			savescores();
 		}
 		sprint(texbuf2, "+ %d, p1: %d, p2: %d", turnsco, p1sco, p2sco);
-		stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
 	}
 	switch(clearflag){
 	case 0:
@@ -552,6 +549,12 @@ printscore(void)
 		break;
 	}
 	sprint(texbuf, "score: %d  move: %d  pieces: %d", totalsco, moves, pcson);
+}
+
+/* display the 3 primary score/info lines */
+void
+printscore(void)
+{
 	textrect3.min.x = screen->r.max.x - (stringwidth(font, texbuf3) + 10);
 	stringbg(screen, textrect3.min, white, ZP, font, texbuf3, black, textrect3.min);
 	stringbg(screen, textrect2.min, white, ZP, font, texbuf2, black, textrect2.min);
@@ -625,6 +628,7 @@ activehit(void)
 	for(i=0; i < 64; i++)
 		selems[i].update(&selems[i]);
 	setmusicbits();
+	calcscore();
 	printscore();
 	if(visflag != 1)
 		overlay();
