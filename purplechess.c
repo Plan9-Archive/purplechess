@@ -653,9 +653,12 @@ soundtrack(void* foo)
 			sleep(1000);
 		}
 		/* music based on Amavect's bytebeat0004.c */
-		hat = ( ((t*t*t)/(t%256 + 1))|( (((t<<1) + (1<<15))|(t<<2)|(t<<3)|(t<<4)) ) );
-		kick = ( (ki1*t * ((1<<5)-((t>>9)%(1<<5)))/(1<<4))|((t<<3)|(t<<2)|(t<<1)) );
-		melody = ((3*me1*t&t>>7)|(4*me1*t&t>>2)|(me2*me1*t&t>>6)|(9*me1*t&t>>4));
+		hat = ((t*t*t)/(t%256 + 1));
+		hat = hat|(( (((t<<1) + (1<<15))|(t<<2)|(t<<3)|(t<<4)) ) );
+		kick = (ki1*t * ((1<<5)-((t>>9)%(1<<5)))/(1<<4));
+		kick = kick|(((t<<3)|(t<<2)|(t<<1)) );
+		melody = (3*me1*t&t>>7)|(4*me1*t&t>>2);
+		melody = melody|((me2*me1*t&t>>6)|(9*me1*t&t>>4));
 		if(saux[current].binid[1] == '0')
 			melody = kick ^ melody;
 		if(saux[current].binid[0] == '1')
