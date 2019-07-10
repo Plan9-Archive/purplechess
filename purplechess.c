@@ -14,7 +14,7 @@
 
 char *buttons3[] = {"New Game", "Retry", "Help", "Hexa", "Binary", "View", "Seed", "Scores", "Music", "Exit", nil};
 Menu menu3 = {buttons3};
-int audioflag, audfd, ki1, me1, me2;	/* k1 me1 me2 parameterize the soundtrack */
+int audioflag, audfd, ki1, me1, me2, meshift;	/* k1 me1 me2 parameterize the soundtrack */
 
 /* convert gray code ids to chess square ids */
 int grtoch[64] = {
@@ -567,7 +567,7 @@ setmusicbits(void)
 {
 	int incr;
 
-	me1 = 32;
+	me1 = 32 + meshift;
 	me2 = 5;
 	incr = 8;
 	if(saux[current].binid[1] == '0')
@@ -575,7 +575,7 @@ setmusicbits(void)
 	if(saux[current].binid[1] == '1')
 		ki1 = 256;
 	if(saux[current].binid[2] == '1'){
-		me1 = 36;
+		me1 = 36 + meshift;
 		me2 = 7;
 		incr = 12;
 	}
@@ -713,6 +713,7 @@ threadmain(int argc, char **argv)
 	ki1 = 128;
 	me1  = 64;
 	me2 = 5;
+	meshift = 0;
 	ARGBEGIN{
 	case 'a':
 		audioflag = 1;
@@ -834,6 +835,14 @@ threadmain(int argc, char **argv)
 		case KEYS:
 			if(r == Kdel)
 				threadexitsall(nil);
+			if(r == '='){
+				meshift++;
+				setmusicbits();
+			}
+			if(r == '-'){
+				meshift--;
+				setmusicbits();
+			}
 		}
 	}
 }
