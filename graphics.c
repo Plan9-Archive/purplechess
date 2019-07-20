@@ -133,24 +133,29 @@ overlay(void)
 void
 boardsize(void)
 {
+	int fontsize;
+
+	fontsize = 25;
+	if(font->height > 25)
+		fontsize = font->height + 2;
 	boardrect.min.x = screen->r.min.x;
 	boardrect.min.y = screen->r.min.y;
 	boardrect.max.x = screen->r.max.x;
-	boardrect.max.y = screen->r.max.y - 60;
+	boardrect.max.y = screen->r.max.y - (fontsize * 2 + 10);
 	textrect.min.x = screen->r.min.x + 5;
-	textrect.min.y = screen->r.max.y - 50;
+	textrect.min.y = screen->r.max.y - (fontsize * 2);
 	textrect.max.x = screen->r.max.x;
 	textrect.max.y = screen->r.max.y;
 	textrect2.min.x = screen->r.min.x + 5;
-	textrect2.min.y = screen->r.max.y - 25;
+	textrect2.min.y = screen->r.max.y - fontsize;
 	textrect2.max.x = screen->r.max.x;
 	textrect2.max.y = screen->r.max.y;
 	textrect3.min.x = screen->r.min.x + 300;
-	textrect3.min.y = screen->r.max.y - 25;
+	textrect3.min.y = screen->r.max.y - fontsize;
 	textrect3.max.x = screen->r.max.x;
 	textrect3.max.y = screen->r.max.y;
 	textrect4.min.x = screen->r.min.x + 300;
-	textrect4.min.y = screen->r.max.y - 50;
+	textrect4.min.y = screen->r.max.y - (fontsize * 2);
 	textrect4.max.x = screen->r.max.x;
 	textrect4.max.y = screen->r.max.y;
 }
